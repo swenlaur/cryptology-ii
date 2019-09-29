@@ -1,0 +1,40 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{crypto-ii}[2012/06/27 Layout and basic formatting of exercises: Version 0.1]
+
+
+
+% Exercise layout specification 
+\newenvironment{exercise}[1]{\exerciseheader
+\noindent\textbf{Exercise (#1).}\begin{itshape}}{\end{itshape}}
+
+% Environments for theorems, lemmata and so on 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposiotion}
+
+% WTF!?
+
+\newenvironment{solution}[1][Solution.]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definition.]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Example.]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark.]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newcommand{\qed}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \hskip1.5em plus0em minus0.5em \fi \nobreak
+      \vrule height0.75em width0.5em depth0.25em\fi}
+
+
+
+% WTF continues
+\newcommand{\withoutsolution}[1] {}
+\newcommand{\withsolution}[1] {#1}
+
+\newcommand{\XSPACE}{\mathcal{X}}
+\newcommand{\DO}{\textbf{do}\ }
+
+\renewcommand{\paragraph}[1]{\bigskip\noindent\textsc{#1}}

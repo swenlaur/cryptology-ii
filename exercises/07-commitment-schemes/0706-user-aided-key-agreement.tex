@@ -1,0 +1,129 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Filipp Ivanov}
+\contributor[Filled out some gaps]{Sven Laur}
+\editor{Sven Laur}
+\tags{user-aided key agreement, ind-cca2 security, non-malleable encryption}
+
+\newcommand{\CS}{\mathfrak{C}}
+\newcommand{\ADVCCATWO}[2]{\ADV^{\mathsf{ind\text{-}cca\text{-}2}}_{#1}(#2)}
+
+\begin{document}
+\begin{exercise}{Security of user-aided key agreement}
+Consider the following simple user-aided key agreement protocol. The public key $\PK$ of a server $\PARTY_1$ is known to all participants. If a participant $\PARTY_2$ wants to connect to $\PARTY_1$ it generates a random session key $k\getsu\KSPACE$ and a short authentication nonce $r\getsu\set{0,\ldots,9999}$ and sends $\ENC_\PK(k\|r)$ to $\PARTY_1$. Next $\PARTY_1$ recovers $k$ and $r$ and sends $r$ as an SMS back to $\PARTY_2$. The client $\PARTY_2$ halts if the SMS does not correspond to his or her authentication nonce.
+Prove that a $t$-time adversary can alter the ciphertext without being detected with probability at most $10^{-4}+\varepsilon$ provided that the cryptosystem is $(t,\varepsilon)$-IND-CCA2 secure and no adversary cannot alter the SMS message.
+\end{exercise}
+\begin{solution}
+For brevity, let $\RRR=\set{0000,\ldots,9999}$ denote the nonce space. Then we can formalise the security goal through the following game: 
+\begin{align*}
+\begin{game}{\GAME}
+ &(\PK,\SK)\gets\GEN\\
+ &k\getsu\KSPACE, r\getsu\RRR\\
+ &c\gets\ENC_\PK(k||r)\\
+ &\hat{c}\gets\AD(c)\\
+ &\hat{k}||\hat{r}\gets\DEC_\SK(c)\\
+ &\IF r\neq \hat{r}\ \RETURN 0\\
+ &\RETURN \neg[k\iseq \hat{k}]\enspace.
+\end{game}
+\end{align*}
+Note that if the adversary return $\hat{c}=c$, he or she is guaranteed to loose the game.
+Hence, we can consider only adversaries that always return $\hat{c}\neq c$. More formally, it is straightforward to modify any adversary to output a different encryption if $\hat{c}=c$. This would only increase the adversaries success probability with the cost of constant overhead in running time. 
+
+Now let $\AD$ be an adversary interacting with game $\GAME$. Then our goal is to construct an adversary
+$\ADB^\AD$ against IND-CCA2 games 
+\begin{align*}
+&\begin{game}{\BGAME_0}
+ &(\PK,\SK)\gets\GEN\\
+ &(m_0,m_1)\gets\ADB^{\ORA_1}(\PK)\\
+ &c\gets\ENC_\PK(m_0)\\ 
+ &\RETURN \ADB^{\ORA_2}(c)
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+ &(\PK,\SK)\gets\GEN\\
+ &(m_0,m_1)\gets\ADB^{\ORA_1}(\PK)\\
+ &c\gets\ENC_\PK(m_1)\\ 
+ &\RETURN \ADB^{\ORA_2}(c)
+\end{game}
+\end{align*}
+so that $\BGAME_0^\ADB$ would be identical to the game $\GAME^\AD$. The latter is straightforward, we must just define: 
+\begin{align*}
+	\begin{fblock}{\ADB^{\ORA_1}(\PK)}
+	& k_0, k_1 \getsu \KSPACE \\
+	& r_0, r_1 \getsu \RSPACE \\
+	& m_0 \gets k_0 || r_0 \\
+	& m_1 \gets k_1 || r_1 \\
+	& \RETURN (m_0, m_1)
+	\end{fblock}
+	&&
+	\begin{aligned}
+	\begin{fblock}{\ADB^{\ORA_2}(c)}
+	& \hat{c} \gets \AD(c) \\
+	& \hat{k} || \hat{r} \gets \ORA_2(\hat{c}) \\
+	& \RETURN [r_0 \iseq \hat{r}] \wedge \neg [k_0 \iseq \hat{k}]\enspace. \\
+	\end{fblock}\\
+	\ \\
+	\end{aligned}
+\end{align*}
+By our assumption $\hat{c}$ is always different form $c$ and thus the call to the decryption oracle never fails. As a result, the direct substitution of the construction of $\ADB$ leads to the game 
+\begin{align*}
+	\begin{game}{\GAME_0^\ADB}
+		& \SK,\PK \gets \GEN \\
+		& k \getsu \KSPACE \\
+		& r_0, r_1 \getsu \RSPACE \\
+		& m_0 \gets k || r_0 \\
+		& m_1 \gets k  || r_1 \\
+		& c \gets \ENC_\PK(m_0) \\
+		& \hat{c} \gets A(c) \\
+		& \hat{k} || \hat{r} \gets \DEC_\SK(\hat{c}) \\
+		& \RETURN [r_0 \iseq \hat{r}] \wedge \neg [k \iseq \hat{k}]
+	\end{game}
+\end{align*}
+which identical to the game $\GAME^\AD$. The only syntactical difference becomes from the extra lines that are needed to compute $m_1$ that is not used to create outcome of the game. Now if we substitute the construction of $\ADB$ into the other game $\BGAME_1$, we get 
+\begin{align*}
+	\begin{game}{\GAME_1^\ADB}
+		& \SK,\PK \gets \GEN \\
+		& k \getsu \KSPACE \\
+		& r_0, r_1 \getsu \RSPACE \\
+		& m_0 \gets k || r_0 \\
+		& m_1 \gets k  || r_1 \\
+		& c \gets \ENC_\PK(m_1) \\
+		& \hat{c} \gets A(c) \\
+		& \hat{k} || \hat{r} \gets \DEC_\SK(\hat{c}) \\
+		& \RETURN [r_0 \iseq \hat{r}] \wedge \neg [k \iseq \hat{k}]
+	\end{game}
+\end{align*}
+which can be further converted into the semantically identical form 
+\begin{align*}
+	\begin{game}{\GAME_2^\ADB}
+		& \SK,\PK \gets \GEN \\
+		& k \getsu \KSPACE \\
+		& r_1 \getsu \RSPACE \\
+		& m_1 \gets k  || r_1 \\
+		& c \gets \ENC_\PK(m_1) \\
+		& \hat{c} \gets A(c) \\
+		& \hat{k} || \hat{r} \gets \DEC_\SK(\hat{c}) \\
+		& r_0\gets\RSPACE \\
+		& \RETURN [r_0 \iseq \hat{r}] \wedge \neg [k \iseq \hat{k}]\enspace.
+	\end{game}
+\end{align*}
+For this game, it is easy to estimate the success probability
+\begin{align*}
+\pr{\GAME_2^\AD=1}\leq\frac{1}{\abs{\RSPACE}}\enspace,
+\end{align*}
+since $r_0$ value is randomly chosen after the value $\hat{r}$ is fixed. By our construction 
+\begin{align*}
+\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}=\ADVCCATWO{\CS}{\ADB}\enspace.
+\end{align*}
+Hence, we can estimate the success of the original game
+\begin{align*}
+\pr{\GAME^\AD=1}\leq \ADVCCATWO{\CS}{\ADB} + \pr{\GAME_2^\AD=1}\leq \ADVCCATWO{\CS}{\ADB}+ \frac{1}{\abs{\RSPACE}}\enspace.
+\end{align*}
+As the running-time $\ADB$ is only by a constant larger than the running time of $\AD$, the usage of $(t,\varepsilon)$-IND-CCA2 secure cryptosystem guarantees  that
+\begin{align*}
+\pr{\GAME^\AD=1}\leq \frac{1}{\abs{\RSPACE}}+ \varepsilon\enspace.
+\end{align*}
+\end{solution}
+
+\end{document}

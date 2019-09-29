@@ -1,0 +1,310 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution which need more work]{Sven Laur}
+\editor{Sven Laur}
+\tags{CTR-$ encryption scheme, horizon-splitting, ind-cpa security}
+
+\newcommand{\COLL}{\mathsf{Coll}}
+\newcommand{\CTRS}{\textsc{Ctr-\$}}
+
+\begin{document}
+\begin{exercise}{Security of $\CTRS$ encryption scheme.} 
+Let $f:\MSPACE\times\KSPACE\to\MSPACE$ be a $(t,
+\varepsilon)$-pseudorandom permutation and let $\CTRS$ be a symmetric
+encryption scheme defined as follows:
+\begin{itemize}
+\item A secret key is a randomly chosen $k\getsu\KSPACE$.
+\item To encrypt a message $m_1,\ldots,m_n$, choose a random nonce
+  $s_0\getsu\MSPACE$ and output a ciphertext vector
+  $s_0,m_1+f(s_0+1,k),\ldots, m_n+f(s_0+n,k)$.
+\item To decrypt $s_0,c_1,\ldots,c_n$, output
+  $c_1-f(s_0+1,k),\ldots,c_n-f(s_0+n,k)$.
+\end{itemize}
+Prove that $\CTRS$ is IND-CPA secure cryptosystem.
+\end{exercise}
+
+\begin{solution}
+Recall that  a symmetric cryptosystem 
+$\mathscr{C}=(\GEN,\ENC,\DEC)$ is $(t,\varepsilon)$-IND-CPA secure, if
+for any $t$-time adversary $\AD$:
+\begin{align*}
+  \advINDCPAXX{\mathscr{C}}{\AD}=\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\BGAME_1^\AD=1}}}\leq
+  \varepsilon
+\end{align*}
+where the oracle $\ORA_1(\cdot)$ in  the indistinguishability games
+\begin{align*}
+  \begin{game}{\BGAME_0^\AD}
+    &\SK\gets\GEN\\
+    &(m_0,m_1)\gets\AD^{\ORA_1(\cdot)}\\
+    &\RETURN \AD^{\ORA_1(\cdot)}(\ENC_\SK(m_0))
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\AD}
+    &\SK\gets\GEN\\
+    &(m_0,m_1)\gets\AD^{\ORA_1(\cdot)}\\
+    &\RETURN \AD^{\ORA_1(\cdot)}(\ENC_\SK(m_1))
+  \end{game}
+\end{align*}
+serves encryption calls. As the first step towards a solution, lets
+substitute the definition of $\CTRS$ encryption scheme into the games
+$\BGAME_0$ and $\BGAME_1$:
+\begin{align*}
+  \begin{game}{\BGAME_0^\AD}
+    &k\getsu\KSPACE\\
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_1(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i, k)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_1(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\AD}
+    &k\getsu\KSPACE\\
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_1(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i, k)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_1(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+\end{align*}
+As the second step, we can replace all invocations of a pseudorandom
+function $f_k(x)=f(x,k)$ with a truly random function. Note that the
+function $f$ is invoked not only in the explicit encryption call but also
+in the oracle $\ORA_1(\cdot)$. Let $\ORA_f(\cdot)$ denote the new
+encryption oracle with the following construction
+\begin{align*}
+  \begin{fblock}{\ORA_f(m_1,\ldots,m_n)}
+    &\overline{s}_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & \overline{c}_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\    
+    &\RETURN (\overline{s}_0,\overline{c}_1,\ldots,\overline{c}_n)
+  \end{fblock}
+\end{align*}
+and let $\GAME_0$ and $\GAME_1$ denote the resulting games
+\begin{align*}
+    \begin{game}{\GAME_0^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+\end{align*}
+As the function $f$ is $(t,\varepsilon)$-pseudorandom function, we can
+easily prove that
+\begin{align}
+ &\abs{\pr{\BGAME_0^\AD=1}-\pr{\GAME_0^\AD=1}}\leq \varepsilon\enspace\label{eq:step-i}\\
+ &\abs{\pr{\BGAME_1^\AD=1}-\pr{\GAME_1^\AD=1}}\leq \varepsilon\label{eq:step-ii}\enspace
+\end{align}
+for all adversaries $\AD$ with sufficiently small running
+time. Indeed, let $\BGAME_2$ and $\BGAME_3$ be the
+indistinguishability games for pseudorandom functions:
+\begin{align*}
+  \begin{game}{\BGAME_2^{\ADB}}
+    &f\gets\FFFALL\\
+    &\RETURN \ADB^{f(\cdot)}
+  \end{game}\qquad\qquad
+  \begin{game}{\BGAME_3^{\ADB}}
+    &f\gets\FFF\\
+    &\RETURN \ADB^{f(\cdot)}
+  \end{game}
+\end{align*}
+Then we can define adversaries $\ADB_0$ and $\ADB_1$ by in-lining the
+common parts of game pairs $\BGAME_0$ and $\GAME_0$ and $\BGAME_1$ and
+$\GAME_1$ into the adversary construction
+\begin{align*}
+    \begin{fblock}{\ADB_0^{f(\cdot)}}
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{fblock}
+  \qquad\qquad
+  \begin{fblock}{\ADB_1^{f(\cdot)}}
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_1^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{fblock}
+\end{align*}
+As a result, it is straightforward to prove that
+$\BGAME_2^{\ADB_i}\equiv\BGAME_i^\AD$ and $\BGAME_3^{\ADB_i}\equiv
+\GAME_i^\AD$. Hence, the
+equations~\eqref{eq:step-i}~and~\eqref{eq:step-ii} must hold as soon
+as the running times of $\ADB_0$ and $\ADB_1$ are less or equal to
+$t$. 
+
+Unfortunately, these running times depend on the number of
+encryption queries. Let $q$ be the number of oracle calls to $\ORA_f$
+made by $\AD$ and $t_f$ be the time penalty of a single call to the
+oracle $f(\cdot)$. Then the running time of $\ADB_i$ is $t_\AD+nq\cdot
+t_f+\Oh(n)$ and consequently the running time of $\AD$ must be below
+$t-nq\cdot t_f-\Oh(n)$ for the
+equations~\eqref{eq:step-i}~and~\eqref{eq:step-ii} to hold.
+ 
+ 
+For the further analysis, there are two possible options.  The most
+straightforward way is to substitute also the encryption oracle
+$\ORA_f(\cdot)$ into the games according to its
+specification. However, this would produce rather lengthy games that
+are difficult to analyse by hand. A more elegant solution is based on
+\emph{horizon splitting}. Let $\COLL$ denote the event that a range
+$[s_0 + 1,\ldots, s_0 + n]$ for the challenge encryption overlaps with
+range $[\overline{s}_0 + 1,\ldots, \overline{s}_0 + n]$ for another
+encryption generated by the oracle $\ORA_f(\cdot)$ during the
+game. Then obviously
+\begin{align*}
+\pr{\GAME_0^\AD=1} &= \pr{\GAME_0^\AD=1\wedge \COLL} + \pr{\GAME_0^\AD=1\wedge \neg\COLL}\enspace,\\
+\pr{\GAME_1^\AD=1} &= \pr{\GAME_1^\AD=1\wedge \COLL} + \pr{\GAME_1^\AD=1\wedge \neg\COLL}\enspace,
+\end{align*}
+and by triangle inequality 
+\begin{eqnarray*}
+   \advINDXX{\GAME_0,\GAME_1}{\AD} &\leq& \abs{\pr{\GAME_0^\AD=1\wedge \COLL}-\pr{\GAME_1^\AD=1\wedge \COLL}}\\
+ &&+ \abs{\pr{\GAME_0^\AD=1\wedge \neg\COLL}-\pr{\GAME_1^\AD=1\wedge \neg\COLL}}\enspace.
+\end{eqnarray*}
+Hence, we can estimate the advantage $\advINDXX{\GAME_0,\GAME_1}{\AD}$ in terms of
+four new games
+\begin{align*}
+  \begin{game}{\GAME_2^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_3^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_1(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}\\
+  \begin{game}{\GAME_4^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_5^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\gets m_0^i+f(s_0 + i)\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+\end{align*}
+Lets analyse the games $\GAME_4$ and $\GAME_5$ first. Since both games
+end with $\bot$ when a collision occurs, the invocations of $f(s_0+i)$
+can be replaced with uniform sampling $y_i\getsu\MSPACE$. The cases
+where this would be detectable are guaranteed to end with $\bot$
+anyway. As $m_i+y_i$ for $y_i\getsu\MSPACE$ has a uniform
+distribution, we can further simplify the games without changing their
+semantics. Let $\GAME_6$ and $\GAME_7$ denote the resulting games
+\begin{align*}
+  \begin{game}{\GAME_6^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_0)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\getsu\MSPACE\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_7^\AD}
+    &f\getsu\FFFALL\\
+    &(\vec{m}_0,\vec{m}_1)\gets\AD^{\ORA_f(\cdot)}\\
+    &s_0\getsu \MSPACE\\ 
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+    & c_i\getsu\MSPACE\\
+    \end{forblock}\\
+    &\IF \neg\COLL\ \THEN \RETURN \bot\\
+    &\RETURN \AD^{\ORA_f(\cdot)}(s_0,c_1,\ldots,c_n)
+  \end{game}
+\end{align*}
+Then by the reasoning given above
+$\GAME_4^\AD\equiv\GAME_6^\AD=\GAME_7^\AD\equiv \GAME_5^\AD$ and
+consequently
+\begin{eqnarray*}
+  \advINDXX{\GAME_0,\GAME_1}{\AD}
+  \leq \abs{\pr{\GAME_0^\AD=1\wedge \COLL}-\pr{\GAME_1^\AD=1\wedge \COLL}}
+  =\advINDXX{\GAME_2,\GAME_3}{\AD}\enspace.
+\end{eqnarray*}
+Note that if ranges $[s_0 + 1,\ldots, s_0 + n]$ and $[\overline{s}_0 +
+1,\ldots, \overline{s}_0 + n]$ overlap at a position $s_0+i$, the
+value $f(s_0+i)$ becomes public and $\AD$ can easily detect whether
+$\vec{m}_0$ or $\vec{m}_1$ was encrypted as long as $m_0^i\neq
+m_1^i$. Hence, we use only a trivial bound
+\begin{align*}
+  \advINDXX{\GAME_2,\GAME_3}{\AD}%
+  \leq \max\set{\pr{\COLL \text{ in } \GAME_0}, \pr{\COLL \text{ in } \GAME_1}}\enspace.
+\end{align*}
+Fortunately, the collision probability depends only on the number of
+oracle calls. For a fixed range $[s_0 + 1,\ldots, s_0 + n]$ and
+uniformly chosen $\overline{s}_0$, the probability of an overlap is
+$\frac{2n-1}{\abs{\MSPACE}}$. As $\AD$ makes $q$ encryption calls, the
+union bound yields
+\begin{align*}
+ \advINDXX{\GAME_2,\GAME_3}{\AD}\leq\frac{q(2n-1)}{\abs{\MSPACE}}\enspace.
+\end{align*}
+To summarise, we have established that the IND-CPA advantage of an
+adversary $\AD$ with a running time $t-nq\cdot t_f-\Oh(n)$ can be bounded:
+\begin{align*}
+  \advINDCPAXX{\CTRS}{\AD}\leq \frac{q(2n-1)}{\abs{\MSPACE}}+ 2\varepsilon
+\end{align*}
+where $q$ is the upper bound on the encryption queries. This result is
+precise but contains unknown value $q$. Since $q\leq t_\AD$ for
+obvious reasons, the inequality $t_\AD\leq t-nt_\AD\cdot t_f-\Oh(n)$
+about running time implies
+\begin{align*}
+ t_\AD\leq\frac{t-\Oh(n)}{1+n t_f}
+\end{align*}
+and consequently
+\begin{align*}
+  \advINDCPAXX{\CTRS}{\AD}\leq \frac{t-\Oh(n)}{1+n t_f}\cdot\frac{(2n-1)}{\abs{\MSPACE}}+ 2\varepsilon\enspace.
+\end{align*}
+
+\paragraph{Remark.} The horizon splitting technique is rather powerful
+and allows us to analyse many settings by splitting the proof into
+different branches. It can be easily generalised for estimating the
+success against a single game, as well.
+\end{solution}
+
+
+\end{document}

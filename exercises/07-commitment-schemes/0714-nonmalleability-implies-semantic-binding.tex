@@ -1,0 +1,203 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sander Siim}
+\editor{Sven Laur}
+\tags{binding commitment,semantical security}
+
+\newcommand{\CS}{\mathfrak{C}}
+\newcommand{\advSEMBINDXX}[2]{\ADV_{#1}^{\mathsf{sem\text{-}bind}}(#2)}
+\newcommand{\advNMOPENXX}[2]{\ADV^{\mathsf{nm\text{-}cpa}}_{#1}(#2)}
+
+
+\begin{document}
+
+
+\begin{exercise}{NM-OPEN$\Rightarrow$SEM-BIND} 
+A commitment scheme $\CS$ is $(t,\varepsilon)$-semantically secure with respect to the binding property if the advantage of any $t$-time adversary $\AD$ against the following games
+\begin{align*}
+&\begin{game}{\GAME_0}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\GAME_1}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(\overline{m})\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+\end{align*}
+is bounded
+\begin{align*}
+\advSEMBINDXX{\CS}{\AD}=\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\leq \varepsilon\enspace.
+\end{align*}
+Show that non-malleability with respect to the opening implies restricted notion of semantic binding  that additionally requires $\supp(\MSPACE_0)\subseteq\MSPACE_\PK$. 
+\end{exercise}
+\begin{solution}
+Recall that  non-malleability with respect to opening is defined through the  security games:
+\begin{align*}
+&\begin{game}{\BGAME_0}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\ADB(\PK)\\
+& m\gets\MSPACE_0\\
+& (c,d) \gets \COM_\PK(m)\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(c)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\ADB(d)\\
+& \IF c \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\ADB(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+& (\overline{c},\overline{d}) \gets \COM_\PK(\overline{m})\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(\overline{c})\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\ADB(\overline{d})\\
+& \IF \overline{c} \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)\enspace.
+\end{game}
+\end{align*}
+Namely, a commitment scheme $\CS$ is $(t,\varepsilon)$-non-malleable with respect to opening if the advantage of any $t$-time adversary $\ADB$ against the games $\BGAME_0, \BGAME_1$ is bounded:
+\begin{align*}
+\advNMOPENXX{\CS}{\ADB}=\pr{\BGAME_0^\ADB=1}-\pr{\BGAME_1^\ADB=1}\leq \varepsilon\enspace.
+\end{align*}
+As the games defining security against semantic binding are structurally very close to non-malleability games, it is not hard to morph an adversary $\AD$ against games $\GAME_0$ and $\GAME_1$ to an adversary $\ADB$ against games $\BGAME_0$ and $\BGAME_0$. The corresponding construction is following:
+\begin{align*}
+\begin{aligned}
+&\begin{game}{\ADB(\PK)}
+& \MSPACE_0\gets\AD(\PK)\\
+&\RETURN \MSPACE_0
+\end{game}\\
+& \
+\end{aligned}
+&
+&
+\begin{aligned}
+\begin{game}{\ADB(c)}
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+&\RETURN \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n
+\end{game}\\
+& \
+\end{aligned}
+&
+&\begin{game}{\ADB(d)}
+& m_* \gets \OPEN_\PK(c,d)\\
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m_*)\\
+&\RETURN \hat{d}_1,\ldots,\hat{d}_n
+\end{game}
+\end{align*}
+This construction is valid since $\AD$ receives correct inputs and $\ADB$ can open the message $m$ since it can store $c$ in the second block and open it with decommitment value $d$. By inlining the adversary $\ADB$ into the games $\BGAME_0$ and $\BGAME_1$, we get a pair of games that are not yet identical to games $\GAME_0^\AD$ and $\GAME_1^\AD$:
+\begin{align*}
+&\begin{game}{\BGAME_0^\ADB}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0\\
+& (c,d) \gets \COM_\PK(m)\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\
+& m_* \gets \OPEN_\PK(c,d)\\
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m_*)\\
+& \IF c \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\BGAME_1^\ADB}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+& (\overline{c},\overline{d}) \gets \COM_\PK(\overline{m})\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \overline{m}_* \gets \OPEN_\PK(\overline{c},\overline{d})\\
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(\overline{m}_*)\\
+& \IF \overline{c} \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)\enspace.
+\end{game}
+\end{align*}
+Under the assumption that the commitment scheme $\CS$ is functional we get 
+\begin{align*}
+m_* &= \OPEN_\PK(\COM_\PK(m)) = m\enspace,\\
+\overline{m}_* &= \OPEN_\PK(\COM_\PK(\overline{m})) = \overline{m}\enspace.
+\end{align*}
+Thus, we can delete these lines from the above games and give $m$ and $\overline{m}$ directly as input to $\AD$ without changing the success probabilities. Also, we can move the line where $m$ or $\overline{m}$ is commited right before the check $\overline{c} \in \set{c_1,\ldots,\hat{c}_n}$ since previous lines do not depend on $(c,d)$. We thus obtain the following games
+\begin{align*}
+&\begin{game}{\GAME_2^\AD}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& (c,d) \gets \COM_\PK(m)\\
+& \IF c \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\GAME_3^\AD}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(\overline{m})\\
+& (\overline{c},\overline{d}) \gets \COM_\PK(\overline{m})\\
+& \IF \overline{c} \in \set{\hat{c}_1,\ldots,\hat{c}_n}\ \RETURN 0\\
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i\in\set{1,\ldots,n}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)\enspace.
+\end{game}
+\end{align*}
+that satisfy $\BGAME_0^\ADB \equiv \GAME_2^\AD$ and $\BGAME_1^\ADB \equiv \GAME_3^\AD$. It is clear that the games $\GAME_2$ and $\GAME_3$ differ from the semantic security games $\GAME_0$ and $\GAME_1$ only by the additional checks $c \in \set{\hat{c}_1,\ldots,\hat{c}_n}$ and $\overline{c} \in \set{\hat{c}_1,\ldots,\hat{c}_n}$. Thus, we can estimate 
+\begin{align*}
+\pr{\GAME_0^\AD = 1} - \pr{c \in \set{\hat{c}_1,\ldots,\hat{c}_n}}&\leq \pr{\BGAME_0^\ADB = 1} \leq \pr{\GAME_0^\AD = 1}\enspace, \\
+\pr{\GAME_1^\AD = 1} - \pr{\overline{c} \in \set{\hat{c}_1,\ldots,\hat{c}_n}}&\leq \pr{\BGAME_1^\ADB = 1}\leq \pr{\GAME_1^\AD = 1}\enspace. 
+\end{align*}
+Note that the probabilities $\pr{\BGAME_0^\ADB = 1}$ and $\pr{\BGAME_1^\ADB = 1}$ can indeed be anywhere in the specified range. For instance, if the relation $\pi(m,\hat{m}_1,\ldots,\hat{m}_n)=[\forall i: m\neq \overline{m}_i]$ then events $\GAME_0^\AD=1$ and $c \in \set{\hat{c}_1,\ldots,\hat{c}_n}$ are mutually exclusive and we achieve upper bound. Similarly, the relation  $\pi(m,\hat{m}_1,\ldots,\hat{m}_n)=[\forall i: m= \overline{m}_i]$ assures that events occur simultaneously and we achieve the lower bound. 
+
+By combining the inequalities derived above, we can conclude 
+\begin{align*}
+\advNMOPENXX{\CS}{\ADB}&\geq \pr{\GAME_0^\AD = 1}- \pr{\GAME_1^\AD = 1}- \pr{c \in \set{\hat{c}_1,\ldots,\hat{c}_n}}\enspace.
+\end{align*}
+To go further with the analysis, we must make additional assumptions about the commitment scheme. Let $\delta$ be the upper bound on the probability that by committing the message twice we get the same digest:
+\begin{align*}
+\delta=\max_{(\PK,\SK)\gets\GEN \atop m\in\MSPACE_\PK}\pr{(c_0,d_0)\gets\COM_\PK(m), (c_1,d_1)\gets\COM_\PK(m): c_1=c_0}\enspace.
+\end{align*} 
+Then we can use union bound to upper bound the probability
+\begin{align*}
+\pr{c \in \set{\hat{c}_1,\ldots,\hat{c}_n}}\leq n\cdot \pr{c=\hat{c}_i}\leq n\cdot\delta
+\end{align*}
+and thus 
+\begin{align*}
+\advNMOPENXX{\CS}{\ADB}&\geq\advSEMBINDXX{\CS}{\AD}-n\cdot\delta
+\end{align*}
+
+As the final step, we must analyse the time-complexity of our constructed adversary $\ADB$. The only additional operation $\ADB$ does is open the commitment. Thus, the overhead is a constant $c$. Thus, we have proven, that if a commitment scheme is $(t+c,\varepsilon)$-non-malleable wrt opening, then it is also $(t, \varepsilon+n\delta)$-semantically secure with respect to the binding property. For practical commitment schemes, the value $\delta$ is much smaller than $\varepsilon$, as it is usually one over the randomness size used to commit a message. One can formally derive the bound on $\delta$ solely from the non-malleability assumption, as non-malleability implies hiding and commitment scheme with high $\delta$ value is not very hiding.
+
+\vspace*{3ex}
+\noindent
+\textsc{Remark on the restriction.} The formal definition of semantic binding does not require that the support of $\MSPACE_0$ is always inside the message space $\MSPACE_\PK$ or otherwise we cannot pass the information about $m$ to $\AD$. This restriction is artificial, as the distribution of future messages $\MSPACE_0$ that might influence the the decommitment procedure might be arbitrary. If the messages is short enough, we can still pack it inside a single commitment. Otherwise, we can pack it into several commitments. The latter leads to a different definition of non-malleability where the adversary sees many commitments $c_1,\ldots,c_n$ before it creates related commitments $\hat{c}_1,\ldots,\hat{c}_n$. As this definition is more complex, we do not pursue this issue further.        
+
+\end{solution}
+\end{document}

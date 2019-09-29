@@ -1,0 +1,58 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Margus Niitsoo}
+\editor{Sven Laur}
+\tags{missing illustration, attack construction, Feistel cipher, pseudorandom permutation}
+
+
+\begin{document}
+\begin{exercise}{Insecurity of three round Feistel cipher}
+Show that the tree-round Feistel cipher
+$\textsc{Feistel}_{f_1,f_2,f_3}(L_0\|R_0)$ is not pseudorandom if the
+adversary can also make decryption queries.
+\end{exercise}
+
+\begin{solution}
+Let $L_0\|R_0$ be an arbitrary message. Then the corresponding
+ciphertexts is 
+\begin{align*}
+  L_3&=R_0\oplus f_2(L_0\oplus f_1(R_0))\enspace,\\
+  R_3&=L_0\oplus f_1(R_0)\oplus f_3(R_0\oplus f_2(L_0\oplus f_1(R_0))\enspace.
+\end{align*}
+Now the ciphertext of a modified message $L_0\oplus\delta\|R_0$ is
+\begin{align*}
+  L_3'&=R_0\oplus f_2(L_0\oplus\delta\oplus f_1(R_0))\enspace,\\
+  R_3'&=L_0\oplus \delta\oplus f_1(R)\oplus f_3(R_0\oplus f_2(L_0\oplus \delta\oplus f_1(R_0))\enspace.
+\end{align*}
+As a next step, we can use decryption operation to find $L_0^*\|R_0^*$
+such that the corresponding ciphertext is
+\begin{align*}
+  L_3^*&=L_3'\oplus 0=R_0\oplus f_2(L_0\oplus\delta\oplus f_1(R_0))\enspace,\\
+  R_3^*&=R_3'\oplus\delta=L_0\oplus f_1(R_0)\oplus f_3(R_0\oplus f_2(L_0\oplus \delta\oplus f_1(R_0))\enspace.
+\end{align*}
+By the definition of the Feistel cipher we can express
+\begin{align*}
+  L_2^*&=R_3^*\oplus f_3(L_3^*)=L_0\oplus f_1(R_0)=L_2\enspace,\\
+  L_1^*&=R_2^*\oplus f_2(L_2^*)= R_2^*\oplus f_2(L_2)=L_3^*\oplus f_2(L_2) \enspace,\\
+  R_0^*&=L_1^*=L_3^*\oplus f_2(L_2)\enspace.
+\end{align*}
+Similarly, we can derive
+\begin{align*}
+    R_0&=L_1=R_2\oplus f_2(L_2)=L_3\oplus f(L_2)
+\end{align*}
+and thus we have obtained a relation
+\begin{align*}
+  R_0^*\oplus L_3^*= f_2(L_2)=R_0\oplus L_3
+\end{align*}
+that holds with probability $1$. The same relation between input and
+output pairs holds with probability 
+\begin{align*}
+  \frac{1}{2^n-2}
+\end{align*}
+for random permutation. Hence, the computational difference is really
+small for the three round Feistel cipher if decryption operations are
+allowed.
+\end{solution}
+
+\end{document}

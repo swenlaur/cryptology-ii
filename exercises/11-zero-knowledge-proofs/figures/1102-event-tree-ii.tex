@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=14cm,paperheight=5cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+\usepackage{crypto-ii}
+
+%\usepackage[table]{xcolor}
+
+%\newcommand{\getsu}{\gets_{\scriptscriptstyle \hspace*{-0.65em} u\hspace*{0.0em}}}
+
+\newcommand{\squigglyline}{\psline[linearc=2pt, arrowsize = 4pt 2]{->}(0.0,0.0)(0.0,0.05)(0.05,0.10)(-0.05,0.20)(0.05,0.30)
+(-0.05,0.40)(0.05,0.50)(-0.05,0.60)(0.05,0.70)(-0.05,0.80)(0.05,0.90)(0.0,0.95)(0.0,1.15)
+}
+%\psset{unit=.25,linewidth=1.5pt} 
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\psset{unit=1.2cm}
+\psset{nodesep=1pt}
+\psset{arrowsize = 4pt 2}
+\begin{pspicture}(-4.0,1.6)(4.0,3.6)
+\cnode[fillstyle=solid, fillcolor=black!75](-4.5,2){4pt}{V1}
+\cnode[fillstyle=solid, fillcolor=gray!25 ](-3.0,2){4pt}{K1}
+\cnode[fillstyle=solid, fillcolor=black!75](-1.5,2){4pt}{V2}
+\cnode[fillstyle=solid, fillcolor=gray!25 ](+0.0,2){4pt}{K2}
+\cnode[fillstyle=solid, fillcolor=black!75](+1.5,2){4pt}{V3}
+\cnode[fillstyle=solid, fillcolor=gray!25 ](+3.0,2){4pt}{K3}
+\rput(+4.5,2){\rnode{V4}{$\bot$}}
+
+\ncline{->}{V1}{K1}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$1$}}}
+\ncline{->}{K1}{V2}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\bot$}}}
+\ncline{->}{V2}{K2}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$1$}}}
+\ncline{->}{K2}{V3}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\bot$}}}
+\ncline{->}{V3}{K3}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$1$}}}
+\ncline{->}{K3}{V4}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\bot$}}}
+
+\cnode[fillstyle=solid, fillcolor=white](-3.7,0.7){4pt}{VF1}
+\rput(-3.7,0.7){$+$}
+\cnode[fillstyle=solid, fillcolor=white](-0.7,0.7){4pt}{VF2}
+\rput(-0.7,0.7){$+$}
+\cnode[fillstyle=solid, fillcolor=white](+2.3,0.7){4pt}{VF3}
+\rput(+2.3,0.7){$+$}
+\ncline{->}{V1}{VF1}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$0$}}}
+\ncline{->}{V2}{VF2}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$0$}}}
+\ncline{->}{V3}{VF3}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$0$}}}
+
+\cnode[fillstyle=solid, fillcolor=white](-2.2,3.3){4pt}{KF1}
+\rput(-2.2,3.3){$+$}
+\cnode[fillstyle=solid, fillcolor=white](+0.8,3.3){4pt}{KF2}
+\rput(+0.8,3.3){$+$}
+\cnode[fillstyle=solid, fillcolor=white](+3.8,3.3){4pt}{KF3}
+\rput(+3.8,3.3){$+$}
+\ncline{->}{K1}{KF1}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\hat{b}$}}}
+\ncline{->}{K2}{KF2}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\hat{b}$}}}
+\ncline{->}{K3}{KF3}
+\aput{:U}{\smash{\raisebox{-0.5ex}{$\hat{b}$}}}
+
+
+
+\end{pspicture}
+\end{document}

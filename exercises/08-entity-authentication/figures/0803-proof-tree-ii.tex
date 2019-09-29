@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=14cm,paperheight=4cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+%\usepackage[table]{xcolor}
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\enlargethispage{1cm}
+\begin{pspicture}(-2.75,-1.0)(8,1.5)
+\psset{arrowsize=6pt, nodesep=2pt}
+\rput(-4.0,+0.0){\rnode{G0}{$\GAME_0$}}
+\rput(-2.0,+0.0){\rnode{G1}{$\GAME_1$}}
+\rput(+0.0,+0.0){\rnode{G2}{$\GAME_2$}}
+\rput(+2.0,+0.0){\rnode{G3}{$\GAME_3$}}
+\ncline{->}{G0}{G1}
+\ncline{->}{G1}{G2}
+\ncline{->}{G2}{G3}
+\aput{:U}{PRF}
+\bput{:U}{$\varepsilon$}
+\rput(2.5,+0.0){\pnode{A0}}
+\rput(3.5,+0.75){\rnode{G4}{$\GAME_{4}$}}
+\rput(3.5,-0.75){\rnode{G5}{$\GAME_{5}$}}
+\ncline[nodesepB = 0pt]{-o}{G3}{A0}
+\ncline[nodesepA = 0pt]{*->}{A0}{G4}
+\ncline[nodesepA = 0pt]{*->}{A0}{G5}
+\rput(5.5,+0.75){\rnode{G41}{$\GAME_{41}$}}
+\rput(5.5,-0.75){\rnode{G51}{$\GAME_{51}$}}
+\ncline{->}{G4}{G41}
+\ncline{->}{G5}{G51}
+\rput(7.5,+0.75){\rnode{G42}{$\GAME_{42}$}}
+\rput(7.5,-0.75){\rnode{G52}{$\GAME_{52}$}}
+\ncline{->}{G41}{G42}
+\ncline{->}{G51}{G52}
+\end{pspicture}
+\end{document}
+

@@ -1,0 +1,162 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\editor{Sven Laur}
+\tags{computational distance}
+
+\DeclareMathOperator*{\EXPO} {\mathbf{E}}
+\begin{document}
+
+
+
+\begin{exercise}{Explicit estimates of computational distances}
+Normally, it is impossible to compute computational distance between
+two distributions directly, since the number of potential
+distinguishing algorithms is humongous. However, for really small
+time-bounds it can be done. Assume that all distinguishers
+$\AD:\ZZ_{16}\to\set{0,1}$ are implemented as Boolean circuits
+consisting of $\textsc{Not}$, $\textsc{And}$, $\textsc{Or}$ gates and
+the corresponding time-complexity is just the number of logic
+gates. For example, $\AD(x_3x_2x_1x_0)= x_1$ has time-complexity $0$
+and $\AD(x_3x_2x_1x_0)= x_1\vee \neg x_3\wedge x_2$ has
+time-complexity $3$.
+\begin{enumerate}
+   \item Let $\mathcal{X}_0$ be a uniform distribution over $\ZZ_{16}$
+     and let $\mathcal{X}_1$ be a uniform distribution over
+     $\set{0,2,4,6,8,10,12,14}$. What is $\CD_x^1(\XXX_0,\XXX_1)$?
+   \item Find a uniform distribution $\XXX_2$ over some $8$ element
+     set such that $\CD_x^1(\XXX_0,\XXX_2)$ is minimal. Compute
+     $\CD_x^2(\XXX_0,\XXX_2)$ and $\CD_x^3(\XXX_0,\XXX_2)$.
+   \item Find a uniform distribution $\XXX_3$ over some $8$ element
+     set such that the distance sum $\CD_x^1(\XXX_1,\XXX_0)+
+     \CD_x^1(\XXX_0,\XXX_3)\neq\CD_x^1(\XXX_1,\XXX_3)$.
+   \item Estimate for which value of $t$ the distances
+     $\CD_x^t(\XXX_0,\XXX_1)$ and $\SD_x(\XXX_0,\XXX_1)$ coincide for
+     all distributions over $\ZZ_{16}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+As the statistical distance $\SD_x(\XXX_0,\XXX_1)=\frac{1}{2}$ and the
+corresponding distinguisher $A(x_3x_2,x_1x_0)=x_0$ consists of zero
+gates, we get $\CD_x^0(\XXX_0,\XXX_1)=\frac{1}{2}$. For the second
+question, let $\XXX_\phi=\set{x\in\ZZ_{16}: \phi(x)=1}$ denote the
+true-set for a circuit $\phi$ and let $\XXX_2$ be some $8$ element
+set. Then by definition
+\begin{align*}
+  \advINDXX{\XXX_0,\XXX_2}{\phi}%
+  &=\abs{\pr{x\gets\XXX_0: \phi(x)=1}-\pr{x\gets\XXX_2: \phi(x)=1}}\\
+  &=\frac{1}{16}\cdot\abs{\abs{\XXX_\phi}-2\cdot\abs{\XXX_\phi\cap \XXX_2}}
+  =\frac{1}{16}\cdot\abs{\abs{\XXX_\phi}-\abs{\XXX_\phi\setminus\XXX_2}}
+\end{align*}
+and minimal computational distance is achieved by the set $\XXX_2$
+that splits almost evenly by all possible sets $\XXX_\phi$. By
+considering formulae
+\begin{align*}
+ \phi_1(x)=x_0,\ldots, \phi_4(x)=x_3,
+\phi_5(x)=\neg x_0,\ldots,\phi_8(x)=\neg x_3\enspace,  
+\end{align*}
+we get that a set $\XXX_2$ can achieve $\CD_x^1(\XXX_0,\XXX_2)=0$ only
+if it contains $4$ elements with the $i$th bit set to one and $4$
+elements with the $i$th bit set to zero. Formulae
+\begin{align*}
+  \phi_9(x)&=x_0\wedge x_1,\enspace
+  \phi_{10}(x)=x_0\wedge x_2 \ldots,
+  \phi_{13}(x)=x_1\wedge x_3,\enspace
+  \phi_{14}(x)=x_2\wedge x_3\enspace,\\
+  \phi_{15}(x)&=x_0\vee x_1,\enspace
+  \phi_{16}(x)=x_0\vee x_2 \ldots,
+  \phi_{19}(x)=x_1\vee x_3,\enspace
+  \phi_{20}(x)=x_2\vee x_3\enspace
+\end{align*}
+indicate that such a set must contain exactly $2$ elements with $i$th
+and $j$th bit set to one and exactly $2$ elements with $i$th and $j$th
+bit set to zero.  A bit representation of a possible solution is
+depicted in Figure~\ref{fig:orthogonal-array}. The solution has a
+peculiar property: if we choose uniformly element from $\XXX_2$ and
+observe a bit pair $i$ and $j$ the corresponding bit-string has
+uniform distribution over $\ZZ_4$. Consequently, any formula
+consisting of two inputs is incapable from distinguishing $\XXX_0$ and
+$\XXX_2$. A formula consisting of two gates can cover three inputs and
+thus potential distinguishing capabilities are higher.  As
+Figure~\ref{fig:violating-triples} clearly shows, the distribution of
+bit triples $x_0,x_2,x_3$ is indeed different from uniform and the
+task of building a distinguisher simplifies considerably. In fact, we can express
+\begin{align*}
+  \advINDXX{\XXX_0,\XXX_2}{\phi}
+  =\frac{1}{8}\cdot\abs{\psi(000)+\psi(101)+\psi(110)
+  -\psi(001)-\psi(100)-\psi(111)}\enspace.
+\end{align*}
+for any formula $\phi(x)=\psi(x_0x_2x_3)$. Exhaustive search reveals
+that the formulae
+\begin{align*}
+    x_0\wedge x_2 \wedge x_3\enspace,
+    x_0\vee x_2 \vee x_3\enspace,
+    x_0\wedge x_3 \vee x_2,\enspace,
+    x_0\wedge(x_2\vee x_3)\enspace   
+\end{align*}
+all achieve optimal advantage
+$\advINDXX{\XXX_0,\XXX_2}{\phi}=\frac{1}{8}$. For the next distance
+estimate, note that a three gate distinguisher can cover all $4$
+inputs if it does not contain $\textsc{Not}$-gates. All of such
+distinguishers achieve advantage $\frac{1}{16}$ and thus cannot not be
+optimal. Consequently, a potential optimal $3$-gate distinguisher with
+$\textsc{Not}$-gate must process inputs $x_0,x_2,x_3$. Indeed, several
+formulae with negation achieve again the advantage $\frac{1}{8}$ but
+not more. Hence, we have shown that
+\begin{align*}
+ \CD_x^2(\XXX_0,\XXX_2)=\CD_x^3(\XXX_0,\XXX_2)=\frac{1}{8}\enspace.
+\end{align*}
+
+
+\begin{figure}[!t]
+  \centering
+  \begin{small}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & $x_7$ & $x_8$ \\
+  \hline
+  $1$   & $1$  & $1$   & $1$   & $0$   & $0$  & $0$   & $0$   \\
+  $1$   & $1$  & $0$   & $0$   & $1$   & $1$  & $0$   & $0$   \\
+  $1$   & $0$  & $1$   & $0$   & $1$   & $0$  & $1$   & $0$   \\
+  $1$   & $0$  & $1$   & $0$   & $0$   & $1$  & $0$   & $1$   \\
+  \hline 
+  $16$  & $3$  & $13$  & $1$   & $6$   & $10$ & $4$   & $8$   \\
+  \hline
+  \end{tabular}
+  \end{small}
+  \caption{Orhogonal array with parameters $n=4$ and $k=2$.}
+  \label{fig:orthogonal-array}
+\end{figure}
+\begin{figure}[!h]
+  \centering
+  \begin{small}
+  \begin{tabular}[sdf]{|c|c|c|}
+    \hline
+    Inputs & Violating triples & $\SD$\\
+    \hline
+    $x_0,x_1,x_2$ &  No violating triples & $0$\\
+    $x_0,x_1,x_3$ &  No violating triples & $0$\\
+    $x_0,x_2,x_3$ &  $000\to 0.00, 001\to 0.25, 100\to 0.25$ & $\frac{3}{8}$\\
+                 &  $101\to 0.00, 110\to 0.00, 111\to 0.25$ & \\
+    $x_2,x_3,x_4$ &  No violating triples & $0$\\
+    \hline
+  \end{tabular}
+  \end{small}
+  \caption{Violating triples}
+  \label{fig:violating-triples}
+\end{figure}
+
+As $\SD_x(\XXX_1,\XXX_1)=0$ and $\SD_x(\XXX_0,\XXX_1)=\frac{1}{2}$, by
+taking $\XXX_3=\XXX_1$ we get the required counter-example for the
+third question.  Finally, note that any statistical test is a
+predicate. As a distinguisher with negated output works as well as the
+original, we must bound the gate complexity of a predicate that is
+satisfied by at most $8$ inputs. Each of this inputs can be
+represented as conjunct consisting of three $\textsc{and}$- and at
+most four $\textsc{not}$-gates. Hence, the total gate count is bounded
+by $64$ gates, i.e., $\CD_x^{64}(\XXX_0,\XXX_1)=\SD_x(\XXX_0,\XXX_1)$
+for all distributions $\XXX_0$ and $\XXX_1$.
+
+\end{solution}
+\end{document}

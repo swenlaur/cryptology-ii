@@ -1,0 +1,133 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{ind-sem proof, state space extension}
+
+
+\begin{document}
+\begin{exercise}{Prediction of randomised functions}
+Let $g:\SSS\times\Omega\to\YYY$ be a randomised function and let $f:\SSS\to\XXX$ be a function such that any two states $s_0,s_1\in\SSS$ are $(t,\varepsilon)$-indistinguishable given the output $f(s_i)$. Prove that a function $f^*:\SSS\times\Omega\to\XXX$ defined as $f_*(s,\omega)=f(s)$ is also such that any two states $(s_0,\omega_0),(s_1,\omega_1)\in\SSS\times\Omega$ are 
+$(t,\varepsilon)$-indistinguishable given the output $f_*(s_i,\omega_i)$ and that  
+\begin{align*}
+\advSemXX{f,g}{\AD}=\advSemXX{f_*,g_*}{\AD}
+\end{align*} 
+where $g_*(s,\omega)=g(s,\omega)$ is a deterministic function over extended state space $\SSS\times\Omega$.
+\end{exercise}
+\begin{solution}
+\textsc{Indistinguishability of states.} For the first part of the proof we must estimate the computational distance of following games:
+\begin{align*}
+&\begin{game}{\GAME_{s_0,\omega_0}}
+&x\gets f_*(s_0,\omega_1)\\
+&\RETURN \AD(x)
+\end{game}
+&&\begin{game}{\GAME_{s_1,\omega_1}}
+&x\gets f_*(s_1,\omega_1)\\
+&\RETURN \AD(x)\enspace.
+\end{game}
+\end{align*}
+By the definition of function $f_*$, we can simplify these games:
+\begin{align*}
+&\begin{game}{\GAME_{s_0,\omega_0}}
+&x\gets f(s_0)\\
+&\RETURN \AD(x)
+\end{game}
+&&\begin{game}{\GAME_{s_1,\omega_1}}
+&x\gets f(s_1)\\
+&\RETURN \AD(x)\enspace.
+\end{game}
+\end{align*}
+Since these games do not depend on $\omega_0$ and $\omega_1$, we can observe the following games:
+\begin{align*}
+&\begin{game}{\GAME_{s_0}}
+&x\gets f(s_0)\\
+&\RETURN \AD(x)
+\end{game}
+&&\begin{game}{\GAME_{s_1}}
+&x\gets f(s_1)\\
+&\RETURN \AD(x)\enspace.
+\end{game}
+\end{align*}
+By the security assumption for $f$, the games $\GAME_{s_0}$ and $\GAME_{s_1}$ is $(t,\varepsilon)$-indistinguishable. Hence, for any $t$-time adversary $\AD$, the advantage of distinguishing games $\GAME_{s_0,\omega_0}$ and $\GAME_{s_1,\omega_1}$ is bounded:
+\begin{align*}
+\advINDXX{(s_0,\omega_0),(s_1,\omega_1)}{\AD}&=\abs{\pr{\GAME_{s_0,\omega_0}^\AD=1}-\pr{\GAME_{s_1,\omega_1}^\AD=1}}\\
+&=\abs{\pr{\GAME_{s_0}^\AD=1}-\pr{\GAME_{s_1}^\AD=1}}=\advINDXX{s_0,s_1}{\AD}\leq \varepsilon\enspace.
+\end{align*} 
+This proves the desired claim about indictinguishability of extended states. 
+
+\vskip 3ex
+\noindent\textsc{Guessing advantage.} Recall that the advantage $\advSemXX{f,g}{\AD}$ can be expressed as the distance between the following games
+\begin{align*}
+\hspace*{-1.5em}
+\begin{game}{\GAME_0}
+&s\gets\SSS\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s)\iseq\AD(x)}] 
+\end{game}
+\hspace*{9.5em}
+\begin{game}{\GAME_1}
+&s\gets\SSS\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s)\iseq y_\circ}] 
+\end{game}
+\end{align*}
+where $y_\circ$ is the must probable outcome of $g(s)$. Analogously, $\advSemXX{f_*,g_*}{\AD}$ can be expressed as the distance between the following games
+\begin{align*}
+&\begin{game}{\BGAME_0}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f_*(s,\omega)\\
+&\RETURN [\smash{g_*(s,\omega)\iseq\AD(x)}] 
+\end{game}
+&&\begin{game}{\BGAME_1}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f_*(s,\omega)\\
+&\RETURN [\smash{g_*(s,\omega)\iseq y_*}] 
+\end{game}
+\end{align*}
+where $y_*$ is the must probable outcome of $g_*(s,\omega)$. First, note that $y_\circ$ coincides with $y_*$, since by definition
+\begin{align*}
+y_\circ=\argmax_{y\in\YYY}\pr{\smash{s\gets\SSS:g(s)\iseq y}}=\argmax_{y\in\YYY}\pr{\smash{s\gets\SSS, \omega\gets\Omega:g(s,\omega)\iseq y}}=y_*\enspace.
+\end{align*}
+Second, note that we can explicitly sample the randomness used to evaluate $g$ in the first set of games: 
+\begin{align*}
+&\begin{game}{\GAME_0}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s,\omega)\iseq\AD(x)}] 
+\end{game}
+&&\begin{game}{\GAME_1}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s,\omega)\iseq y_\circ}]\enspace. 
+\end{game}
+\end{align*}
+Now if we substitute the definitions of $f_*$ and $g_*$ into the second set of games, we get games
+\begin{align*}
+&\begin{game}{\BGAME_0}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s,\omega)\iseq\AD(x)}] 
+\end{game}
+&&\begin{game}{\BGAME_1}
+&s\gets\SSS\\
+&\omega\gets\Omega\\
+&x\gets f(s)\\
+&\RETURN [\smash{g(s,\omega)\iseq y_\circ}] 
+\end{game}
+\end{align*}
+that are identical to the first set of games. Hence,
+\begin{align*}
+\advSEMXX{f,g}{\AD}=\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}}
+=\abs{\pr{\smash{\BGAME_0^\AD=1}}-\pr{\smash{\BGAME_1^\AD=1}}}=\advSEMXX{f_*,g_*}{\AD}
+\end{align*} 
+as desired. The claim about prediction success follows.
+
+
+\end{solution}
+\end{document}

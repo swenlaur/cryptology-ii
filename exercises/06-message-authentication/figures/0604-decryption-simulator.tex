@@ -1,0 +1,127 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=14cm,paperheight=10cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+%\usepackage[table]{xcolor}
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\enlargethispage{1cm}
+\begin{pspicture}(-4,-3.0)(4,4.0)
+\rput(0,2.5){
+	\psframe[fillstyle=solid,fillcolor=red,linecolor=black,framearc=0.1](0,0)(1.5,1.5)
+	\rput(0.75,0.75){$\AD$}
+	\pnode(0.0,0.75){A0}
+	\pnode(1.5,0.75){A1}
+}
+
+\rput(-0.25,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=olive!20,linecolor=black,framearc=0.1,linestyle=dotted](0,0)(2.0,1.0)
+	\rput(1.00,0.50){$k\gets\KKK$}
+	\pnode(0.0,0.5){G0}
+	\pnode(2.0,0.5){G1}
+}
+
+\rput(-5.0,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=teal!20,linecolor=black,framearc=0.1, linestyle=dotted](0,0)(2.0,1.0)
+	\rput(1.0,0.50){$\mathsf{Auth\text{-}Enc}$}
+	\pnode(0.0,0.5){E0}
+	\pnode(2.0,0.5){E1}
+	\pnode(1.0,1.0){E2}
+	\pnode(0.8,0.0){E3}
+	\pnode(1.2,0.0){E4}
+}
+
+\rput(+4.5,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=teal!20,linecolor=black,framearc=0.1,linestyle=dotted](0,0)(2.0,1.0)
+	\rput(1.00,0.50){$\mathsf{Auth\text{-}Dec}$}
+	\pnode(0.0,0.5){D0}
+	\pnode(2.0,0.5){D1}
+	\pnode(1.0,1.0){D2}
+	\pnode(1.0,0.0){D3}
+}
+
+\rput(-5.0,-4.0)
+{
+	\psframe[fillstyle=solid,fillcolor=teal!50,linecolor=black,framearc=0.1](0,0)(2.0,1.0)
+	\rput(1.00,0.50){$\ENC$}
+	\pnode(0.0,0.5){EE0}
+	\pnode(2.0,0.5){EE1}
+	\pnode(0.8,1.0){EE2}
+	\pnode(1.2,1.0){EE3}
+}
+
+
+\ncline[arrowsize=6pt]{->}{G0}{E1}
+\bput{:D}{$k$}
+\ncline[arrowsize=6pt]{->}{G1}{D0}
+\aput{:U}{$k$}
+\ncangle[angleA=180,angleB=90,arrowsize=6pt]{->}{A0}{E2}
+\rput(-1.95,3.5){$m_1,\ldots,m_q$}
+\ncangle[angleA=180,angleB=90,arrowsize=6pt]{->}{A1}{D2}
+\rput(+3.0,3.5){$\hat{c}_1,\ldots,\hat{c}_n$}
+
+\rput(0.70,-1.2)
+{
+	\begin{tabular}{|c|c|c|}
+	\hline
+	$m_1$& $t_1$ & $c_1$\\
+	$m_2$& $t_2$ & $c_2$\\
+	$\vdots$& $\vdots$ & $\vdots$\\
+	$m_q$& $t_q$ & $c_q$\\
+	\hline
+	\end{tabular}
+	\pnode(-2.4,-0.00){DB1}
+	\pnode(-2.4,-0.30){DB2}
+	\pnode(+0.05,-0.15){DB3}
+	
+}
+
+\ncangle[angleA=-90,angleB=180,arrowsize=6pt]{->}{E4}{DB1}
+\rput(-2.5,-1){$t_i=h(m_i,k)$}
+\ncangle[angleA=-90,angleB=180,arrowsize=6pt]{->}{EE3}{DB2}
+\rput(-2.2,-1.9){$c_i=\ENC_{\SK}(m_i,t_i)$}
+\ncline[arrowsize=6pt]{->}{E3}{EE2}
+\bput{:U}{$m_i,t_i$}
+\ncangle[angleA=-90,angleB=0,arrowsize=6pt]{->}{D3}{DB3}
+\rput(3.8,-1.15){$\exists j:\hat{c}_i=c_j$?}
+
+%cangle[angleA=-90,angleB=180,arrowsize=6pt]{->}{EE3}{DB2}
+
+\end{pspicture}
+
+\end{document}
+
+\begin{pspicture}(-4,+1.5)(5,5.5)
+\rput(0,1){
+\begin{tabular}{||c|c|c|c|c|c|c|c|c|c|c|c|c}
+\hline
+\cellcolor{red!25}\rnode{T0}{$\mathsf{arg}(M)$}
+& \cellcolor{yellow!75}-- 
+& \cellcolor{yellow!75} $\ldots$
+\\ 
+\hline 
+\end{tabular}}
+\rput(-1.0,2.5){
+\psframe[fillstyle=solid,fillcolor=olive,framearc=0.1](0,0)(2,3)
+\rput(1,-2.0){\cnode[fillstyle=solid](0,2){3pt}{H1}}
+\pscircle[fillstyle=solid,fillcolor=orange](1,0.75){10pt}
+\rput(1,0.75){$q_s$}
+\rput(1,2.50){Finite}
+\rput(1,2.00){Automaton}
+\rput(1,1.50){$M$}
+}
+\ncangle[angleA=-90,angleB=90,arm=0.5cm,nodesepB=3pt, arrowsize=6pt]{->}{H1}{T0}
+\rput(0,0.25){Effective start configuration}
+\end{pspicture}
+
+\end{document}
+
+\end{document}

@@ -1,0 +1,26 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{}
+\tags{Subgroup Hiding problem, pseudorandom generator, discrete logatithm}
+
+\newcommand{\ADVSH}[2]{\ADV_{#1}^{\mathsf{sgh}}(#2)}
+
+\begin{document}
+\begin{exercise}{Pseudorandom generator from Subgroup Hiding}
+ Let $\GG_*=\langle g_*\rangle$ be a $q$-element subgroup of a finite group $\GG$. 
+ We say that $\GG_*$ is $(t,\varepsilon)$-indistinguishable from $\GG$ if for any $t$-time
+ adversary $\AD$
+  \begin{align*}
+  \ADVSH{\GG}{\AD}=\abs{\pr{x\getsu\GG:\AD(x)=1}-\pr{x\getsu\GG_*:\AD(x)=1}}
+  \leq\varepsilon\enspace.
+  \end{align*}
+ Define a function $f:\ZZ_q\to\GG$ that is a pseudorandom generator whenever 
+ $(t,\varepsilon)$-indistinguishable from $\GG$. Describe a naive distinguishing strategy 
+ for the subgroup hiding and compute the corresponding time-success bound. 
+\end{exercise}
+\begin{solution}
+\textbf{Hint:} The most simple function works 
+\textbf{Hint:} How are discrete logarithm and group membership related? 
+	
+\end{solution}
+\end{document}

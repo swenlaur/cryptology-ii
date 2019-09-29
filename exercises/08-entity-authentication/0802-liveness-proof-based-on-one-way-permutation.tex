@@ -1,0 +1,102 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Complete rewrite]{Sven Laur}
+\editor{Sven Laur}
+\tags{liveness proof, pseudorandom permutation, one-way function}
+
+\newcommand{\ADVOW}[2]{\ADV^{\mathsf{ow}}_{#1}(#2)}
+
+\begin{document}
+\begin{exercise}{Liveness proof based on one-way permutation}
+Entity authentication protocols are often used to prove liveness of a device or a person. For instance, ATM machines normally ask PIN codes several times during long transactions to assure that the person is still present. Such liveness proofs can be implemented with one-way functions. Let $f:\XXX\to\XXX$ be a one-way permutation and let $n$ be the maximal number of protocol invocations. The private key $x_n$ is chosen randomly form $\XXX$. The public key $x_0$ is computed by evaluating the following hash chain $x_i\gets f(x_{i+1})$ for $i\in\set{0,\ldots,n-1}$. Each time when a party wants to prove liveness he or she will release non-published sub-key $\hat{x}_i=x_i$. The proof is successful if recompilation of the hash chain $\hat{x}_k\gets f(\hat{x}_{k+1})$ for $k\in\set{0,\ldots,i-1}$ leads to  $\hat{x}_0=x_0$. Prove that $(t,\varepsilon)$-secure one-way permutation protocols are executed sequentially, then the probability that a $t$-time adversary succeeds in the $i^{\text{th}}$ authentication without seeing $x_i$ is at most $\varepsilon$. How large can be the success probability of a $t$-time adversary that can attack any of these liveness proofs? Show how this protocol can be instantiated with a trapdoor permutation to reduce the size of the private key.
+
+\end{exercise}
+\begin{solution}
+\textsc{Formalisation of the security claim.}
+Let us write a game that models the adversaries attack against the $i^{\text{th}}$ protocol instance. By this time the keys $x_1,\ldots, x_{i-1}$ are already released. By taking the most pessimistic view, we can assume that adversary knows these values before the attack against the $i^{\text{th}}$ protocol instance. This leads to the following security game:  
+\begin{align*}
+  \begin{game}{\GAME_0^{\AD}}
+    &x_n \getsu \XXX \\
+    &x_{n-1} \gets f(x_{n})\\
+    &\cdots\\
+    &x_{0} \gets f(x_{1})\\
+    &\hat{x}_i \gets \AD(x_0,x_1,\ldots,x_{i-1})\\
+    &\RETURN [\hat{x}_i\iseq x_i]
+  \end{game}
+\end{align*}
+
+\vspace*{2ex}
+\noindent
+\textsc{Security analysis.}
+Recall that a function is $(t,\varepsilon)$-one-way function if $\ADVOW{f}{\ADB}\leq\varepsilon$ for any $t$-time adversary $\ADB$ where the advantage is defined through the following game:
+\begin{align*}
+\begin{game}{\BGAME}
+& x\getsu \XXX\\
+& y\gets f(x)\\
+& \hat{x}\gets \ADB(y)\\
+& \RETURN [\hat{x}\iseq x]\enspace.
+\end{game}
+\end{align*}
+Intuitively, it is clear that the ability to find $x_i$ such that $f(x_i)=x_{i-1}$ means that $\AD$ can efficiently invert the function. However, we must formally prove this. For that we must first prove that $x_{i}$ is uniformly chosen from $\XXX$. Since $f$ is a permutation, the $x_{n-1}=f(x_n)$ is uniformly distributed if $x_n\getsu \XXX$ and so on. Hence, we can rewite the game $\GAME_0$ in a simpler form:
+\begin{align*}
+  \begin{game}{\GAME_1^{\AD}}
+    &x_{i} \getsu \XXX \\
+    &x_{i-1} \gets f(x_{i})\\
+    &\cdots\\
+    &x_{0} \gets f(x_{1})\\
+    &\hat{x}_i \gets \AD(x_0,x_1,\ldots,x_{i-1})\\
+    &\RETURN [\hat{x}_i\iseq x_i]\enspace.
+  \end{game}
+\end{align*}
+Now there is a straightforward reduction construction:
+\begin{align*}
+  \begin{fblock}{\ADB^{\AD}(y)}
+    &x_{i-1} \gets y\\
+    &x_{i-2} \gets f(x_{i-1})\\
+    &\cdots\\
+    &x_{0} \gets f(x_{1})\\
+    &\RETURN \AD(x_0,x_1,\ldots,x_{i-1})\enspace.\\
+  \end{fblock}
+\end{align*}
+It is straightforward to verify that by substituting the definition of $\ADB$ into the game $\BGAME$, we get a game 
+\begin{align*}
+  \begin{game}{\GAME_2^{\AD}}
+    &x \getsu \XXX \\
+    &y\gets f(x)\\ 
+    &x_{i-1} \gets y\\
+    &x_{i-2} \gets f(x_{i-1})\\
+    &\cdots\\
+    &x_{0} \gets f(x_{1})\\
+    &\hat{x}_i \gets \AD(x_0,x_1,\ldots,x_{i-1})\\
+    &\RETURN [\hat{x}_i\iseq x_i]\enspace.
+  \end{game}
+\end{align*}
+that is semantically equivalent to $\GAME_1$. Consequently, we have proven
+\begin{align*}
+\pr{\GAME_0^\AD=1}\leq \ADVOW{f}{\ADB}\enspace.
+\end{align*}
+Since the running time of $\ADB$ exceeds the running time of $\AD$ by $\Oh(n)$ steps, we can conclude that $(t+\Oh(n),\varepsilon)$-one-way permutation is sufficient to  guarantee that any $t$-time adversary can succeed at most $\varepsilon$ in the attack against $i^{\text{th}}$ protocol instance. As there are $n$ protocol instances to attack, the overall probability that a $t$-time adversary succeeds against any of the protocols is $n\varepsilon$. 
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Practical implementation.}
+Let us initialize the construction with $f(x) = x^2 \mod N$, where $N=pq$ is RSA modulus. This construction is guaranteed to be one-way function, as long as factoring RSA moduli is computationally intractable. A naive implementation of the scheme would lead to a secret key that consists of $x_1,\ldots, x_n$. However, we can do much better.
+
+First, note that $x_0,\ldots x_{n-1}$ must be a quadratic residues by construction. Second,
+note that we can efficiently compute square roots if we know the factorisation of $N$. Thus, we could in principle find $x_{i-1}$ directly from $x_i$. However, there are four possible square roots and we must choose the correct candidate. If factors $p,q\equiv 3 \pmod{4}$ then it easy to prove that either $a$ or $-a$ is a quadratic residue in $\ZZ_p^*$ and $\ZZ_q^*$ and thus also the sets of quadratic residues and quadratic non-residues are equal. Due to the Chinese reminder theorem $\ZZ_N\simeq\ZZ_p\times\ZZ_q$ and we can consider $(x_1,x_2)\in \ZZ_p\times\ZZ_q$ instead of $x\in\ZZ_N$. Now if $(x_1,x_2)$ is a quadratic residue then there are four square roots 
+\begin{align*}
+(\xi_1,\xi_2), (-\xi_1,\xi_2), (\xi_1,-\xi_2), (-\xi_1,-\xi_2) 
+\end{align*} 
+for some $\xi_1^2=x_1$ and $\xi_2^2=x_2$. For obvious reasons, the root is a quadratic residue only if the first component is quadratic residue and the second component is quadratic residue. Under our assumptions either $\xi_i$ or $-\xi_i$ is a quadratic residue and thus only one of the four square roots is a quadratic residue.  As a result, we have shown that if $x_0$ is computed from $x_n$, we can reliably reconstruct all intermediate values $x_i$ by selecting the right square root of $x_{i+1}$. Moreover, we do not have to select $x_n$ and compute $x_0$ it is sufficient if we choose $x_0$ as a quadratic residue and compute $x_i$ on the fly. As $x_0$ and $n$ uniquely determines $x_n$, the correspondence must be a permutation. Thus a randomly chosen quadratic residue $x_0$ assures that $x_n$ is uniformly distributed over quadratic residues, too.
+
+\vspace*{2ex}
+\noindent
+\textsc{Practical implementation.}
+Another way to define a trapdoor permutation is to use RSA permutation. For that we must first generate RSA modulus $N$ and then a public encryption exponent $e$, which defines a trapdoor permutation $f(x)=x^e\mod N$. By knowing the secret decryption exponent $d$, it is  easy to invert the permutation: $f^{-1}(y)=y^d\mod N$. Note that there is no direct reduction which converts RSA inverter into factoring algorithm. However, this problem is considered intractable for randomly chosen encryption exponent. Thus, we can use also this variant although its concrete security guarantees are worse compared to the contraction based on squaring (discussed above).       
+
+\end{solution}
+
+\end{document}

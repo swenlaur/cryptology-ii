@@ -1,0 +1,21 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Initial solution]{Filipp Ivanov}
+\editor{Sven Laur}
+\tags{Combiner construction, discrete logarithm, Jensen inequality}
+\begin{document}
+\begin{exercise}{Analysis of combiner constructions}
+Let $\GG$ be a finite $q$-element group such that all elements $y\in\GG$ can be expressed as powers of $g\in\GG$. Let $\AD_1$ be a solver that finds the first bit of the discrete logarithm with probability $\varepsilon_1$, i.e., $\pr{x\gets \ZZ_{q}: \AD_1(g^x)=x_1}\geq\varepsilon_1$. Similarly, let  $\AD_2$ be a solver that finds the second bit of the discrete logarithm with probability $\varepsilon_1$ and so on. Now let $\ADB$ be the combiner algorithm that combines the outputs of $\AD_1,\ldots,\AD_n$ for $n=\ceil{\log_2 q}$ to restore the entire discrete logarithm:   
+\begin{align*}
+    \begin{fblock}{\ADB(y)}
+    & x_1\gets\AD_1(y), \ldots, x_n\gets\AD_n(y)\\
+    & \RETURN x_n\ldots x_1  
+    \end{fblock}     
+\end{align*}%
+The construction guarantees that $\ADB$ succeeds in finding the discrete logarithm of $y$ if all $x_i$ are correct. Find a good lower bound on the advantage $\ADVDL{\GG}{\ADB}=\pr{x\gets \ZZ_{q}: \ADB(g^x)=x}$.
+\end{exercise}
+  
+\begin{solution} 
+
+\end{solution}
+\end{document}

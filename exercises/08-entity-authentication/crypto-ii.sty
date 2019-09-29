@@ -1,0 +1,134 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{crypto-ii}[2009/02/08 Extra macros for Crypto II course: Version 0.2]
+\RequirePackage{color}
+\RequirePackage{crysymb}
+
+% Common operators
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\Vee}{\vee}
+
+% Standard statistical shorthands
+\newcommand{\E}[1]{\EXP\left[#1\right]}
+\newcommand{\D}[1]{\VAR\left[#1\right]}
+\newcommand{\sdev}[1]{\boldsymbol{\sigma}\left[#1\right]}
+
+% Other common mathematical symbols and macros
+\newcommand{\getsu}{\gets_{\scriptscriptstyle \hspace*{-0.65em} u\hspace*{0.0em}}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+% Some colours (should be moved to somewhere else)
+\definecolor{orange}{rgb}{1.0,0.653,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{lightgray}{gray}{.75}
+\definecolor{txtgray}{gray}{.5}
+
+
+% Various advantages
+\newcommand{\advIndXX}[2]{\ADV^{\mathsf{ind}}_{#1}(#2)}
+\newcommand{\advSemXX}[2]{\ADV^{\mathsf{sem}}_{#1}(#2)}
+\newcommand{\advWinXX}[2]{\ADV^{\mathsf{win}}_{#1}(#2)}
+\newcommand{\advBindXX}[2]{\ADV^{\mathsf{bind}}_{#1}(#2)}
+\newcommand{\advHidXX}[2]{\ADV^{\mathsf{hid}}_{#1}(#2)}
+\newcommand{\advINDFPAXX}[2]{\ADV^{\mathsf{ind\text{-}fpa}}_{#1}(#2)}
+\newcommand{\advINDCPAXX}[2]{\ADV^{\mathsf{ind\text{-}cpa}}_{#1}(#2)}
+\newcommand{\advINDCCAIXX}[2]{\ADV^{\mathsf{ind\text{-}cca1}}_{#1}(#2)}
+\newcommand{\advINDCCAIIXX}[2]{\ADV^{\mathsf{ind\text{-}cca2}}_{#1}(#2)}
+\newcommand{\advNMCPAXX}[2]{\ADV^{\mathsf{nm\text{-}cpa}}_{#1}(#2)}
+\newcommand{\advNMCCAIXX}[2]{\ADV^{\mathsf{nm\text{-}cca1}}_{#1}(#2)}
+\newcommand{\advNMCCAIIXX}[2]{\ADV^{\mathsf{nm\text{-}cca2}}_{#1}(#2)}
+
+\newcommand{\ADVDL}[2]{\ADV^{\mathsf{dl}}_{#1}(#2)}
+\newcommand{\ADVCDH}[2]{\ADV^{\mathsf{cdh}}_{#1}(#2)}
+\newcommand{\ADVDDH}[2]{\ADV^{\mathsf{ddh}}_{#1}(#2)}
+
+\newcommand{\advMACXX}[2]{\ADV^{\mathsf{mac}}_{#1}(#2)}
+\newcommand{\advCRXX}[2]{\ADV^{\mathsf{cr}}_{#1}(#2)}
+\newcommand{\advWCRXX}[2]{\ADV^{\mathsf{w\text{-}cr}}_{#1}(#2)}
+\newcommand{\advExtrXX}[2]{\ADV^{\mathsf{ext}}_{#1}(#2)}
+\newcommand{\advEquivXX}[2]{\ADV^{\mathsf{eqv}}_{#1}(#2)}
+\newcommand{\advEAUTHXX}[2]{\ADV^{\mathsf{ent\text{-}auth}}_{#1}(#2)}
+\newcommand{\advFORGEXX}[2]{\ADV^{\mathsf{forge}}_{#1}(#2)}
+\newcommand{\advINVCPAXX}[2]{\ADV^{\mathsf{inv\text{-}cpa}}_{#1}(#2)}
+\newcommand{\advINVCCAIIXX}[2]{\ADV^{\mathsf{inv\text{-}cca2}}_{#1}(#2)}
+\newcommand{\advQRPXX}[2]{\ADV^{\mathsf{qrp}}_{#1}(#2)}
+\newcommand{\advCFXX}[2]{\ADV^{\mathsf{c\text{-}free}}_{#1}(#2)}
+\newcommand{\advUFORGEXX}[2]{\ADV^{\mathsf{u\text{-}forge}}_{#1}(#2)}
+\newcommand{\advHCPredXX}[2]{\ADV^{\mathsf{hc\text{-}pred}}_{#1}(#2)}
+\newcommand{\advSUCCXX}[2]{\ADV^{\mathsf{succ}}_{#1}(#2)}
+\newcommand{\advRSAXX}[2]{\ADV^{\mathsf{rsa}}_{#1}(#2)}
+\newcommand{\advPRGXX}[2]{\ADV^{\mathsf{prg}}_{#1}(#2)}
+\newcommand{\advPRFXX}[2]{\ADV^{\mathsf{prf}}_{#1}(#2)}
+\newcommand{\advPRPXX}[2]{\ADV^{\mathsf{prf}}_{#1}(#2)}
+\newcommand{\advINDXX}[2]{\ADV^{\mathsf{ind}}_{#1}(#2)}
+\newcommand{\advSEMXX}[2]{\ADV^{\mathsf{sem}}_{#1}(#2)}
+%\newcommand{\advHCPXX}[2]{\ADV^{\mathsf{hpc}}_{#1}(#2)}
+
+
+% A big mess that should be cleaned somehow
+% Some of the macros should be moved to crysymb
+ 
+
+\newcommand{\KGEN}{\mathsf{KGen}}
+\newcommand{\SSPACE}{\mathcal{S}}
+\newcommand{\MAP}{\mathrm{Map}}
+\newcommand{\INV}{\mathrm{Inv}}
+
+\newcommand{\enc}[1]{\ENC_\PK(#1)}
+\newcommand{\dec}[1]{\DEC_\SK(#1)}
+
+\newcommand{\FFFALL}{\FFF_{\mathrm{all}}}
+\newcommand{\FFFPERM}{\FFF_{\mathrm{prm}}}
+
+\newcommand{\MAC}{\mathsf{Mac}}
+\newcommand{\mac}{\mathsf{mac}}
+\newcommand{\EXTRACT}{\mathsf{Extr}}
+\newcommand{\OPEN}{\mathsf{Open}}
+\newcommand{\FCOM}{\mathsf{Com}^*}
+
+\newcommand{\ID}{\mathsf{id}} 
+
+\newcommand{\STATEA}{\phi_{\mathrm{a}}}
+\newcommand{\OSTATE}{\psi}
+\newcommand{\OSTATEA}{\psi_{\mathrm{a}}}
+
+\newcommand{\tre}{t_{\mathrm{re}}}
+\newcommand{\tid}{t_{\mathrm{id}}}
+
+\newcommand{\VERIFIER}{\mathscr{V}}
+\newcommand{\PROVER}  {\mathscr{P}}
+
+\newcommand{\SIGN}{\mathsf{Sign}}
+\newcommand{\FFFTPERM}{\FFF_{\mathrm{tp}}}
+
+\newcommand{\PRG}{\mathsf{prg}}
+
+
+\newcommand{\IV}{\mathsf{iv}}
+
+
+\newcommand{\STATE}{\phi}
+\renewcommand{\OSTATE}{\psi}
+
+
+\newcommand{\tpre}{t_{\mathrm{pred}}}
+  
+
+
+\newcommand{\POK}{\textsc{pok}}
+\newcommand{\pok}[2]{\POK_{#1}\left[#2\right]}
+\newcommand{\ZK}{\textsc{Zk}}
+\newcommand{\zk}[2]{\ZK_{#1}\left[#2\right]}
+\newcommand{\ZKPOK}{\textsc{ZkPok}}
+\newcommand{\zkpok}[2]{\ZKPOK_{#1}\left[#2\right]}
+
+
+\newlength{\dhatheight}
+\newcommand{\dhat}[1]{%
+    \settoheight{\dhatheight}{\ensuremath{\hat{#1}}}%
+    \addtolength{\dhatheight}{-0.35ex}%
+    \hat{\vphantom{\rule{1pt}{\dhatheight}}%
+    \smash{\hat{#1}}}}
+

@@ -1,0 +1,371 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{non-malleabilety, ind-cpa security, public key encryption, trivial inclusions}
+
+\newcommand{\mzero}{m_{\langle\!\langle 0 \rangle\!\rangle}}
+\newcommand{\mone}{m_{\langle\!\langle 1 \rangle\!\rangle}}
+\newcommand{\mb}{m_{\langle\!\langle b \rangle\!\rangle}}
+
+\begin{document}
+\begin{exercise}{Trivial inclusions}
+Prove the following claims about public key cryptosystems
+  \begin{enumerate}
+  \item A homomorphic cryptosystem cannot be non-malleable.
+  \item NM-CPA security implies IND-CPA security.
+  \item NM-CCA1 security implies IND-CCA1 security.
+  \item NM-CCA2 security implies IND-CCA2 security.
+  \end{enumerate}\end{exercise}
+
+\begin{solution}
+To prove the first claim about non-malleability, we have recall the definition of homomorphic encryption. There are many types of homomorphic encryption. Here we consider only multiplicatively and additively homomorphic encryption. A cryptosystem is additively homomorphic if 
+\begin{align*}
+\forall \PK,\SK\gets\GEN,\ \forall m_1,m_2\in\MSPACE_\PK:\quad\ENC_\PK(m_1)\cdot\ENC_\PK(m_2)\equiv\ENC_\PK(m_1+m_2)\enspace.
+\end{align*}
+A cryptosystem is multiplicatively homomorphic if 
+\begin{align*}
+\forall \PK,\SK\gets\GEN,\ \forall m_1,m_2\in\MSPACE_\PK:\quad\ENC_\PK(m_1)\cdot\ENC_\PK(m_2)\equiv\ENC_\PK(m_1\cdot m_2)\enspace.
+\end{align*}
+One of the best properties of homomorphic encryption schemes is re-randomisation. Let $c$ be a valid ciphertext of a message $m$. For additively homomorphic encryption scheme, we can re-randomise a ciphertext $c$ by multiplying it by a freshly generated encryption $\ENC_\PK(0)$. As a result, we get a ciphertext $\hat{c}_1$ such that if is a random ciphertext of $m$:
+\begin{align*}
+ \hat{c}_1\equiv c\cdot\ENC_\PK(0)\equiv\ENC_\PK(m+0)\equiv\ENC_\PK(m)\enspace.
+\end{align*}    
+For multiplicatively homomorphic encryption scheme, we can re-randomise a ciphertext $c$ by multiplying it by a freshly generated encryption $\ENC_\PK(1)$. Again, we get a ciphertext $\hat{c}_1$ such that
+\begin{align*}
+ \hat{c}_1\equiv c\cdot\ENC_\PK(1)\equiv\ENC_\PK(m\cdot 1)\equiv\ENC_\PK(m)\enspace.
+\end{align*}    
+In other words, a malicious attacker can always alter the ciphertext without altering the messages underneath. As result, it is easy to show malleability of such encryption schemes. In the following, the left adversary is constructed for an additively and the right one is  for multiplicatively homomorphic encryption:
+\begin{align*}
+&\begin{aligned}
+&\begin{fblock}{\ADB(\PK)}
+&\RETURN \MSPACE_\PK\\
+\end{fblock}\\
+&\ \\
+&\begin{fblock}{\ADB(c)}
+&\pi(m,\hat{m}_1)=\smash{[m\iseq \hat{m}_1]}\\
+&\hat{c}_1\gets c\cdot \ENC_\PK(0)\\
+&\RETURN (\pi, \hat{c}_1)
+\end{fblock}
+\end{aligned}
+&
+&\begin{aligned}
+&\begin{fblock}{\ADB(\PK)}
+&\RETURN \MSPACE_\PK\\
+\end{fblock}\\
+&\ \\
+&\begin{fblock}{\ADB(c)}
+&\pi(m,\hat{m}_1)=\smash{[m\iseq \hat{m}_1]}\\
+&\hat{c}_1\gets c\cdot \ENC_\PK(1)\\
+&\RETURN (\pi, \hat{c}_1)\enspace.
+\end{fblock}
+\end{aligned}
+\end{align*}  
+If we inline the definition of the adversary into the games defining non-malleability
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\ADB(\PK)\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\PK(m)\\
+    &\pi(\cdot),\hat{c}_1,\ldots\hat{c}_n\gets\ADB(c)\\
+    &\IF c\in\set{\hat{c}_1,\ldots\hat{c}_n}\ \THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\ADB(\PK)\\
+    &m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    & \pi(\cdot),\hat{c}_1,\ldots\hat{c}_n\gets\ADB(\overline{c})\\
+    &\IF \overline{c}\in\set{\hat{c}_1,\ldots\hat{c}_n}\ \THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots) 
+  \end{game}
+\end{align*}
+we get
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &m\gets\MSPACE\\
+    &c\gets\ENC_\PK(m)\\
+    &\hat{c}_1\gets c\cdot \ENC_\PK(0)\\ 
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m\iseq \dec{\hat{c}_1}]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &m\gets\MSPACE,\overline{m}\gets\MSPACE\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    &\hat{c}_1\gets \overline{c}\cdot \ENC_\PK(0)\\ 
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m\iseq \dec{\hat{c}_1}]}
+  \end{game}
+\end{align*}
+which further simplifies due to the properties of re-randomisation:
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &m\gets\MSPACE\\
+    &c\gets\ENC_\PK(m)\\
+    &\hat{c}_1\gets c\cdot \ENC_\PK(0)\\ 
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m\iseq m]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &m\gets\MSPACE,\overline{m}\gets\MSPACE\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    &\hat{c}_1\gets \overline{c}\cdot \ENC_\PK(0)\\ 
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m\iseq \overline{m}]}\enspace.
+  \end{game}
+\end{align*}
+From this simplified form it is evident that $\BGAME^\ADB$ can return zero only if $c=\hat{c}_1$.  Let $\delta$ denote the corresponding probability that re-randomisation produces the same ciphertext:
+\begin{align*}
+\delta=\pr{c=\hat{c}_1}=\frac{1}{\abs{\ENC_\PK(m)}}\enspace.
+\end{align*}  
+It is relatively straightforward to prove that the number of potential ciphertexts must be the same for all messages. Usually, the number of potential ciphertexts is directly related to the size of randomness space $\RRR$ used during encryption operation. The game $\BGAME^\ADB$ can return one only if $m=\overline{m}$. Hence, the advantage
+\begin{align*}
+\advNMCPAXX{}{\ADB}\geq 1-\delta-\frac{1}{\abs{\MSPACE_\PK}}\gg 0
+\end{align*} 
+is really noticeable. Since $\ADB$ is also efficient algorithm, the homomorphic encryption cannot be non-malleable for reasonable time bounds and success bounds.
+
+
+\vspace*{3ex}
+\noindent
+\textsc{Non-malleability implies indistinguishability.}
+All three reductions that tie non-malleability with indistinguishability are very similar. The only difference is when the adversary can use decryption oracle. Therefore, we provide the construction for the most restricted case where the adversary has no access to decryption oracle. Let $\AD$ be an adversary against IND-CPA games:
+\begin{align*}
+  &\begin{game}{\GAME_0^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &c\gets \ENC_\PK(m_0)\\
+    &\RETURN \AD(c)
+  \end{game}
+  &
+  &\begin{game}{\GAME_1^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &c\gets \ENC_\PK(m_1)\\
+    &\RETURN \AD(c)\enspace.
+  \end{game}
+\end{align*}
+Then we can construct an adversary $\ADB$ that encrypts the guess $b$ of $\AD$ as an encryption $\hat{c}_1$. By default the message space $\MSPACE_\PK$ does not have to contain elements $0$ and $1$. However, this is an easy problem to solve. W.l.o.g. we can assume that $\AD$ outputs more probably $0$ in the game $\GAME_0$ and $1$ in the game $\GAME_1$. Then we can just encrypt $\ENC_\PK(m_b)$ as related ciphertext and check for equality as a relation. However, this can lead to situations where the adversary with the correct guess is disqualified as $c=\hat{c}_1$. To avoid this problem, we can encrypt $\ENC_\PK(m_{1-b})$ as related ciphertext and check for inequality as a relation:
+\begin{align*}
+&\begin{aligned}
+&\begin{fblock}{\ADB(\PK)}
+& (m_0,m_1)\gets\AD(\PK)\\
+&\RETURN \set{m_0,m_1}\\
+\end{fblock}\\
+&\ \\
+&\begin{fblock}{\ADB(c)}
+&\pi(m,\hat{m}_1)=\smash{[m\neq \hat{m}_1]}\\
+&b\gets\AD(c)\\
+&\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+&\RETURN (\pi, \hat{c}_1)
+\end{fblock}
+\end{aligned}
+\end{align*}   
+If we inline the definition of the adversary into the games defining non-malleability we get simplified games:
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &m\getsu\set{m_0,m_1}\\
+    &c\gets \ENC_\PK(m)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m \neq \dec{\hat{c}_1}]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    & (m_0,m_1)\gets\AD(\PK)\\
+    &m\getsu\set{m_0,m_1}, \overline{m}\getsu\set{m_0,m_1}\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    &b\gets\AD(\overline{c})\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m \neq \dec{\hat{c}_1}]}
+  \end{game}
+\end{align*}
+which can be further simplified: 
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &m\getsu\set{m_0,m_1}\\
+    &c\gets \ENC_\PK(m)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m \neq m_{1-b}]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    & (m_0,m_1)\gets\AD(\PK)\\
+    &m\getsu\set{m_0,m_1}, \overline{m}\getsu\set{m_0,m_1}\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    &b\gets\AD(\overline{c})\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[m \neq m_{1-b}]}\enspace.
+  \end{game}
+\end{align*}
+The game $\BGAME_1^\ADB$ can end with one only if $m\neq m_{1-b}$. Since $b$ is independent from $m$ and there are at most two options for value of $m$, we can easily derive
+\begin{align*}
+\pr{\BGAME_1^\ADB=1}\leq \pr{\smash{m\iseq m_b}}\leq \frac{1}{2}\enspace.
+\end{align*}
+The analysis of $\BGAME_0^\ADB$ requires decomposition:
+\begin{align*}
+\pr{\BGAME_0^\ADB=1}=\pr{\BGAME_0^\ADB=1\wedge m_0=m_1}+\pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1}=\pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1}\enspace.
+\end{align*} 
+Note that the last equality follows form the fact that if $m_0=m_1$ then $m$ cannot be different from $m_{1-b}$. Further decomposition according to the value of $m$ yields to two probabilities 
+\begin{align*}
+\pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1}=\pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1\wedge m=m_0} + \pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1\wedge m=m_1}\enspace,
+\end{align*} 
+which can be modelled with the following games:
+\begin{align*}
+  \begin{game}{\BGAME_2^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0 = m_1\ \THEN \RETURN 0\\
+    &m\getsu\set{m_0,m_1}\\
+    &\IF m\neq m_0\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_0)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[b\iseq 0]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_3^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    & (m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0= m_1\ \THEN \RETURN 0\\
+    &m\getsu\set{m_0,m_1}\\ 
+    &\IF m\neq m_1\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_1)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_{1-b})\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[b\iseq 1]}\enspace.
+  \end{game}
+\end{align*}
+As the second check in both games succeeds with probability $\frac{1}{2}$ we can express
+\begin{align*}
+\pr{\BGAME_0^\ADB=1}&={\textstyle\frac{1}{2}}\cdot \pr{\BGAME_4^\ADB=1}+{\textstyle\frac{1}{2}}\cdot \pr{\BGAME_5^\ADB=1}
+\end{align*} 
+where the games $\BGAME_4$ and $\BGAME_5$ are very close to IND-CPA games:
+\begin{align*}
+  \begin{game}{\BGAME_4^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0 = m_1\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_0)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_b)\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[b\iseq 0]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_5^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    & (m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0= m_1\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_1)\\
+    &b\gets\AD(c)\\
+    &\hat{c}_1\gets\ENC_\PK(m_b)\\
+    &\IF c=\hat{c}_1\ \THEN \RETURN 0\\
+    &\RETURN \smash{[b\iseq 1]}\enspace.
+  \end{game}
+\end{align*}
+In particular, note that the last condition holds in the games then the check $c=\hat{c}_1$ can never hold as we encrypt a different message $m_{1-b}$. Thus, we can further simplify games without changing the output distributions:
+\begin{align*}
+  \begin{game}{\BGAME_4^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0 = m_1\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_0)\\
+    &b\gets\AD(c)\\
+    &\RETURN \smash{[b\iseq 0]}
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_5^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    & (m_0,m_1)\gets\AD(\PK)\\
+    &\IF m_0= m_1\ \THEN \RETURN 0\\
+    &c\gets \ENC_\PK(m_1)\\
+    &b\gets\AD(c)\\
+    &\RETURN \smash{[b\iseq 1]}\enspace.
+  \end{game}
+\end{align*}
+Now it is straightforward to see that 
+\begin{align*}
+\pr{\BGAME_4^\ADB=1}+\pr{\BGAME_5^\ADB=1}&=1-\pr{\GAME_0^\AD=1\wedge m_0\neq m_1} + \pr{\GAME_1^\AD=1\wedge m_0\neq m_1}\\
+&=1+ \advINDCPAXX{}{\AD}\enspace, 
+\end{align*}
+since the choice $m_0=m_1$ does not contribute to IND-CPA advantage and we assumed that the adversary $\AD$ predicts the bit correctly. As a result, we have proven 
+\begin{align*}
+\pr{\BGAME_0^\ADB=1}=\frac{1}{2}+ \frac{1}{2}\cdot \advINDCPAXX{}{\AD}
+\end{align*}
+which implies that
+\begin{align*}
+\advNMCPAXX{}{\ADB}= \frac{1}{2}+\frac{1}{2}\cdot \advINDCPAXX{}{\AD} -\frac{1}{2}
+=\frac{1}{2}\cdot \advINDCPAXX{}{\AD}
+\end{align*}
+Since the running times of $\AD$ and $\ADB$ are comparable and $\ADB$ is well defined, we have established that $(t,\varepsilon)$-secure NM-CPA encryption scheme is also $(t,2\varepsilon)$-secure IND-CPA encryption scheme. 
+
+The same construction is applicable for the reductions NM-CCA1 $\Rightarrow$ IND-CCA1 and NM-CCA2 $\Rightarrow$ IND-CCA2, as the adversary $\ADB$ makes oracle calls in right phases.   
+
+\vspace*{3ex}
+\noindent
+\textsc{Limits of non-malleability definition.}
+Note that the target relation $\pi$ is defined only after the adversary has seen the ciphertext $c$. Hence, we can stretch the limits of the non-malleability games and allow attacks where no related ciphertexts are defined:
+ \begin{align*}
+ &\begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\ADB(\PK)\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\PK(m)\\
+    &\pi(\cdot)\gets\ADB(c)\\
+    &\RETURN \pi(m)
+  \end{game}
+ &&
+  \begin{game}{\BGAME_1^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\ADB(\PK)\\
+    &m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\
+    &\overline{c}\gets \ENC_\PK(\overline{m})\\
+    & \pi(\cdot)\gets\ADB(\overline{c})\\
+    &\RETURN \pi(m) \enspace.
+  \end{game}
+\end{align*}
+In this attack is a legitimate attack against non-malleability, then $\ADB$ can directly define 
+$\pi(m)=\smash{[m\iseq m_b]}$ and output no additional ciphertexts:
+\begin{align*}
+&\begin{fblock}{\ADB(\PK)}
+& (m_0,m_1)\gets\AD(\PK)\\
+&\RETURN \set{m_0,m_1}\\
+\end{fblock}\\
+&\ \\
+&\begin{fblock}{\ADB(c)}
+&b\gets\AD(c)\\
+&\pi(m)=\smash{[m\iseq m_b]}\\
+&\RETURN \pi\enspace.
+\end{fblock}
+\end{align*}   
+The success analysis of this adversary is analogous and slightly simpler as we do not have to worry that related ciphertexts coincide with the challenge ciphertext $c$. 
+
+Even if such a natural extension to non-malleability definition is not allowed, we can still use the same relation by ignoring all messages corresponding to related ciphertexts $\hat{c}_1,\ldots,\hat{c}_n$. The analysis would be analogous again. However, we should then estimate the probability that $c\in\set{\hat{c}_1,\ldots,\hat{c}_n}$ which is negligible if we generate $\hat{c}_1,\ldots,\hat{c}_n$ as valid encryptions of random message space elements. 
+
+
+\end{solution}
+
+
+
+\end{document}

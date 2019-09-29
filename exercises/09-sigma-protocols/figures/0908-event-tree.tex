@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=19cm,paperheight=6cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+%\usepackage[table]{xcolor}
+
+\newcommand{\squigglyline}{\psline[linearc=2pt, arrowsize = 4pt 2]{->}(0.0,0.0)(0.0,0.05)(0.05,0.10)(-0.05,0.20)(0.05,0.30)
+(-0.05,0.40)(0.05,0.50)(-0.05,0.60)(0.05,0.70)(-0.05,0.80)(0.05,0.90)(0.0,0.95)(0.0,1.15)}
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\psset{unit=1.5cm}
+\begin{pspicture}(-7.4,3.5)(6,6)
+\psset{nodesep=2pt}
+
+\rput(-8.5,5.5){$\KEXTR^{\PPP_*(\cdot)}(\phi)$}
+\rput{270}(-7.9,5.5){\squigglyline}
+
+\rput(-6.0,5.5){\rnode{S}{$\gamma_1\gets\PPP_*(\beta_1)$}}
+\rput(-6,3.5){\rnode{A1}{$\textsc{Fail}$}}
+\ncline{->}{S}{A1}
+\bput{:D}{\smash{$g^{\gamma_1}\neq \alpha y^{\beta_1}$}}
+
+\rput(-3.0,5.5){\rnode{A2}{$\gamma_2\gets\PPP_*(\beta_2)$}}
+\rput(-3.0,3.5){\rnode{B1}{$\textsc{Fail}$}}
+\ncline{->}{S}{A2}
+\bput{:U}{\smash{\raisebox{2.7ex}{$g^{\gamma_1}=\alpha y^{\beta_1}$}}}
+\ncline{->}{A2}{B1}
+\bput{:D}{\smash{$g^{\gamma_2}\neq \alpha y^{\beta_2}$}}
+
+\cnode[fillstyle=solid, fillcolor=gray!75](0,5.5){4pt}{B2}
+\rput(0.0,3.5){\rnode{C1}{$\textsc{Fail}$}}
+\ncline{->}{A2}{B2}
+\bput{:U}{\smash{\raisebox{2.7ex}{$g^{\gamma_2}=\alpha y^{\beta_2}$}}}
+\ncline{->}{B2}{C1}
+\bput{:D}{\smash{$\beta_1=\beta_2$}}
+
+\rput(2.5,5.5){\rnode{C2}{\textsc{Success}}}
+\ncline{->}{B2}{C2}
+\bput{:U}{\smash{\raisebox{2.7ex}{$\beta_1\neq\beta_2$}}}
+
+\end{pspicture}
+\end{document}

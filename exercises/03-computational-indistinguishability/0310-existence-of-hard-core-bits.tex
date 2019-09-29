@@ -1,0 +1,133 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Karl Tarbe}
+\contributor[Most of solutions]{Sven Laur}
+\tags{indistinguishability, hard-core bit, regularity, pseudorandom generator}
+
+
+\begin{document}
+\begin{exercise}{Existence of hard-core bits}
+A predicate $\pi:\SSS\to\set{0,1}$ is said to be a
+  \emph{$\varepsilon$-regular} if the output distribution for uniform
+  input distribution is nearly uniform:
+  \begin{align*}
+   \Delta(\pi)=\abs{\pr{s\getsu\SSS:\pi(s)=0}-\pr{s\getsu\SSS:\pi(s)=1}}
+   \leq\varepsilon\enspace.     
+  \end{align*}
+  A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable} also
+  known as \emph{$(t,\varepsilon)$-hardcore predicate} for a function
+  $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f,\pi}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+  \end{align*}
+  Prove that any $(t,\varepsilon)$-hardcore predicate is $2\varepsilon$-regular. Let $f:\SSS\to\set{0,1}^n$ be a deterministic function and let
+    $\pi_k(s)$ denote the $k$th bit of $f(s)$ and $f_k(s)$ denote the
+    output of $f(s)$ without the $k$th bit. Show that if $f$ is a
+    $(t,\varepsilon)$-secure pseudorandom generator, then $\pi_k$ is
+    $(t,\varepsilon)$-hardcore predicate for $f_k$.
+\end{exercise}
+\begin{solution}
+\textsc{Regularity.}
+As the first step,  we first unroll the game inlined into the probability formula that defines advantage against hard-core predicates:
+\begin{align*}
+\begin{game}{\GAME}
+ & s\getsu \SSS\\
+ & x\gets f(s)\\
+ & b\gets \pi(s)\\
+ & \RETURN [\smash{b \iseq \AD(x)}]\enspace.
+\end{game}
+\end{align*} 
+This representation highlights that  $\AD$ must choose between two complex hypotheses $[\pi(s)\iseq 0]$ and $[\pi(s)\iseq 1]$. If one of these hypotheses is significantly more probable than the other, then the adversary $\AD_*$ abuse this fact and output the most probable hypothesis without looking at the input. Let 
+\begin{align*}
+\alpha_0&=\pr{s\getsu\SSS:\pi(s)=0}\\\
+\alpha_1&=\pr{s\getsu\SSS:\pi(s)=1}
+\end{align*}  
+the corresponding probabilities for hypotheses. Then it is straightforward to see that
+\begin{align*}
+\advHCPredXX{f,\pi}{\AD_*}&=\abs{\alpha_0-{\textstyle\frac{1}{2}}}= \abs{\alpha_1-{\textstyle\frac{1}{2}}}={\textstyle \frac{1}{2}}\cdot \abs{\alpha_0-\alpha_1}\\
+&={\textstyle \frac{1}{2}}\cdot \abs{\pr{s\getsu\SSS:\pi(s)=0}-\pr{s\getsu\SSS:\pi(s)=1}}\enspace.
+\end{align*}
+Consequently, any predicate that is not $2\varepsilon$-regular can be predicted without looking at the input with advantage at least $\varepsilon$. Thus, the first claim is proved.   
+
+\vskip 3ex
+\noindent\textsc{Indistinguishability.}
+Although the definition of hard-core predicate is given through a single guessing game, we can represent it also in terms of indistinguishability. Let us first define two sets:
+\begin{align*}
+\SSS_0&=\set{s\in\SSS: \pi(s)=0}\\
+\SSS_1&=\set{s\in\SSS: \pi(s)=1}\enspace.
+\end{align*}  
+Then we can define following distinguishing games:
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & s\getsu \SSS_0\\
+ & x\gets f(s)\\
+ & \RETURN \AD(x)
+\end{game}
+&&\begin{game}{\GAME_1}
+ & s\getsu \SSS_1\\
+ & x\gets f(s)\\
+ & \RETURN \AD(x)
+\end{game}
+\end{align*} 
+If the sizes of sets are equal $\abs{\SSS_0}=\abs{\SSS_1}$, then the game $\GAME$ can be thought as simple guessing between equiprobable seed distributions $\SSS_0$ and $\SSS_1$ and thus 
+\begin{align*}
+\advHCPredXX{f,\pi}{\AD}=\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}}\enspace.
+\end{align*}
+In general,  the probability of seed distributions $\SSS_0$ and $\SSS_1$ is slightly off balance and thus 
+\begin{align*}
+\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\GAME_1^\AD=1}}&= 2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-\max\set{\alpha_0,\alpha_1}}\\
+&\leq 2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}- {\textstyle\frac{1}{2}}}+ 2\cdot \abs{\alpha_0-{\textstyle\frac{1}{2}}}\\
+&\leq \advHCPredXX{f,\pi}{\AD} + 2\cdot\Delta(\pi)\enspace. 
+\end{align*}
+Consequently, we could define hard-core predicates in terms of indistinguishability games as long as we require that the predicate is nearly regular. For regular predicates, these two notions coincide.  
+
+\vskip 3ex
+\noindent\textsc{Analysis of a standard construction.}
+Let $k$ be fixed and let $x_{\bullet}$ denote a bitstring $x_n\ldots x_{k+1}x_{k-1}x_1$  that is obtained by dropping the $k$th bit form $n$-bit string $x=x_n\ldots x_1$. To show that $\pi_k$ is an hardcore bit, we have to analyse the following game:
+\begin{align*}
+\begin{game}{\GAME_0}
+ & s\getsu \SSS\\
+ & x\gets f(s)\\
+ & \RETURN [\smash{x_k \iseq \AD(x_\bullet)}]\enspace.
+\end{game}
+\end{align*}
+By our assumption $f(s)$ is indistinguishable from uniformly chosen string $x\getsu\set{0,1}^n$. Let $\GAME_1$ be the corresponding game:
+\begin{align*}
+\begin{game}{\GAME_1}
+ & s\getsu \SSS\\
+ & x\getsu \set{0,1}^n\\
+ & \RETURN [\smash{x_k \iseq \AD(x_\bullet)}]\enspace.
+\end{game}
+\end{align*}
+For the formal proof, we need to estimate the computational difference of $\GAME_0$ and $\GAME_1$ interns of security games:
+\begin{align*}
+&\begin{game}{\BGAME_0^\ADB}
+      & s \getsu \set{0,1}^n \\
+      & x \getsu f(s) \\
+      & \RETURN [ \smash{\ADB(x) \iseq 1}] 
+\end{game}
+&&
+\begin{aligned}
+\begin{game}{\BGAME_1^\ADB}
+      & x \getsu \set{0,1}^{n} \\
+      & \RETURN [\smash{\ADB(x) \iseq 1}]
+\end{game}\\
+& \\
+\end{aligned}
+\end{align*}
+through which the notion of pseudorandomness is defined.  Now if we define the adversary as follows: 
+\begin{align*}
+\begin{game}{\ADB(x)}
+      & \RETURN [\smash{x_k\iseq \AD(x_\bullet)}]
+\end{game}
+\end{align*}
+then $\BGAME_0^\ADB\equiv\GAME_0^\AD$ and $\BGAME_1^\ADB\equiv\GAME_1^\AD$. As $\ADB$ is a valid program and its running time is only by a constant slower than the running time of $\AD$, games  $\GAME_0$ and $\GAME_1$ are $(t,\varepsilon)$-indistinguishable. As the bit $x_k$ is completely independent form $\vec{x}_\bullet$ in the game $\GAME_1$, we get the desired result: 
+\begin{align*}
+\advHCPredXX{f,\pi}{\AD}=
+\abs{\pr{\smash{\GAME_0^\AD=1}}-{\textstyle \frac{1}{2}}}
+=\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}}\leq \varepsilon\enspace.
+\end{align*} 
+\end{solution}
+\end{document}

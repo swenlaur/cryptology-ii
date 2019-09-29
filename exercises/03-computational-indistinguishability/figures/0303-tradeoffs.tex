@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=14cm,paperheight=6cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+%\usepackage[table]{xcolor}
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\psset{unit=3cm}
+\begin{pspicture}(-0.2,-0.0)(3.3,1.35)
+\rput(0,0)
+{
+  \psgrid[gridlabels=8pt, subgriddiv=10,subgridcolor=gray!20, gridwidth=0.3pt](0,0)(0,0)(1,1)
+  \psline[arrows=->](0,0)(1.2,0.0)
+  \psline[arrows=->](0,0)(0.0,1.2)
+  \rput[b](0.0,1.25){$\beta(\ADB)$}
+  \rput[l](1.25,0.0){$\alpha(\ADB)$}
+  \psline[linewidth=0.5pt, linecolor = blue](0.0,1.0)(0.3,0.5)
+  \psline[linewidth=0.5pt, linecolor = red](0.3,0.5)(1.0,0.0)
+  \psline[linewidth=0.5pt, linestyle = dotted](0.3,0.0)(0.3,0.5)  
+  \psline[linewidth=0.5pt, linestyle = dotted](0.0,0.5)(0.3,0.5)
+  \psdots[dotscale=0.5](0.0,1.0)(0.3,0.5)(1.0,0.0)
+  \psdots[dotscale=0.5](0.3,0.0)(0.0,0.5)  
+  \rput[r](-0.1,0.5){$\beta(\AD)$}
+  \rput[d](0.3,-0.1){$\alpha(\AD)$}
+  
+}
+\rput(1.8,0)
+{
+  \psgrid[gridlabels=8pt, subgriddiv=10,subgridcolor=gray!20, gridwidth=0.3pt](0,0)(0,0)(1,1)
+  \psline[arrows=->](0,0)(1.2,0.0)
+  \psline[arrows=->](0,0)(0.0,1.2)
+  \rput[l](1.25,0.0){$c$}
+  \rput[b](0.0,1.25){Ratio}
+  \psline[linewidth=0.5pt, linecolor = blue](0,0)(1.0,0.5)
+  \rput{31}(0.5,0.33){$\alpha(\ADB)$}
+  \psline[linewidth=0.5pt, linecolor = blue](0,1)(1.0,0.3)
+  \rput{-30}(0.5,0.74){$\beta(\ADB)$}
+  \psdots[dotscale=0.5](1.0,0.5)(1.0,0.3)
+  \rput[l](1.05,0.3){$\beta(\AD)$}
+  \rput[l](1.05,0.5){$\alpha(\AD)$}
+    
+  
+}
+\end{pspicture}
+\end{document}
+
+\psset{nodesep=2pt}
+\rput(1.0,0.0){\rnode{Q000}{$\textcolor{red}{\GAME_{000}}$}}
+\rput(4.0,0.0){\rnode{Q100}{$\textcolor{red}{\GAME_{100}}$}}
+\rput(1.0,3.0){\rnode{Q010}{$\textcolor{red}{\GAME_{010}}$}}
+\rput(4.0,3.0){\rnode{Q110}{$\textcolor{red}{\GAME_{110}}$}}
+\rput(2.5,1.5){\rnode{Q001}{$\textcolor{red}{\GAME_{001}}$}}
+\rput(5.5,1.5){\rnode{Q101}{$\textcolor{red}{\GAME_{101}}$}}
+\rput(2.5,4.5){\rnode{Q011}{$\textcolor{red}{\GAME_{011}}$}}
+\rput(5.5,4.5){\rnode{Q111}{$\textcolor{red}{\GAME_{111}}$}}
+\ncline[linecolor=red]{-}{Q000}{Q100}
+\ncline{-}{Q000}{Q010}
+\ncline[linecolor=red]{-}{Q100}{Q110}
+\ncline[linecolor=red]{-}{Q010}{Q110}
+\ncline[linecolor=red]{-}{Q001}{Q101}
+\ncline[linecolor=red]{-}{Q001}{Q011}
+\ncline[linecolor=red]{-}{Q101}{Q111}
+\ncline{-}{Q011}{Q111}
+\ncline{-}{Q000}{Q001}
+\ncline{-}{Q100}{Q101}
+\ncline[linecolor=red]{-}{Q010}{Q011}
+\ncline{-}{Q110}{Q111}
+
+\end{pspicture}
+\end{document}

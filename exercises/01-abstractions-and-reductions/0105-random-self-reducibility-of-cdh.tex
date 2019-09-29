@@ -1,0 +1,80 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor[Created the initial version of the solution]{Filipp Ivanov}
+\tags{Computational Diffie-Hellman problem, random self-reducibility, missing solution}
+
+\begin{document}
+\begin{exercise}{Random self-reducibility of CDH}
+  Let $\GG$ be a finite group such that all elements $y\in\GG$ can be
+  expressed as powers of $g\in\GG$. Then the Computational
+  Diffie-Hellman (CDH) problem is following. Given $x=g^a$ and
+  $y=g^b$, find a group element $z=g^{ab}$.
+  \begin{enumerate}
+  \item Show that Computational Diffie-Hellman problem is random
+    self-reducible, i.e., for any algorithm $\ADB$ that achieves
+    advantage
+    \begin{align*}
+      \ADVCDH{\GG}{\ADB}\doteq\pr{x,y\getsu\GG: \ADB(x,y)=g^{\log_g
+          x\log_g y}}
+    \end{align*}
+    there exists an oracle algorithm $\AD^{\ADB}$ that for any input
+    $x,y\in\GG$ outputs the correct answer with the probability
+    $\ADVCDH{\GG}{\ADB}$ and has roughly the same running time.
+  \item Given that the CDH problem is random self-reducible, show that
+    the difficulty of CDH instances cannot wary a lot. Namely, let
+    $\ADB$ be a $t$-time algorithm that achieves maximal advantage
+    $\ADVCDH{\GG}{\ADB}$. What can we say about worst-case advantage
+    \begin{align*}
+      \min_{x,y\in\GG}\pr{\AD(x,y)=g^{\log_g x\log_g y}}?
+    \end{align*}
+    Can there be a large number of pairs $(x,y)$ for which the CDH problem
+    is easy?
+   \item Show how to amplify the success rate of $\ADB$ by
+    repetitions. Sketch the corresponding time-success profile
+    $\varepsilon(t)$. What does this say about time-success profile of
+    CDH problem in general?
+  \end{enumerate}
+\end{exercise}
+\begin{solution}
+\textsc{Random Self-reducibility.}
+Given an original adversary $\ADB$ against computational Diffie-Hellman problem we can 
+construct the following algorithm:
+	\begin{align*}
+		\begin{fblock}{\AD^{\ADB}(x,y)}
+			& a, b \getsu \mathbb{Z}_{|\GG|} \\
+			& c \gets \ADB(x \cdot g^a, y \cdot g^b) \\
+			& \RETURN c \cdot x^{-b} \cdot y^{-a} \cdot g^{-ab}\enspace.
+		\end{fblock}
+	\end{align*}
+For the analysis, let $\alpha = \log_g x$ and $ \beta = \log_g y$. Then by the definition, the tuple $x \cdot g^a, y \cdot g^b, c$ is a valid Diffie-Helmann tuple only if   
+\begin{align*}
+c = g^{(\alpha+a)(\beta+b)} \quad\Longleftrightarrow\quad c=g^{\alpha\beta} \cdot g^{\alpha b} \cdot g^{ab} \cdot g^{\beta a}\enspace.
+\end{align*}
+From this we can conclude 
+\begin{align*}
+c = g^{(\alpha+a)(\beta+b)} \quad\Longleftrightarrow\quad g^{\alpha\beta}= c \cdot (g^{\alpha})^{-b}  \cdot (g^{\beta})^{a}\cdot g^{ab}\enspace,
+\end{align*}
+which itself implies that the adversary $\AD^\ADB$ succeed if and only if $\ADB$ produces a Diffie-Helmann tuple:  
+\begin{align*}
+c = g^{(\alpha+a)(\beta+b)} \quad\Longleftrightarrow\quad  g^{\alpha\beta}= c \cdot x^{-b} \cdot y^{-a} \cdot g^{-ab}\enspace.
+\end{align*}
+Hence, the advantage of $\AD^{\ADB}$ can be calculated as follows:
+\begin{align*}
+\pr{\AD^{\ADB}(x,y) = g^{\alpha\beta}} =
+\pr{\smash{a,b \getsu \mathbb{Z}_{|\GG|} : \ADB(x \cdot g^a, y \cdot g^b) = g^{(\alpha + a) \cdot (\beta + b)}}} \enspace.
+\end{align*}
+Now it is easy to see that for any $\forall \alpha,\beta \in \ZZ_{\abs{\GG}}$, the group elements $x \cdot g^a$ and $ y \cdot g^b$ are independent and have uniform distribution. Hence, the adversary $\ADB$ inside $\AD^\ADB$ gets correctly formed CDH challenges and we thus we can conclude
+\begin{align*}
+\pr{\smash{a,b \getsu \mathbb{Z}_{|\GG|} ; \ADB(x \cdot g^a, y \cdot g^b) = g^{(\alpha + a) \cdot (\beta + b)}}}=\ADVCDH{\GG}{\ADB}\enspace.
+\end{align*}
+If $\ADB$ runs in $t$-time, $\AD^{\ADB}$ runs in $(t + \delta)$-time, where $\delta$ is a small time required to perform element sampling and multiplications.
+
+\vspace*{2ex}
+\noindent\textsc{Uniformity.} Because $\AD$ reduces each problem instance to a random one, $\pr{\AD(x,y)=g^{\log_g x\log_g y}}$ is equal to $\ADVCDH{\GG}{\ADB}$ for each pair $(x,y)$. Therefore, the worst-case advantage of $\AD$ is the same as advantage of $\ADB$ and if there are a lot of CDH instances, which are easy for $\ADB$, the performance of $\AD$ is good on any instance.
+
+\vspace*{2ex}
+\noindent\textsc{Amplification effects.}
+\textbf{To be added}	
+	
+\end{solution}
+\end{document}

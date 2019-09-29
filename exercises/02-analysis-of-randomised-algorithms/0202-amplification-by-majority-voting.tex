@@ -1,0 +1,101 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Initial solution]{Prastudy Fauzi}
+\contributor[Significantly altered the original presentation]{Sven Laur}
+\editor{Sven Laur}
+\tags{success amplification, majority voting, Hoeffding bound, Chernoff bound}
+
+\newcommand{\msb}{\mathsf{msb}}
+\begin{document}
+\begin{exercise}{Success amplification by majority voting}
+Let $\GG$ be a finite $q$-element group such that all elements $y\in\GG$ can be expressed as powers of $g\in\GG$. Let $\AD$ be an algorithm for finding the most significant bit of discrete logarithm such that $\pr{\AD(y)\text{ guesses correctly}}\geq \varepsilon>\frac{1}{2}$ for any $y\in\GG$. Construct an algorithm that fails with probability $2^{-n}$. Show that it is possible to give a construction withe the running-time that is linear in $n$ and quadratic in $1/(\varepsilon-\frac{1}{2})$.
+\end{exercise}
+
+\begin{solution}
+\textsc{Simple amplification.} 
+According to the assumptions the probability that $\AD(y)$ returns correctly the most significant bit is at least $\varepsilon>\frac{1}{2}$ for all $y\in\GG$. This assumption automatically excludes probability that $\AD$ is a deterministic algorithm. Indeed, if $\AD$ is deterministic then for any $y$ it either outputs a correct answer or not. As the probability of outputting the correct answer is nonzero for all $y\in\GG$, the deterministic $\AD$ must output the correct output for all $y\in\GG$ and there is nothing for us to do further. If $\AD$ is a randomised algorithm, then depending on the randomness we get sometimes correct and sometimes incorrect answers for a fixed input $y$. By the assumption the fraction of correct answers is at least $\varepsilon$. In particular, not that if we run $\AD(y)$ twice with freshly chosen randomness we get two independent samples from the seth of all answers. Therefore, we can define the amplification algorithm as follows:      
+\begin{align*}
+   &\begin{game}{\ADB^\AD(m,y)}
+      &\begin{forblock}{i\in \set{1 \dots m}}
+        & x_i \gets \AD(y)\\
+      \end{forblock}\\
+      & s \gets x_1 + \cdots + x_{m}\\
+      & \RETURN [2\cdot s > m]\enspace.
+    \end{game}
+\end{align*}
+Now recall the Hoeffding bound. Let $X_1,\ldots,X_m$ be independent samples form a fixed zero-one distribution such that the probability of one is $\alpha$. Then the probability that the sum of these individual samples $S=X_1+\cdots +X_m$ is significantly less than mathematical expectation $\EXP(S)$ is negligible:
+\begin{align*}
+\pr{\EXP(S) - S \leq  m\cdot\delta} \leq \exp{- 2 m\delta^2}.
+\end{align*} 
+For the analysis let us consider the case, when the the correct answer is one. Then by our assumption the probability that $\AD(y)$ returns one is at least $\varepsilon$. On the same time $\ADB$ returns one only if the majority of $x_i$-s are ones. That is we can express the failure probability as follows:
+\begin{align*}
+\pr{x_1+\cdots+x_m\leq m/2}&=\pr{m\varepsilon - (x_1+\cdots+x_m)\leq m\varepsilon -m/2}\\
+&\leq\pr{\EXP(x_1+\cdots+x_m) - (x_1+\cdots+x_m)\leq m(\varepsilon -1/2)}\enspace.
+\end{align*}
+As the right-hand side of the inequality corresponds to the left-hand side of the Hoeffding bound, we get
+\begin{align*}
+\pr{x_1+\cdots+x_m\leq m/2}\leq \exp{-2m (\varepsilon-1/2)^2}
+\end{align*} 
+Thus, we can guarantee that the failure probability is below $2^{-n}$ if 
+\begin{align*}
+\exp{- 2m(\varepsilon-1/2)^2}\leq 2^{-n}\quad\Longleftrightarrow\quad
+n\ln 2 \leq 2m(\varepsilon-1/2)^2\enspace.
+\end{align*} 
+The latter provides a lower bound for required samples:
+\begin{align*}
+m\geq \frac{n\ln 2}{2(\varepsilon-1/2)^2}\enspace,
+\end{align*}
+which is indeed linear in $n$ and quadratic in $1/(\varepsilon-\frac{1}{2})$. The analysis of the case where the correct answer is zero is symmetrical --- again the decision bound $m/2$ is quite far from the expected number of ones. 
+  
+
+\vspace*{2ex}
+\noindent
+\textsc{Construction of the discrete logarithm solver.} Recall that it was possible to reconstruct the full discrete logarithm if we had a perfect solver $\ADB_\circ$ for the most significant bit. Let us quickly recall the corresponding construction $\ADC$ under the assumption that the size of $\GG$ is below $2^k$. Let $y=g^x$ where $x=x_k\ldots x_0$ in binary. Let $\msb(x)=x_k$ denote the most significant bit of $x$. Then clearly
+\begin{align*}
+y_1=g^{x_{k-1}\ldots x_00}=y\cdot g^{\msb(x)}
+\end{align*}  
+and we can use the most significant bit solver $\ADB_\circ$ for $y_1$ to recover $x_{k-1}$. By repeating this procedure, we can recover all bits of $x$ by making $k$ calls to $\ADB_\circ$:
+\begin{align*}
+   &\begin{fblock}{\ADC^{\ADB_\circ}(y)}
+      &\begin{forblock}{i=k,\dots, 0\ }
+      &  x_i \gets \AD_1(y) \\
+      &  y \gets y^2 g^{-2x_i}) \\
+      \end{forblock}\\
+      & \RETURN x_{k} \ldots x_0 \enspace.
+    \end{fblock}
+\end{align*}
+
+If the solver $\ADB$ for the most significant bit is guaranteed to succeed with probability at least $\delta$ for any $y\in\GG$, then it reconstructs the correct answer with the probability at least $\delta^k$. To get a bigger success probability, we can use standard discrete logarithm amplification technique for $\ADC$. Due to the quasi-linearity of this amplification scheme, $\ell$ repetitions of $\ADC$ increases the success probability approximately $\ell$ times. 
+
+This leads us to an interesting tradeoff issue. Given an initial solver $\AD$ for the most significant bit, we can first amplify its success by constructing the majority vote amplifier $\ADB$ with $m$-fold repetition and then doing an additional amplification by running $\ell$ times the discrete logarithm solver $\ADC$.  As a result, different choices of $m$ and $\ell$ can lead to the same success probability. Let us analyse the situation in more detail to determine the optimal ratio between parameters. First, note that for fixed $\varepsilon$ and $m$ the success probability 
+\begin{align*}
+\delta\geq 1-\exp{-2m (\varepsilon-1/2)^2}
+\end{align*}
+and thus the overall failure probability after $\ell$ reruns of $\ADC$ is not larger than 
+\begin{align*}
+\pr{\mathsf{Failure}}=
+\biggl(1-\Bigl(1-\exp{-2m (\varepsilon-1/2)^2}\Bigr)^k\biggr)^\ell
+&\approx \Bigl(k\cdot \exp{-2m (\varepsilon-1/2)^2}\Bigr)^\ell\enspace,
+\end{align*}
+which itself implies 
+\begin{align*}
+\log \pr{\mathsf{Failure}}\approx \ell\cdot \log k -2\ell\cdot m (\varepsilon-1/2)^2\enspace.
+\end{align*} 
+By looking to the equation, we see that the second term remains constant as long as $\ell\cdot m$ remains constant and the first terms increases when we increase $\ell$. Consequently, an approximately optimal solution is to choose $\ell=1$ and choose $m$ large enough to get the desired failure probability.   
+
+\vspace*{2ex}
+\noindent
+\textsc{On the random self-reducibility of the most significant bit.}
+All these reductions so far assume that the success probability $\AD$ is uniformly large for any $y\in\GG$. In practice, we might encounter an algorithm, for which the probability of correct answer is $\varepsilon>\frac{1}{2}$ only if $y$ is chosen uniformly form $\GG$. Hence, we might ask is it possible to convert a particular most significant bit instance to a random most significant bit instance. 
+
+This seems to be a difficult task for the following reason. Let $x=x_k\ldots x_0$ and $\overline{x}=\overline{x}_k\ldots\overline{x}_0$. Then the standard rerandomisation procedure $\overline{y}=y\cdot g^{\overline{x}}$ leads to the new most significant bit $\msb(x+\overline{x}\mod q)$. The latter is difficult to predict even if $x+\overline{x}<q$,
+since
+\begin{align*}
+\msb(x+\overline{x})
+\begin{cases}
+x_k\oplus \overline{x}_k,&\text{if } x+\overline{x}< q \wedge x_{k-1}\ldots x_0+ \overline{x}_{k-1}\ldots \overline{x}_0 < 2^k\enspace, \\
+1\oplus x_k\oplus \overline{x}_k,&\text{if } x+\overline{x}< q \wedge x_{k-1}\ldots x_0+ \overline{x}_{k-1}\ldots \overline{x}_0 \geq 2^k\enspace
+\end{cases}
+\end{align*}
+and we have no information about the tail $x_{k-1}\ldots x_0$. \end{solution}
+\end{document}

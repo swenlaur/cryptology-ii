@@ -1,0 +1,50 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Initial solution]{Ivo Kubjas}
+\contributor[Added the discussion about stopping the machine]{Sven Laur}
+\editor{Sven Laur}
+\tags{expected running time, strict running time, Markov inequality}
+
+\DeclareMathOperator*{\EXPO} {\mathbf{E}}
+\begin{document}
+
+
+\begin{exercise}{From expected to strict running time}
+Let $\GG$ be a finite $q$-element group such that all elements $y\in\GG$ can be expressed as powers of $g\in\GG$. Let $\AD$ be an algorithm that always finds a discrete logarithm with the expected running-time at most $\tau$. Construct a $t$-time algorithm $\ADB$ that fails with probability $2^{-n}$ and its running-time $t$ is linear in $\tau$ and in $n$.
+\end{exercise}
+  
+\begin{solution} 
+Let $t$ be a function mapping randomness of the algorithm $\omega\in\Omega$ and its input $y\in\GG$ to the running time of the algorithm, i.e., $t(y;\omega)$ is the running time of $\AD$ on input $y$ and randomness $\omega$. From the assumption, we know that
+\begin{align*}
+ \forall y\in\GG:\quad \EXP_{\omega\in\Omega}[t(y;\omega)]\leq \tau\enspace.
+\end{align*}
+By using Markov's inequality, we get that the probability that algorithm $\AD$ runs longer than $t_0$ steps is
+\begin{align*}
+\pr{t(y;\omega) \geq t_0} \leq \frac{\EXP_{\omega\in\Omega}[t(y;\omega)]}{t_0}\leq\frac{\tau}{t_0}\enspace. 
+\end{align*}
+Let us consider the probability that the algorithm fails provide an output in time $2 \tau$. The inequality derived above allows us to punt the corresponding probability form above: 
+\begin{align*}
+\forall y\in \GG:\quad
+\pr{t(y;\omega) \geq 2\tau} \leq \frac{\tau}{2\tau} = \frac{1}{2} \enspace.
+\end{align*}
+
+Now let $\AD_{2 \tau}$ be an algorithm that invokes $\AD$ and waits its output for exactly $2\tau$ time. If $\AD$ succeeds, it outputs $\AD$'s output and $\perp$ otherwise. It is easy to construct such an algorithm from the code of $\AD$ by replacing each instruction of $\AD$ by a set of instructions: we first check if a dedicated time variable is smaller than $2\tau$, then we execute the instruction of $\AD$, finally we increment the dedicated time variable $t$ by $1$. If $\AD$ and $\AD_{2\tau}$ are  random access machines, then it is easy to see that the running time of $\AD_{2\tau}$ is $\Oh(2\tau)$. If $\AD_{2\tau}$ is a Turing machine with an extra working tape compared to $\AD$ then the same claim holds. However, if $\AD$ and $\AD_{2\tau}$ must be turing machines such that the number of working tapes is the same, we can only prove that $\AD_{2\tau}$ runs in time $\Oh(\tau^2)$    because the location of the dedicated timer $t$ might be $\Omega(\tau)$ apart from the symbol $\AD_{2\tau}$ is modifying inside the instruction block. Regardless of the bound on the running time we have proven
+\begin{align*}
+\forall y\in\GG:\quad\pr{x\gets\AD_{2\tau}(y): g^x\neq y}=\pr{t(y;\omega) \geq 2\tau}\leq \frac{1}{2}\enspace.
+\end{align*} 
+
+Now, let us consider the construction
+\begin{align*}
+\begin{game}{\ADB^{\AD_{2\tau}}(n, y)}
+&\begin{forblock}{\ell\in\set{1,\ldots, n}\ }
+& x \gets \AD_{2\tau}(y) \\
+& \text{if } g^{x} = y \enspace \RETURN y
+\end{forblock}\\
+& \RETURN \bot
+\end{game}
+\end{align*}
+Clearly, algorithm $\ADB$ runs in time less than $c\cdot 2n\tau$ for some small overhead constant $c>1$ in the Random Access Machine model. During this time, $\ADB$ makes at most $n$ queries to $\AD_{2\tau}$. As the probability of failure each time is $\frac{1}{2}$, then after $n$ invocations the failure probability is $\left(\frac{1}{2}\right)^n = 2^{-n}$. Thus, we have constructed an algorithm $\ADB$ which runs in time $\Oh(n\tau)$ and its failure probability is $2^{-n}$, as required. 
+
+For the Turing machines, the construction runs in time $\Oh(n\tau^2)$ and in general it is difficult if not impossible to show that the running rime can be actually bounded by $\Oh(n\tau)$. The only way to achieve that is to modify the definition of a Turing machine so that all algorithms can use timers. However, the latter is technically an non-trivial task, as the algorithm $\AD$ might then already use a timer and we must makes sure that $\AD_{2\tau}$ can make calls to timer without obligating timers used by $\AD$.
+\end{solution}
+\end{document}

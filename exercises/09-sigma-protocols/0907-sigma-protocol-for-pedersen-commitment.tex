@@ -1,0 +1,110 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Significant rewrite]{Sven Laur}
+\editor{Sven Laur}
+\tags{sigma protocol, discrete logarithm, zero-knowledge, special soundness, Pedersen commitment}
+
+\begin{document}
+\begin{exercise}{Sigma protocol for Pedersen commitment}
+Let $\GG$ be a discrete logarithm group with a prime number $q$ elements. Then public parameters of the Pedersen commitments are two group elements $g_1$ and $g_2$. To commit an element $m\in\ZZ_q$, the commiter has to choose a random element $x\in\ZZ_q$ and compute a corresponding commitment $c=g_1^mg_2^x$. As the commitment is perfectly hiding, the committer can only prove that he or she knows $m$ and $x$ such that $c=g_1^mg_2^x$. Prove that the sigma protocol depicted below is  a sigma protocol for proving knowledge $\POK[\exists m \exists x: c=g_1^mg_2^x]$.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r_1,r_2\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha=g_1^{r_1} g_2^{r_2}$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma_1= m\beta+r_1, \gamma_2= x\beta+r_2$}}$\\
+    && $\bigl[g_1^{\gamma_1}g_2^{\gamma_2}\iseq y^{\beta}\alpha\bigr]$\\  
+  \end{tabular}
+\end{center}  
+
+\end{exercise}
+
+\begin{solution}
+As the protocol has the right message structure, we must show only that the protocol is functional and has special soundness and zero-knowledge property. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Functionality.} 
+If both parities are honest then $y=g_1^mg_2^x$. Consequently,
+\begin{align*}
+g_1^{\gamma_1}g_2^{\gamma_2}
+& = g_1^{m\beta + r_1}g_2^{x\beta + r_2} 
+  = g_1^{m\beta}g_1^{r_1}g_2^{x\beta}g_2^{r_2}
+  =  \left(g_1^{m}g_2^{x}\right)^{\beta}g_1^{r_1}g_2^{r_2}
+  =  y^{\beta}\alpha
+\end{align*}
+and thus the verifier always reaches the accepting state.
+
+\vspace*{2ex}
+\noindent
+\textsc{Special soundness.}
+Let $(\alpha,\beta,\gamma_1,\gamma_2)$ and $(\alpha,\bar{\beta},\bar{\gamma}_1,\bar{\gamma}_2)$ two accepting protocol transcripts. To get the extraction formulae, we first express secrets $m$ and $x$ in terms of $\beta,\bar{\beta},\ldots,\bar{\gamma}_2$ under the assumption that the prover is honest. This leads us to the system of linear equations: 
+\begin{align*}
+&\begin{aligned}
+\gamma_1 &= m\beta+r_1\enspace,\\
+\bar{\gamma}_1 &= m\bar{\beta}+r_1\enspace,\\
+\end{aligned}
+&&
+\begin{aligned} 
+\gamma_2 &= x\beta+r_2\enspace,\\
+\bar{\gamma}_2 &= x\bar{\beta}+r_2\enspace,
+\end{aligned}
+\end{align*}
+which has the following solution
+\begin{align*}
+m &= \frac{\gamma_1 - \bar{\gamma}_1}{\beta - \bar{\beta}}\enspace,
+&
+x &= \frac{\gamma_2 - \bar{\gamma}_2}{\beta - \bar{\beta}}\enspace. 
+\end{align*}
+Next, we have to show that this holds for any accepting transcript pair. Let us verify this by direct algebraic manipulation:
+\begin{align*}
+g_1^mg_2^x=g_1^{\frac{\gamma_1 - \bar{\gamma}_1}{\beta - \bar{\beta}}}g_2^{\frac{\gamma_2 - \bar{\gamma}_2}{\beta - \bar{\beta}}} 
+= \left(\frac{g_1^{\gamma_1}}{g_1^{\bar{\gamma_1}}}\cdot\frac{g_2^{\gamma_2}}{g_2^{\bar{\gamma_2}}}\right)^{\frac{1}{\beta - \bar{\beta}}} 
+=  \left(\frac{\alpha y^{\beta}}{\alpha y^{\bar{\beta}}}\right)^{\frac{1}{\beta - \bar{\beta}}} 
+ =  \left(y^{\beta - \bar{\beta}}\right)^{\frac{1}{\beta - \bar{\beta}}} 
+ =  y\enspace.
+\end{align*}
+
+\vspace*{2ex}
+\noindent
+\textsc{Zero-knowledge property.}
+Recall that the sigma protocol satisfies the zero-knowledge property if the protocol transcript can be simulated as follows:
+\begin{align*}
+\begin{fblock}{\SIM}
+ &\beta\gets\ZZ_q\\
+ &(\alpha,\gamma_1,\gamma_2)\gets\SSS(\beta)\\
+ &\RETURN (\alpha,\beta,\gamma_1,\gamma_2)\enspace.
+\end{fblock}
+\end{align*}
+To show the existence of such simulator, let us first analyse the distribution of $\gamma_1$ and $\gamma_2$ for a fixed $\beta$ value. If the prover is honest then 
+\begin{align*}
+\gamma_1&= m\beta+r_1\\
+\gamma_2&= x\beta+r_2
+\end{align*}
+for randomly chosen $r_1,r_2\getsu\ZZ_q$ and thus $\gamma_1$ and $\gamma_2$ are independently and uniformly distributed over $\ZZ_q$. Hence, we know how to sample $\gamma_1$ and $\gamma_2$ for a fixed $\beta$. It remains to derive the value of $\alpha$. As the valid transcript must satisfy the verification condition
+\begin{align*}
+g_1^{\gamma_1}g_2^{\gamma_2}= y^{\beta}\alpha \quad\Leftrightarrow\quad
+\alpha= g_1^{\gamma_1}g_2^{\gamma_2}\cdot y^{-\beta}
+\end{align*}
+we get the following simulator construction
+\begin{align*}
+\begin{fblock}{\SSS(\beta)}
+&\gamma_1,\gamma_2\getsu\ZZ_q\\
+&\alpha\gets g_1^{\gamma_1}g_2^{\gamma_2}\cdot y^{-\beta}\\
+&\RETURN (\alpha,\gamma_1,\gamma_2)\enspace.
+\end{fblock}
+\end{align*}
+For the complete proof, we should show that the simulation creates the same distribution as in the real protocol execution. The latter follows from two observations proved above:
+\begin{itemize}
+\item For fixed $\beta, \gamma_2,\gamma_2$ there exists only one $\alpha$ such that $(\alpha,\beta,\gamma_1,\gamma_2)$ is accepting protocol transcript.
+\item In the protocol execution, the distribution of $(\beta,\gamma_1,\gamma_2)$ is uniform over $\ZZ_q\times\ZZ_q\times\ZZ_q$. 
+\end{itemize}
+Indeed, the simulator $\SIM$ generates first $(\beta,\gamma_1,\gamma_2)$ by uniform sampling and then picks the only possible $\alpha$ value. Thus, it must get the same message distribution. 
+
+\end{solution}
+\end{document}

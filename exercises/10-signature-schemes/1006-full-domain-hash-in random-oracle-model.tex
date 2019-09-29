@@ -1,0 +1,422 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Simplified problem]{Ivo Kubjas}
+\contributor[Initial version of constructive reduction]{Filipp Ivanov}
+\contributor[General reduction]{Prastudy Fauzi}
+\editor{Sven Laur}
+\tags{full-domain-hash, signature scheme, random oracle model}
+
+\newcommand{\FTP}{\FFF_{\mathrm{tp}}}
+\newcommand{\qh}{q_{\text{h}}}
+\newcommand{\qs}{q_{\text{s}}}
+\newcommand{\ORAH}{\ORA_\text{h}}
+\newcommand{\ORAS}{\ORA_\SIGN}
+\newcommand{\ADVINVCPA}[2]{\ADV_{#1}^{\mathrm{inv\text{-}cpa}}(#2)}
+\newcommand{\HHHALL}{\HHH_{\mathrm{all}}}
+\newcommand{\ADVWIN}[2]{\ADV^{\mathsf{win}}_{#1}(#2)}
+\newcommand{\BRO}{\BGAME_\text{RO}}
+
+
+\begin{document}
+\begin{exercise}{FRH in RO model}
+Show that the full domain hash signature is secure against existential forgeries in the random oracle model. Establish security bounds under the assumption that  the scheme uses  $(t,\varepsilon)$-secure collection of trapdoor permutations $\FTP$ and $\MAP_\PK(\cdot)$ is always $\tau$-time computable. 
+\end{exercise}
+\begin{solution}
+To show how such proofs are constructed, we construct the proof in three steps. First, we consider a very specific key only attack. Then we generalise the proof for all key only attacks. Finally we show how to convert an attack with uses signing oracle to an attack without the oracle while preserving success.
+
+For the proof, recall that a collection of trapdoor permutations $\FTP$ is determined by
+three algorithms $(\GEN,\MAP,\INV)$ such that
+\begin{align*}
+  \forall (\PK,\SK)\gets\GEN,\quad \forall m\in\MSPACE_\PK:\qquad
+  \INV_\SK(\MAP_\PK(m))=m\enspace
+\end{align*}
+and both algorithms $\MAP_\PK(\cdot)$ and $\INV_\SK(\cdot)$ are
+deterministic. The security of the permutation collection is defined through the success $\ADVINVCPA{\FTP}{\ADB}$ against the following game:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+    &x\getsu\MSPACE_\PK\\
+    &y\gets\MAP_\PK(x)\\
+    &\RETURN [\ADB(\PK,y)\iseq x ]\enspace.
+  \end{game}
+\end{align*}
+A collection of trapdoor permutations $\FFFTPERM$ is
+$(t,\varepsilon)$-secure if for any $t$-time adversary $\ADB$ the success probability $\ADVINVCPA{\FTP}{\ADB}$ is upper bounded by $\varepsilon$.
+
+
+\paragraph{A very specific key only attack.} Let us first consider an attack, where the adversary makes $\qh$ queries to the random oracle $\ORAH$ to forge a signature $(m,s)$ such that $h(m)$ is computed as the $1^{\text{st}}$ query to $\ORAH$ and all $\qh$ hash queries are made on distinct inputs. We start by defining the security game $\GAME_1$, where the adversary is able to forge one more signature while having access to a random oracle $\ORAH$:
+\begin{align*}
+ \begin{game}{\GAME_1}
+  & h \getsu \HHHALL \\
+  & (\PK, \SK) \gets \GEN \\
+  & (m, s) \gets \AD^{\ORAH}(\PK) \\
+  & y \gets h(m) \\
+  & \RETURN [\smash{\MAP_\PK(s) \iseq y}]\enspace.
+ \end{game}
+\end{align*}
+As we consider a restricted class of adversaries that forge the signature for the first query $m_1$ to the hash oracle $\ORAH$, we can rewrite the security game in more explicit manner:
+\begin{align*}
+    \begin{game}{\GAME_2}
+        & h \getsu \HHHALL \\
+        & (\PK, \SK) \gets \GEN \\
+        & m_1 \gets \AD(\PK) \\
+        & y \gets h(m_1) \\
+        & s \gets \AD^{\ORAH}(y) \\
+        & \RETURN [\smash{\MAP_\PK(s) \iseq y}] \enspace.
+    \end{game}
+\end{align*}
+The game makes the first query $m_1$ to the oracle explicit. Formally, the adversary $\AD$ for the game $\GAME_1$ is not compatible with the game $\GAME_2$. However, there is a straightforward wrapper construction with constant overhead that makes the conversion without changing the success probability.  
+ 
+
+For constructing the inverter for any input $y$, we need to trick the adversary into
+believing that $y$ is the output of $h(m_1)$. For this, we replace the initial
+oracle with a slightly modified one which outputs $y$ if he is queried for
+$m_1$ and $\ORAH(m)$ otherwise:
+\begin{align*}
+    \begin{game}{\ORAH'(m)}
+        & \IF m \iseq m_1 \ \THEN \RETURN y \\
+        & \ELSE \RETURN \ORAH(m)
+    \end{game}
+\end{align*}
+To be punctual, $m_1$ and $y$ are hidden parameters of $\ORAH'$ which must be initialised by the inverter 
+\begin{align*}
+    \begin{game}{\ADB^{\AD,\ORAH}(\PK, y)}
+        & h\gets\HHHALL\\
+        & m_1 \gets \AD(\PK) \\
+        & s \gets \AD^{\ORAH}(y) \\
+        & \RETURN s
+    \end{game}
+\end{align*}
+before calling $\ORAH'$. Note that if we use this inverter $\ADB$ in game $\BGAME^\ADB$, then we get
+\begin{align*}
+    \begin{game}{\BGAME^\ADB}
+        & (\PK, \SK) \gets \GEN \\
+        & x \getsu \MSPACE_\PK \\
+        & y \gets \MAP_{\PK}(x) \\
+        & h \getsu \HHHALL \\
+        & m_1 \gets \AD(\PK) \\
+        & s \gets \AD^{\ORAH'}(y) \\
+        & \RETURN [s \iseq x]\enspace.
+    \end{game}
+\end{align*}
+Now note that  the condition $s=x$ is equivalent to the condition that $\MAP_\PK(s)=y$ and we can inverse the choices of $m$ and $y$ in $\BGAME$ by firstly taking $y\gets \MSPACE_\PK$ and then $x \gets \INV_{\SK}(y)$ without changing the output of the game. As a result, we obtain that the game $\BGAME^\ADB$ is equivalent to the following game:  
+\begin{align*}
+    \begin{game}{\GAME_3}
+        & h \getsu \HHHALL \\
+        & (\PK, \SK) \gets \GEN \\
+        & y \getsu \MSPACE_\PK \\
+        & x \gets \INV_{\PK}(m) \\
+        & m_1 \gets \AD(\PK) \\
+        & s \gets \AD^{\ORAH'}(y) \\
+        & \RETURN [\MAP_\PK(s) \iseq y]\enspace.
+    \end{game}
+\end{align*}
+Now the only difference between $\GAME_2$ and $\GAME_3$ is in the way $y$ is computed.
+If $h$ is chosen uniformly from $\HHHALL$, then $y \gets h(m_1)$ is also uniform
+in $\MSPACE_\PK$ and thus the games are identical. Thus, we have formally proved  
+\begin{align*}
+\ADVWIN{\GAME_1}{\AD}=\ADVINVCPA{\FTP}{\ADB^{\ORAH'}}\enspace.
+\end{align*}
+However, the latter is not sufficient for the proof, since $\ADB$ must have an oracle access to $\ORAH'$ to run, whereas the security of $\FTP$ is defined in terms of algorithms that make no oracle calls. 
+
+Fortunately, we can remove the oracle $\ORAH'$ from the construction of $\ADB$. As $\AD$ makes distinct calls to $\ORAH$ so does the $\ORAH'$. Consequently, we can replace all replies by randomly sampled elements, which leads to the following simplification:    
+\begin{align*}
+    \begin{game}{\ORAH''(m)}
+        & \IF m \iseq m_1 \ \THEN y_*\gets y \\
+        & \ELSE y_*\getsu\MSPACE_\PK\\ 
+        & \RETURN y_*\enspace.
+    \end{game}
+\end{align*}
+Since $\ORAH''$ makes no calls to oracles, the algorithm $\ADB^{\AD,\ORAH''}$ is in the valid form. As the running time of $\ADB^{\AD,\ORAH''}$ is $\Oh(\qh)$ steps slower than $\AD$, we get the desired upper bound:
+\begin{align*}
+\ADVWIN{\GAME_1}{\AD}=\ADVINVCPA{\FTP}{\ADB^{\ORAH'}}=\ADVINVCPA{\FTP}{\ADB^{\ORAH''}}\leq \varepsilon\enspace
+\end{align*}
+whenever the running time of $\AD$ is $t-\Oh(q)$.
+ 
+Similar construction could be given for another restricted case when $h(m)$ is the $i^{\text{th}}$ query. We modify the oracle such that it returns random value for all $j^{\text{th}}$
+query for $j\neq i$ and outputs $y$ when $j=i$:
+\begin{align*}
+    \begin{game}{\ORAH''(m)}
+        & count\gets count+1\\
+        & \IF count\iseq i \ \THEN y_*\gets y \\
+        & \ELSE y_*\getsu\MSPACE_\PK\\ 
+        & \RETURN y_*\enspace
+    \end{game}
+\end{align*}
+where the global variable $count$ is initially set to zero. Further details are left as an exercise. 
+
+\paragraph{A constructive reduction for a key only attack.}
+Next, let us consider a general attack where the adversary makes $\qh$ queries to the random oracle $\ORAH$ to forge a signature $(m,s)$. W.l.o.g. we can assume that $\AD$ queries the hash value for the forged signature. If not then we can write a wrapper that
+queries $h(m)$ as the last step. It can increase the number of queries to $\qh+1$.  Secondly, we can assume that $\AD$ makes exactly $\qh+1$ distinct oracle queries. Overhead of the corresponding wrapper is $\Oh(\qh\log\qh)$. As a result, we can model the attack through the following game: 
+\begin{align*}
+	\begin{game}{\GAME^\AD}
+		& (\PK, \SK) \gets \GEN \\
+		& h \gets \HHHALL \\
+		& y_0 \gets \bot \\
+		& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+			& m_i \gets A(y_{i-1}) \\
+			& y_i \gets h(m_i)
+		  \end{forblock} \\
+		& (m, s) \gets A(h_{q_h+1}) \\
+		& \RETURN [h(m) \iseq \MAP_\PK(s)]\enspace, 
+	\end{game}
+\end{align*}
+which itself can be simplified due to the properties of the random function family $\HHHALL$:
+\begin{align*}
+	\begin{game}{\GAME_1^\AD}
+		& (\PK, \SK) \gets \GEN \\
+		& y_0 \gets \bot \\
+		& \begin{forblock}{\ i \in \set{1, \dots, q_h+1} }
+			& m_i \gets A(y_{i-1}) \\
+			& y_i \gets \MSPACE_\PK
+		  \end{forblock} \\
+		& (m, s) \gets A(h_{q_h+1}) \\
+		& \text{Choose $k$ such that $m=m_k$}\\ 
+		& \RETURN [h_k = \MAP_\PK(s)]\enspace 
+	\end{game}
+\end{align*}
+without changing the success probability nor the semantics of the game.
+
+Now it is straightforward to construct the inverter $\ADB$ by planting the value $y$ to be inverted as the $k^\text{th}$ reply. Clearly for some $k$, the probability that the adversary $\AD$ is successful and $m$ is submitted as the $k^\text{th}$ is not smaller than   
+the average success:
+\begin{align*} 
+\exists k:\quad \pr{\GAME_1^\AD=1\wedge m=m_k}\geq \frac{1}{\qh+1}\cdot\ADVWIN{\GAME_1}{\AD}\enspace.
+\end{align*}
+However, there is no evident way to determine $k$ efficiently by looking at the code of $\AD$. Hence, the only sensible alternative is to choose $k$ randomly. The latter leads to the following inverter construction: 
+\begin{align*}
+	\begin{fblock}{\ADB^\AD(\PK, y)}
+	& k \gets \set{1, \dots, q_h+1} \\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& \IF i \iseq k\ \THEN y_i \gets y\ \ELSE y_i \gets \MSPACE_\PK
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+	& \IF m \iseq m_k\ \THEN \RETURN s \ \ELSE \RETURN \bot\\
+	\end{fblock}
+\end{align*}
+There are many way how to estimate the success of the inverter. Here, we choose the most explicit way. We just inline the construction of $\ADB$ into the game $\BGAME$ and manipulate the game further without changing its semantics:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+    &x\getsu\MSPACE_\PK\\
+    &y\gets\MAP_\PK(x)\\
+	& k \gets \set{1, \dots, q_h+1} \\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& \IF i \iseq k\ \THEN y_i \gets y\ \ELSE y_i \gets \MSPACE_\PK
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+	& \IF m \iseq m_k\ \THEN \RETURN [s\iseq x] \ \ELSE \RETURN 0\\
+  \end{game}
+\end{align*}
+Note that the last line captures the condition that $\ADB$ does not halt with $\bot$ only if $m=m_k$. Since $\MAP_\PK$ is the permutation we can rewrite the input generation and output verification phase:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+    &y\getsu\MSPACE_\PK\\
+	& k \gets \set{1, \dots, q_h+1} \\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& \IF i \iseq k\ \THEN y_i \gets y\ \ELSE y_i \gets \MSPACE_\PK
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+    & \IF m \neq m_k\ \THEN \RETURN 0\\
+	& \RETURN [\MAP_\PK(s)\iseq y]\enspace.  
+  \end{game}
+\end{align*}
+Since the challenge $y$ is chosen uniformly from $\MSPACE_\PK$, the difference between if and else branches in the cycle body vanishes and we can further simplify the game:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+	& k \gets \set{1, \dots, q_h+1} \\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& y_i \gets \MSPACE_\PK
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+    & \IF m \neq m_k\ \THEN \RETURN 0\\
+	& \RETURN [\MAP_\PK(s)\iseq y_k]\enspace,  
+  \end{game}
+\end{align*}
+which can be further describe in terms of random function sampling:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+    & h\gets\HHHALL\\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& y_i \gets h(m_i)
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+	& k \gets \set{1, \dots, q_h+1} \\
+    & \IF m \neq m_k\ \THEN \RETURN 0\\
+	& \RETURN [\MAP_\PK(s)\iseq h(m)]\enspace.  
+  \end{game}
+\end{align*}
+As $\AD$ is guaranteed to produce $m\in\set{m_1,\ldots,m_{\qh+1}}$ by our assumptions, we can formally derive
+\begin{align*}
+\pr{\BGAME^\ADB=1}&=\sum_{i=1}^{\qh+1}\pr{\BGAME^\ADB=1\wedge m=m_i}=\sum_{i=1}^{\qh+1}\pr{\MAP_\PK(s)= h(m)\wedge m = m_k\wedge m=m_i}\enspace.
+\end{align*}
+As the term under the sum can be expressed as
+\begin{align*}
+\pr{\MAP_\PK(s)= h(m)\wedge m = m_k\wedge m=m_i}=
+\pr{\MAP_\PK(s)= h(m)\wedge m=m_i}\cdot \pr{m_i = m_k}
+\end{align*}
+and the condition $m_i= m_k$ holds with uniform probability
+\begin{align*}
+\forall i:\quad \pr{m_i=m_k}=\frac{1}{\qh+1}\enspace,
+\end{align*} 
+we get the desired lower bound
+\begin{align*}
+\ADVINVCPA{\FTP}{\ADB}=\pr{\BGAME^\ADB=1}&=\frac{1}{\qh+1}\cdot\sum_{i=1}^{\qh+1}\pr{\MAP_\PK(s)= h(m)\wedge m=m_i}=\frac{\ADVWIN{\GAME_1}{\AD}}{\qh+1}\enspace.
+\end{align*}
+Another way to prove this bound is to reorder the checks in the game:
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &(\PK,\SK)\gets\GEN\\
+    & h\gets\HHHALL\\
+	& y_0 \gets \bot \\
+	& \begin{forblock}{\ i \in \set{1, \dots, q_h+1}\ }
+		& m_i \gets \AD(y_{i-1}) \\
+		& y_i \gets h(m_i)
+	  \end{forblock} \\
+	& (m, s) \gets \AD \\
+	& \IF \MAP_\PK(s)\neq h(m)\ \THEN \RETURN 0\\
+	& k \gets \set{1, \dots, q_h+1} \\
+	& \RETURN [m = m_k]\enspace.  
+  \end{game}
+\end{align*}
+and then note that the first part of the game is identical to $\GAME_1^\AD$ and the final test succeeds with the probability 
+\begin{align*}
+\forall m:\quad \pr{m=m_k}=\frac{1}{\qh+1}\enspace.
+\end{align*} 
+
+To summarise, we have obtained a direct reduction with 
+\begin{align*}
+\ADVINVCPA{\FTP}{\ADB}=\frac{\ADVWIN{\GAME_1}{\AD}}{\qh+1}\enspace
+\end{align*}
+where the running time of $\ADB$ is $\Oh(\qh\log\qh)$  time steps longer than the running time of $\AD$ that is not guaranteed to query distinct inputs. Therefore, if $\FTP$ is a $(t, \varepsilon)$-secure collection of trapdoor permutations, the full domain hash signature is $((\qh+1)\varepsilon, t - \Oh(\qh\log\qh))$-secure against key-only attacks where adversary make $\qh$ queries.
+  
+ 
+
+\paragraph{A general constructive reduction.} Finally, let us consider a general attack where the adversary makes $\qh$ queries to the random oracle $\ORAH$ and $\qs$ queries to the signing oracle $\ORAS$ to forge a new signature $(m,s)$ that is not in the list of replies. Let $S[\cdot]$ denote the array of queried signatures, i.e., $S[m]\neq \bot$ means that the signature has been queried form the oracle. Then we can formalise the security game as follows: 
+\begin{align*}
+\begin{game}{\GAME_1}
+ &(\PK,\SK) \gets\GEN\\
+ &h \gets \HHHALL \\
+ &(m, s) \gets \AD^{\ORAH, \ORAS}(\PK)\\
+ &\IF S[m] \neq \bot \enspace \RETURN 0 \\
+ &\RETURN [h(m) \iseq  \MAP_\PK(s)]\enspace.
+\end{game}
+\end{align*}
+As before, let $q_h$ denote the maximal number of hash queries and $q_s$ the maximal number of signing queries the adversary can make. Also, let $H[\cdot]$ denote array of queried hashes.  
+
+
+First, note that by the construction $H[m]=\MAP_\PK(S[m])$ for all messages $m$ that are submitted to the signing oracle. Moreover, by the properties of $\HHHALL$ all values $H[m]$ are uniformly distributed over $\MSPACE_\PK$. As $\MAP_\PK$ is a permtation, we can sample uniform values from $\MSPACE_\PK$ by first sampling $s$ and then computing $\MAP_\PK(s)$. This way we can escape the hard inversion problem. Formally, we define two new oracles \begin{align*}
+\begin{fblock}{\ORAH'(m)}
+ &\IF H[m] = \bot \\
+ &\begin{cblock}
+ & S[m]\getsu \MSPACE\\
+ & H[m] \gets \MAP_\PK(S[m])\\
+ \end{cblock}\\
+ &\RETURN H[m]
+\end{fblock}
+&&
+\begin{fblock}{\ORAS'(m)}
+ &\IF S[m] = \bot \\
+ &\begin{cblock}
+ &S[m]\getsu \MSPACE\\
+ &H[m] \gets \MAP_\PK(S[m])
+ &\end{cblock}\\ 
+ &\RETURN S[m]\enspace.
+\end{fblock}
+\end{align*}
+For the correctness, note that the construction guarantees that elements $S[m]$ and $H[m]$ are either simultaneously undefined or defined and there can be no redefinitions of undefined variables. For the reasons explained above, the behaviour of the oracle pair $\ORAH'$ and $\ORAS'$ is indistinguishable form the oracle pair $\ORAH$ and $\ORAS$. Consequently, the game $\GAME_1$ is equivalent to the game 
+\begin{align*}
+\begin{game}{\GAME_2}
+ &(\PK,\SK) \gets\GEN\\
+ &(m, s) \gets \AD^{\ORAH', \ORAS'}(\PK)\\
+ &\IF S[m] \neq \bot \enspace \RETURN 0 \\
+ &\RETURN [h(m) \iseq  \MAP_\PK(s)]\enspace.
+\end{game}
+\end{align*}
+Note that the new game $\GAME_2$ is not equivalent to the key-only attack in the random oracle model. Although the oracle $\ORAH'$ is indistinguishable form the random oracle $\ORAH$, the construction is different.
+
+Nevertheless, we can use the idea as before to build the inverter algorithm. Let us start from non-constructive analysis. Clearly,
+\begin{align*}
+\ADVWIN{\GAME_1}{\AD}=\sum_{i=1}^{\qh+\qs+1}\pr{\GAME_2^\AD=1\wedge \text{$i^\text{th}$ query corresponds to the signature}}
+\end{align*}
+where $\AD$ is such that it is quarantined to query the hash of the message $m$. Now there must exist $k$ such that 
+\begin{align*}
+\pr{\GAME_2^\AD=1\wedge \text{$k^\text{th}$ query corresponds to the signature}}\geq 
+\frac{\ADVWIN{\GAME_1}{\AD}}{\qh+\qs+1}\enspace.
+\end{align*}
+Now for this $k$, we can construct an inverter $\ADB$ by  modifying the pair of oracles so that they $H[m_k]=y$. The simulation can fail only if the adversary $\AD$ queries $\ORAS'(m_k)$ but then $(m_k,s)$ is not a valid forgery. We leave the formal construction of the inverter and its analysis to the reader.
+
+For the constructive reduction, we just give the construction of $\ADB$ together with modified oracles:
+
+\begin{align*}
+\begin{aligned}
+\begin{fblock}{\ADB^{\ORAH'',\ORAS''}(\PK,y)}
+ &count\gets 0\\
+ &k\getsu\set{1,\ldots,\qh+\qs+1}\\ 
+ &(m, s) \gets \AD^{\ORAH'', \ORAS''}(\PK)\\
+ &\IF S[m] \neq \bot \enspace \RETURN 0 \\
+ & \IF m \neq m_k\ \THEN \RETURN 0\\
+ &\ELSE \RETURN s
+\end{fblock}\\
+&\\
+&\\
+\end{aligned}
+&&
+\begin{fblock}{\ORAH''(m)}
+ & count\gets count+1\\
+ &\IF H[m] = \bot \\
+ &\begin{cblock}
+ & \IF count\iseq k\ \THEN\\
+ & \begin{cblock} 
+ & H[m]\gets y 
+ & \end{cblock}\\
+ & \ELSE\\ 
+ & \begin{cblock} 
+ & S[m]\getsu \MSPACE\\
+ & H[m] \gets \MAP_\PK(S[m])
+ &\end{cblock}\\
+ \end{cblock}\\
+ &\RETURN H[m]
+\end{fblock}
+&&
+\begin{fblock}{\ORAS''(m)}
+ & count\gets count+1\\
+ &\IF S[m] = \bot \\
+ &\begin{cblock}
+ & \IF count\iseq k\ \THEN\\
+ & \begin{cblock} 
+ & H[m]\gets y 
+ & \end{cblock}\\
+ & \ELSE\\ 
+ & \begin{cblock} 
+ & S[m]\getsu \MSPACE\\
+ & H[m] \gets \MAP_\PK(S[m])
+ &\end{cblock}
+ &\end{cblock}\\ 
+ &\RETURN S[m]\enspace.
+\end{fblock}
+\end{align*}
+For the analysis note that $\ADB^{\ORAH'',\ORAS''}$ provides a perfect simulation of $\GAME_2$ for $\AD$ unless the $k^\text{th}$ query is a signing query. However, the $\ADB^{\ORAH'',\ORAS''}$ would halt even if the signature would be correct.  Hence, it is straightforward to show by direct inlining that 
+\begin{align*}
+\ADVINVCPA{\FTP}{\ADB^{\ORAH'',\ORAS''}}= 
+\frac{\ADVWIN{\GAME_1}{\AD}}{\qh+\qs+1}\enspace.
+\end{align*}
+    
+The reduction overhead is $q_s + q_h + 1$ calls to one of $\ORAH''$ and $\ORAS''$, but both of these have time dominated by the $\MAP_\PK(\cdot)$ operation, hence there is a $(q_s + q_h + 1) \tau$ overhead.
+So if the scheme uses  $(t,\varepsilon)$-secure collection of trapdoor permutations $\FTP$, then the full domain hash is $(t - (q_s + q_h + 1) \tau, (q_s + q_h + 1) \varepsilon)$-secure in the random oracle model.
+
+\end{solution}
+\end{document}

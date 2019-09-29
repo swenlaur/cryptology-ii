@@ -1,0 +1,238 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author[Construction due to Jens Groth]{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Imporoved presentation]{Sven Laur}
+\editor{Sven Laur}
+\tags{dual-mode commitment, IND-CPA security, homomorphic encryption,  hiding, binding}
+
+\newcommand{\ADVINDCPA}[2]{\ADV^{\mathsf{ind\text{-}cpa}}_{#1}{(#2)}}
+
+\newcommand{\ADVNMCPA}[2]{\ADV^{\mathsf{s\text{-}nm\text{-}cpa}}_{#1}{(#2)}}
+\newcommand{\CS}{\mathfrak{C}}
+\theoremstyle{plain}\newtheorem{stmt}{Statement}
+\renewcommand{\qedsymbol}{}
+
+
+\newcommand{\gen}[1]{\langle{#1}\rangle}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\Hash}{\mathcal{H}}
+%\newcommand{\D}{\mathcal{D}ealer}
+\newcommand{\R}{\mathcal{R}}
+%\newcommand{\getsu}{\stackrel{u}{\gets}}
+\newcommand{\Gen}{\mathsf{Gen}}
+\newcommand{\Enc}{\mathsf{Enc}}
+\newcommand{\Dec}{\mathsf{Dec}}
+\newcommand{\Com}{\mathsf{Com}}
+\newcommand{\Mac}{\mathsf{Mac}}
+\newcommand{\Ver}{\mathsf{Ver}}
+\newcommand{\Open}{\mathsf{Open}}
+\newcommand{\INDCPA}{\mathsf{IND\text{-}CPA}}
+
+
+
+\begin{document}
+\begin{exercise}{Dual-mode commitment} 
+Show that an multiplicatively homomorphic asymmetric IND-CPA secure cryptosystem $\CS=(\GEN,\ENC,\DEC)$ with perfect decryption can be converted to perfectly hiding and computationally binding commitment by using the following construction:
+\begin{align*}
+\begin{fblock}{\GEN^\star}
+  & (\PK,\SK)\gets\GEN\\
+  & c_\star \gets \ENC_\PK(0)\\
+  & \RETURN (\PK, c_\star)
+\end{fblock}
+&&
+\begin{fblock}{\COM_{\PK,c_\star}(m)}
+ &r\getsu\R\\
+ &c\gets c_\star^m \cdot \ENC_{\PK,c_\star}(0;r)\\
+ &\RETURN (c,(m,r))
+\end{fblock}
+&&
+\begin{fblock}{\OPEN_{\PK,\star}(c, m, r)}
+& \hat{c}\gets c_\star^m \cdot \ENC_\PK(0;r)\\ 
+& \IF c = \hat{c}\ \RETURN m\\
+& \ELSE \RETURN \bot\enspace
+\end{fblock}
+\end{align*}
+and computationally hiding and perfectly binding commitment by using the following construction: 
+\begin{align*}
+\begin{fblock}{\GEN^\star}
+  & (\PK,\SK)\gets\GEN\\
+  & c_\circ \gets \ENC_\PK(1)\\
+  & \RETURN (\PK, c_\circ)
+\end{fblock}
+&&
+\begin{fblock}{\COM_{\PK,c_\circ}(m)}
+ &r\getsu\R\\
+ &c\gets c_\circ^m \cdot \ENC_\PK(0;r)\\
+ &\RETURN (c,(m,r))
+\end{fblock}
+&&
+\begin{fblock}{\OPEN_\PK(c, m, r)}
+& \hat{c}\gets c_\circ^m \cdot \ENC_\PK(0;r)\\ 
+& \IF c = \hat{c}\ \RETURN m\\
+& \ELSE \RETURN \bot\enspace.
+\end{fblock}
+\end{align*}
+\end{exercise}
+  
+\begin{solution} 
+Let us prove simple security statements first. Since the encryption scheme is multiplicatively homomorphic, we get that the commitment value  
+\begin{align*}
+c_\star^m\cdot\ENC_\PK(0)\equiv \ENC_\PK(0)^m\cdot \ENC_\PK(0)\equiv \ENC_\PK(0)
+\end{align*}
+is a random encryption of a zero. Thus it is straightforward to prove that hiding games 
+\begin{align*}
+  \begin{game}{\GAME_0^\A}
+    &(\PK,c_\star)\gets\GEN^\star\\
+    &(m_0,m_1)\gets\A(\PK,c_\star)\\
+    &r\getsu\RSPACE\\
+    &c \gets c_\star^{m_0} \cdot \ENC_\PK(0;r)\\
+    &\RETURN \A(c)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\A}
+    &(\PK,c_\star)\gets\GEN^\star\\
+    &(m_0,m_1)\gets\A(\PK,c_\star)\\
+    &r\getsu\RSPACE\\
+    &c \gets c_\star^{m_1} \cdot \ENC_\PK(0;r)\\
+    &\RETURN \A(c)
+  \end{game}
+\end{align*}
+are completely identical. Hence, the first commitment scheme is indeed perfectly hiding. By using the properties of homomorphic encryption, we can easily show that   
+\begin{align*}
+c_\circ^m\cdot\ENC_\PK(0)\equiv \ENC_\PK(1)^m\cdot \ENC_\PK(0)\equiv \ENC_\PK(m)
+\end{align*}
+is a random encryption of $m$. Consequently no commitment can be double opened. Indeed, a valid double opening $c, m_0, r_0, m_1,r_1$ means that 
+\begin{align*}
+\ENC_\PK(m_0;\hat{r}_0)=c=\ENC_\PK(m_1;\hat{r}_1)
+\end{align*}
+for some $r_0,r_1\in\RSPACE$. Consequently, the cryptosystem cannot be perfectly decryptable. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Similarlty of commitment modes.} Both commitment schemes are structurally very similar. First note that the commit and open functions are identical for both schemes. The difference lies only in the form of the public parameters. Moreover, the key generation algorithm returns elements pair that are computationally indistinguishable if the cryptosystem is IND-CPA secure. Thus, we can prove the remaining security properties by contrasting these two commitment schemes commonly references as commitment modes.     
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Contrasting for hiding.} Let us prove first that the second commitment mode is computationally hiding. For that observe that corresponding hiding games 
+\begin{align*}
+  \begin{game}{\GAME_2^\A}
+    &(\PK,c_\circ)\gets\GEN^\circ\\
+    &(m_0,m_1)\gets\A(\PK,c_\circ)\\
+    &r\getsu\RSPACE\\
+    &c \gets c_\circ^{m_0} \cdot \ENC_\PK(0;r)\\
+    &\RETURN \A(c)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_3^\A}
+    &(\PK,c_\circ)\gets\GEN^\circ\\
+    &(m_0,m_1)\gets\A(\PK,c_\circ)\\
+    &r\getsu\RSPACE\\
+    &c \gets c_\circ^{m_1} \cdot \ENC_\PK(0;r)\\
+    &\RETURN \A(c)
+  \end{game}
+\end{align*}
+are very similar to the hiding games $\GAME_0$ and $\GAME_1$. More precisely, consider the adversary construction
+\begin{align*}
+\begin{aligned}
+\begin{fblock}{\ADB^\AD(\PK)}
+\RETURN (0,1)
+\end{fblock}\\
+\ \\
+\ \\
+\end{aligned}
+\qquad\qquad
+\begin{fblock}{\ADB^\AD(c)}
+ &(m_0,m_1)\gets\A(\PK,c)\\
+ &r\getsu\RSPACE\\
+ &c \gets c^{m_0} \cdot \ENC_\PK(0;r)\\
+ &\RETURN \A(c)\enspace.
+\end{fblock}
+\end{align*}
+Then direct substitution of the adversary into the IND-CPA security games
+\begin{align*}
+  \begin{game}{\BGAME_0^\B}
+    &\PK\gets\Gen\\
+    &(m_0,m_1)\gets\B(pk)\\
+    &c\gets\ENC_\PK(m_0)\\
+    &\RETURN \B(c)\\
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\B}
+    &\PK\gets\Gen\\
+    &(m_0,m_1)\gets\B(pk)\\
+    &c\gets\ENC_\PK(m_1)\\
+    &\RETURN \B(c)
+  \end{game}
+\end{align*}
+yields games $\GAME_0^\AD$ and $\GAME_2^\AD$. The similar construction exists also for the games $\GAME_1^\AD$ and $\GAME_3^\AD$. Hence, 
+\begin{align*}
+\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_2^\AD=1}}&=\ADVINDCPA{\CS}{\ADB}\enspace, \\
+\abs{\pr{\GAME_1^\AD=1}-\pr{\GAME_3^\AD=1}}&=\ADVINDCPA{\CS}{\ADC}\enspace,
+\end{align*}
+for algorithms $\ADB$ and $\ADC$ which have only constant overhead in the running time. Since $\GAME_0^\AD\equiv \GAME_1^\AD$, we can use the triangle inequality to get the boung
+\begin{align*}
+\abs{\pr{\GAME_2^\AD=1}-\pr{\GAME_3^\AD=1}}\leq \ADVINDCPA{\CS}{\ADB}+ \ADVINDCPA{\CS}{\ADC} \enspace.
+\end{align*}  
+Consequently, if the cryptosystem is $(t,\varepsilon)$-IND-CPA secure, the resulting commitment scheme is $(t,2\varepsilon)$-hiding. 
+ 
+\vspace*{2ex}
+\noindent
+\textsc{Contrasting for binding.}
+We can us the same contrasting also for the binging games. Let us consider the binging game against the first commitment mode:
+\begin{align*}
+\begin{game}{\GAME_3^\A}
+ &\PK\gets\Gen\\
+ &c_\star = \ENC_\PK(0)\\
+ &(c,m_0,r_0,m_1,r_1)\gets \A(pk,c_\star)\\
+ &c_0 \gets c_\star^{m_0}\cdot\ENC_\PK(0;r_0)\\
+ &c_1 \gets c_\star^{m_1}\cdot\ENC_\PK(0;r_1)\\
+ &\RETURN [c\iseq c_0] \wedge [c \iseq c_1] \wedge [m_0 \neq m_1] 
+\end{game}
+\end{align*}
+and he binging game against the second commitment mode:
+\begin{align*}
+\begin{game}{\GAME_4^\A}
+ &\PK\gets\Gen\\
+ &c_\circ = \ENC_\PK(0)\\
+ &(c,m_0,r_0,m_1,r_1)\gets \A(pk,c_\circ)\\
+ &c_0 \gets c_\star^{m_0}\cdot\ENC_\PK(0;r_0)\\
+ &c_1 \gets c_\star^{m_1}\cdot\ENC_\PK(0;r_1)\\
+ &\RETURN [c\iseq c_0] \wedge [c \iseq c_1] \wedge [m_0 \neq m_1] \enspace.
+\end{game}
+\end{align*}
+Again, we can give a reduction construction
+\begin{align*}
+\begin{aligned}
+\begin{fblock}{\ADB^\AD(\PK)}
+\RETURN (0,1)
+\end{fblock}\\
+\ \\
+\ \\
+\ \\
+\end{aligned}
+\qquad\qquad
+\begin{fblock}{\ADB^\AD(c)}
+ &(c,m_0,r_0,m_1,r_1)\gets \A(pk,c_\circ)\\
+ &c_0 \gets c_\star^{m_0}\cdot\ENC_\PK(0;r_0)\\
+ &c_1 \gets c_\star^{m_1}\cdot\ENC_\PK(0;r_1)\\
+ &\RETURN [c\iseq c_0] \wedge [c \iseq c_1] \wedge [m_0 \neq m_1] \enspace.
+\end{fblock}
+\end{align*}
+such that by substituting it to the IND-CPA games yields: $\GAME_3^\AD\equiv\BGAME_0^\ADB$ and $\GAME_4^\AD\equiv\BGAME_1^\ADB$. Thus, again we get
+\begin{align*}
+\abs{\pr{\GAME_3^\AD=1}-\pr{\GAME_4^\AD=1}}&=\ADVINDCPA{\CS}{\ADB}\enspace
+\end{align*}
+Since the second commitment mode is perfectly binding, we can estimate
+\begin{align*}
+\pr{\GAME_3^\AD=1}\leq \ADVINDCPA{\CS}{\ADB}+\pr{\GAME_4^\AD=1}\leq \ADVINDCPA{\CS}{\ADB}\enspace.
+\end{align*}
+Again, the overhead in the running time of $\ADB$ is only constant and we get that $(t,\varepsilon)$-IND-CPA security assures that the first commitment mode is $(t,\varepsilon)$-binding.     
+  
+\end{solution}
+\end{document}
+
+

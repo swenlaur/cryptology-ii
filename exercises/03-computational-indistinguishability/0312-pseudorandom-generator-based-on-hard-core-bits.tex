@@ -1,0 +1,28 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{}
+\editor{Sven Laur}
+\tags{ind-sem proof, coin-fixing argument}
+
+
+\begin{document}
+\begin{exercise}{Pseudorandom generator based on hard-core bits}
+  A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable} also
+  known as \emph{$(t,\varepsilon)$-hardcore predicate} for a function
+  $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+  \end{align*}
+   If a function $f:\set{0,1}^n\to\set{0,1}^{n+\ell}$
+    is $(t,\varepsilon_1)$-pseudorandom generator and
+    $\pi:\set{0,1}^n\to\set{0,1}$ is efficiently computable predicate
+    $(t,\varepsilon_1)$-hardcore , then a concatenation
+    $f_*(s)=f(s)||\pi(s)$ is
+    $(t,\varepsilon_1+\varepsilon_2)$-pseudorandom generator.
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}

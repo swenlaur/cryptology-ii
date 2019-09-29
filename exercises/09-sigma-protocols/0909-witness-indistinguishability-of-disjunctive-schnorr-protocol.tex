@@ -1,0 +1,203 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Kristiina Rahkema}
+\editor{Sven Laur}
+\tags{sigma protocol, discrete logarithm, zero-knowledge, witness indistinguishability}
+
+\begin{document}
+\begin{exercise}{Witness indistinguishability of disjunctive composition}
+Let $\GG$ be a discrete logarithm group with a prime number $q$ elements. Use the Schnorr protocol 
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha=g^{r}$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= x\beta+r$}}$\\
+    && $\bigl[g^{\gamma}\iseq \alpha y^{\beta}\bigr]$\\  
+  \end{tabular}
+\end{center}  
+to construct a proof of knowledge $\POK[\exists x_1\exists x_2: y_1=g^{x_1} \vee y_2=g^{x_2}]$. Give a complete description of the provers behaviour if it knows only $x_1$, only $x_2$ or both secrets. Use game rewriting to show that the output distribution of a verifier does not depend which of those provers it interacts.  
+\end{exercise}
+
+\begin{solution}
+Recall that the disjunctive composition is a three move protocol, where the prover sends two commitment messages $\alpha_1$ and $\alpha_2$. After that the verifier sends a challenge $\beta$, which is then freely decomposed into sub-challenges $\beta_1$ and $\beta_2$ and augmented with corresponding responses $\gamma_1$ and $\gamma_2$. Next, the verifier checks that $\beta_1+\beta_2=\beta$ and that individual protocol transcripts $(\alpha_1,\beta_1,\gamma_1)$ and $(\alpha_2,\beta_2,\gamma_2)$ are valid. The overall structure of disjunctive composition is depicted below.   
+\begin{center}
+  \begin{tabular}{rcc}
+    \hspace*{8em} $\PPP$ & & $\VVV$\\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1, \alpha_2$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\
+    &$\xrightarrow{\makebox[6cm]{$\beta_1, \beta_2, \gamma_1$, $\gamma_2$}}$\\
+    && $[\beta_1+\beta_2\iseq \beta]$\\  
+    && $[g^{\gamma_1}\iseq \alpha_1 y^{\beta_1}] \wedge [g^{\gamma_2}\iseq \alpha_2 y^{\beta_2}]$ \\
+  \end{tabular}
+\end{center}  
+If the prover knows both secret exponents $x_1$ and $x_2$, then it can carry out both protocols as usual and we get the following detailed description of a protocol execution: 
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r_1\getsu\ZZ_q$ \\
+    $r_2\getsu\ZZ_q$ \\
+    $\alpha_1 \gets g^{r_1}$ \\
+    $\alpha_2 \gets g^{r_2}$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1, \alpha_2$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    $\beta_2\getsu\ZZ_q$ \\
+    $\beta_1 \gets \beta - \beta_2$ \\
+    $\gamma_1 \gets x_1\beta_1+r_1$ \\
+    $\gamma_2 \gets x_2\beta_2+r_2$ \\
+    &$\xrightarrow{\makebox[6cm]{$\beta_1, \beta_2, \gamma_1$, $\gamma_2$}}$\\
+    && $[\beta_1+\beta_2\iseq \beta]$\\  
+    && $[g^{\gamma_1}\iseq \alpha_1 y^{\beta_1}] \wedge [g^{\gamma_2}\iseq \alpha_2 y^{\beta_2}]$ \\
+  \end{tabular}
+\end{center}  
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Prover knows only $x_1$.}
+When the prover does not know $x_2$, it cannot create the response for the second sub-challenge $\beta_2$ without creating a simulated protocol transcript first. As a result, the prover must fix the value $\beta_2$ before the challenge $\beta$ is generated. The corresponding protocol execution is depicted below.
+
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r_1\getsu\ZZ_q$ \\
+    $\beta_2\getsu\ZZ_q$ \\
+    $\gamma_2\getsu\ZZ_q$ \\
+    $\alpha_1 \gets g^{r_1}$ \\
+    $\alpha_2 \gets \frac{g^{\gamma_2}}{y_2^{\beta_2}}$\\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1, \alpha_2$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    $\beta_1 \gets \beta - \beta_2$ \\
+    $\gamma_1 \gets x_1\beta_1+r_1$ \\
+    &$\xrightarrow{\makebox[6cm]{$\beta_1, \beta_2,\gamma_1$, $\gamma_2$}}$\\
+    && $[\beta_1+\beta_2\iseq \beta]$\\  
+    && $[g^{\gamma_1}\iseq \alpha_1 y^{\beta_1}] \wedge [g^{\gamma_2}\iseq \alpha_2 y^{\beta_2}]$ \\
+  \end{tabular}
+\end{center}  
+
+\vspace*{2ex}
+\noindent
+\textsc{Prover knows only $x_2$.}
+When the prover does not know $x_1$, it cannot create the response for the second sub-challenge $\beta_1$ without creating a simulated protocol transcript first. As a result, the prover must fix the value $\beta_1$ before the challenge $\beta$ is generated. The corresponding protocol execution is depicted below.
+
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r_2\getsu\ZZ_q$ \\
+    $\beta_1\getsu\ZZ_q$ \\
+    $\gamma_1\getsu\ZZ_q$ \\
+    $\alpha_1 \gets \frac{g^{\gamma_1}}{y_1^{\beta_1}}$\\
+    $\alpha_2 \gets g^{r_2}$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1, \alpha_2$}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    $\beta_2 \gets \beta - \beta_1$ \\
+    $\gamma_2\gets x_2\beta_2+r_2$ \\
+    &$\xrightarrow{\makebox[6cm]{$\beta_1, \beta_2,\gamma_1$, $\gamma_2$}}$\\
+    && $[\beta_1+\beta_2\iseq \beta]$\\  
+    && $[g^{\gamma_1}\iseq \alpha_1 y^{\beta_1}] \wedge [g^{\gamma_2}\iseq \alpha_2 y^{\beta_2}]$ \\
+  \end{tabular}
+\end{center}  
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Witness indistinguishability.}
+In the following we show that the verifier cannot distinguish which of those three modes the honest prover runs. As the first step, we show that the verifier cannot distinguish whether the prover knows $x_1$ and $x_2$ or only $x_1$.  For that, we construct games for both execution modes where the output is determined by the verifier $\VVV_*$ and then show that both games produce identical output distributions. The game $\GAME_0$ corresponds to the case where the prover knows $x_1$ and $x_2$ and game $\GAME_3$ to the case where prover knows only $x_1$:
+\begin{align*}
+&\begin{game}{\GAME_0}
+&r_1\getsu\ZZ_q \\
+   & r_2\getsu\ZZ_q \\
+    &\alpha_1 \gets g^{r_1} \\
+    &\alpha_2 \gets g^{r_2} \\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+  &\beta_2\getsu\ZZ_q \\
+    &\beta_1 \gets \beta - \beta_2 \\
+    &\gamma_1 \gets x_1\beta_1+r_1 \\
+    &\gamma_2 \gets x_2\beta_2+r_2 \\
+&\RETURN \VVV_*(\beta_1,\beta_2,\gamma_1,\gamma_2)
+\end{game}
+&\begin{game}{\GAME_3}
+  &r_1\getsu\ZZ_q \\
+  &\beta_2\getsu\ZZ_q \\
+   &\gamma_2\getsu\ZZ_q \\
+   &\alpha_1 \gets g^{r_1} \\
+   &\alpha_2 \gets \frac{g^{\gamma_2}}{y_2^{\beta_2}}\\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+  &\beta_1 \gets \beta - \beta_2 \\
+    &\gamma_1 \gets x_1\beta_1+r_1\\
+  &\RETURN \VVV_*(\beta_1,\beta_2,\gamma_1,\gamma_2)\enspace.
+\end{game}
+\end{align*}
+Since the sampling of $\beta_2$ does not depend on $\beta$ in $\GAME_0$ we can move it towards the beginning of the game and get a new game with the same output distribution:
+\begin{align*}
+&\begin{game}{\GAME_{1}}
+&r_1\getsu\ZZ_q \\
+&\beta_2\getsu\ZZ_q \\
+   & r_2\getsu\ZZ_q \\
+    &\alpha_1 \gets g^{r_1} \\
+    &\alpha_2 \gets g^{r_2} \\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+    &\beta_1 \gets \beta - \beta_2 \\
+    &\gamma_1 \gets x_1\beta_1+r_1 \\
+    &\gamma_2 \gets x_2\beta_2+r_2 \\
+&\RETURN \VVV_*(\beta_1,\beta_2,\gamma_1,\gamma_2)\enspace.
+\end{game}.
+\end{align*}
+Let us now concentrate on the variables $r_2, \alpha_2, \beta_2, \gamma_2$. Note that even for fixed $\beta_2$ the value $\gamma_2$ must be uniformly distributed as $r_2$ is uniformly distributed. Hence, we can pick $\gamma_2$ and then calculate $r_2$ from it:
+\begin{align*}
+&\begin{game}{\GAME_{2}}
+&r_1\getsu\ZZ_q \\
+&\beta_2\getsu\ZZ_q \\
+&\gamma_2\getsu\ZZ_q \\
+&r_2\gets \gamma_2 - x_2\beta_2 \\
+    &\alpha_1 \gets g^{r_1} \\
+    &\alpha_2 \gets g^{r_2} \\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+    &\beta_1 \gets \beta - \beta_2 \\
+    &\gamma_1 \gets x_1\beta_1+r_1 \\
+&\RETURN \VVV_*(\gamma_1,\gamma_2,\beta_1,\beta_2)\enspace.
+\end{game}\end{align*}
+Now note that $\alpha_2 = g^{r_2}  = g^{\gamma_2 - x_2\beta_2} = \frac{g^{\gamma_2}}{y^{\beta_2}}$ and thus $\GAME_{2}$ is equivalent to $\GAME_{3}$.
+
+The sequence of game transformations that show that knowledge of $x_2$ is indistinguishable form the knowledge of $x_1$ and $x_2$ is analogous, except for a minor detail how $\beta_1$ and $\beta_2$ are generated:
+\begin{align*}
+&\begin{game}{\GAME_0}
+&r_1\getsu\ZZ_q \\
+   & r_2\getsu\ZZ_q \\
+    &\alpha_1 \gets g^{r_1} \\
+    &\alpha_2 \gets g^{r_2} \\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+  &\beta_2\getsu\ZZ_q \\
+    &\beta_1 \gets \beta - \beta_2 \\
+    &\gamma_1 \gets x_1\beta_1+r_1 \\
+    &\gamma_2 \gets x_2\beta_2+r_2 \\
+&\RETURN \VVV_*(\beta_1,\beta_2,\gamma_1,\gamma_2)
+\end{game}
+&\begin{game}{\overline{\GAME}_3}
+   &r_2\getsu\ZZ_q \\
+   &\beta_1\getsu\ZZ_q\\
+   &\gamma_1\getsu\ZZ_q \\
+   &\alpha_1 \gets \frac{g^{\gamma_1}}{y_1^{\beta_1}}\\
+   &\alpha_2 \gets g^{r_2} \\
+  &\beta\gets \VVV_*(\alpha_1,\alpha_2)\\
+  &\beta_2 \gets \beta - \beta_1 \\
+    &\gamma_1 \gets x_1\beta_1+r_1\\
+  &\RETURN \VVV_*(\beta_1,\beta_2,\gamma_1,\gamma_2)\enspace.
+\end{game}
+\end{align*}
+It is easy to see that it does not matter if we first pick $\beta_1$ and then calculate $\beta_2 = \beta - \beta_1$ in $\GAME_0$ or if we first pick $\beta_2$ and then calculate $\beta_1 = \beta - \beta_2$. After doing this switch, we will arrive at the setting where the games are analogously aligned as in the first equivalence proof and we can do analogous proof that games $\GAME_0$ and $\GAME_3$ are identical. As a result, we have shown 
+\begin{align*}
+\GAME_3^{\VVV_*}\equiv \GAME_0^{\VVV_*}\equiv \overline{\GAME}_3^{\VVV_*}
+\end{align*}
+and thus by transitivity the verifier will not be able to distinguish between any of these games. Note that the proof holds also for malicious adversary who could create $\beta$ as it wishes, since during the game rewriting we made no assumption about $\beta$.  
+\end{solution}
+\end{document}

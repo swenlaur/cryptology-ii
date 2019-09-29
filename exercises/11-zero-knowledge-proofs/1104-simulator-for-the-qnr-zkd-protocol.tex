@@ -1,0 +1,54 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author[Fiat-Shamir]{Sven Laur}
+\contributor{Pille Pullonen}
+\editor{Sven Laur}
+\tags{statistical indistinguishability, distributions, simulatability, quadratic non-residuosity proof}
+
+\renewcommand{\ADVIND}[2]{\ADV^{\mathsf{ind}}_{#1}(#2)}
+\newcommand{\REWRITE}{\qquad\scalebox{1.5}{$\rightsquigarrow$}\qquad}
+
+\newcommand{\ISQNR}{\mathsf{IsQnr}}
+\begin{document}
+
+
+\begin{exercise}{Simulator for the QNR-ZKD protocol}
+Let $n$ be a composite number with a factorisation $n=pq$ known to the prover $\PPP$. Let $v\in\ZZ_n^*$ be a number for which the prover wants to prove that it is quadratic non-residue. Let $(\GEN,\COM,\OPEN)$ be a perfectly binding and computationally hiding commitment.  Show that the the following zero-knowledge  protocol    
+\begin{center}
+\begin{tabular}{lllcl}
+	&$\PPP$ &&   $\VVV$\\
+	$\PK\gets\GEN$
+	&&&& $b\getsu\set{0,1},\ $\\
+    &&$\xleftarrow{\makebox[4cm]{$c=r^2v^b$}}$ 
+	&& $r\getsu\ZZ_n^*$ \\
+	
+	$\overline{b}\gets\ISQNR_{p,q}(c)$\\
+	$(\overline{c},\overline{d})\gets\COM(\overline{b})$
+	&&$\xrightarrow{\makebox[4cm]{{$\PK,\overline{c}$}}}$\\
+	&&$\xleftarrow {\makebox[4cm]{$r,b$}}$ \\
+	$c\iseq r^2v^b$\\
+	&&$\xrightarrow{\makebox[4cm]{$\overline{d}$}}$
+	&& $\OPEN_\PK(\overline{c},\overline{d})\iseq b$
+	\\
+\end{tabular}
+\end{center}  
+where the verifier $\VVV$ releases $r,b$ is simulatable. For that construct first a semi-efficient algorithm $\KEXTR^{\VVV_*}$ for extracting $r,b$ that correspond to initial message $c$. Next show that the following simulator construction
+\begin{align*}
+\begin{fblock}{\VVV_\circ(\phi)}
+ & \omega\gets\Omega\\
+ & c\gets\VVV_*(\phi;\omega)\\
+ & (b_*,r_*)\gets\KEXTR^{\VVV_*}(\phi;\omega)\\
+ & \alpha\gets\VVV_*\\
+ & \beta\getsu\BBB\\
+ & \gamma\gets\VVV_*(\beta)\\
+ & \IF \VERIFY(\alpha,\beta,\gamma)=0\ \THEN \RETURN \VVV_*(\bot)\\ 
+ & \IF \beta_*\neq \bot \ \THEN \RETURN \VVV_*(b_*)\\
+ & \ELSE \RETURN \bot
+\end{fblock}
+\end{align*}   
+can create an output distribution $\psi_\circ$ that is computationally  $(t_\circ,\varepsilon_\circ)$-distant from the output distribution of malicious verifier $\VVV_*$ that interacts with the honest prover. Also, estimate how the running-time of the simulator depends on the desired distance $\varepsilon_\circ$.
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}
+

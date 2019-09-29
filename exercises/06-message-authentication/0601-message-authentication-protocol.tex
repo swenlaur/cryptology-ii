@@ -1,0 +1,304 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{lmodern} % Muidu tekib ühe konkreetse fondi kompileerimisega veateade
+\author{Sven Laur}
+\contributor[Initial solution]{Ivo Kubjas}
+\editor{Sven Laur}
+\tags{message authentication, protocol, asynchronous communication}
+
+\newtheorem{llemma}{Lemma}
+\newcommand{\HELLO}{\textsf{Hello}}
+\newcommand{\ADVMAC}[2]{\ADV_{#1}^{\mathsf{mac}}(#2)}
+
+\begin{document}
+
+\begin{exercise}{Stateless message authentication protocol} Although a good
+    message authentication code $h:\MSPACE\times\KSPACE\to\TSPACE$ protects
+    against impersonation and substitution attacks, it does not guarantee
+    security against reflection and interleaving attacks. In the following, we
+    analyse the security of a simple three move protocol between $\PARTY_1$ and
+    $\PARTY_2$. First, $\PARTY_1$ sends $\textsf{Hello}$ message to $\PARTY_2$
+    who replies a randomly generated nonce $r\gets\RRR$.  To transfer a message
+    $m$, $\PARTY_1$ sends out $m, r, h(m||r,k)$ to $\PARTY_2$ who accepts $m$
+    only if the message authentication code is correct and the nonce $r$ is the
+    one sent out by $\PARTY_2$. Let us consider security of two sequential
+    invocations of this protocol between $\PARTY_1$ and $\PARTY_2$ in the
+    setting where all messages are routed through the adversary $\AD$.
+
+    \begin{center}
+        \begin{tabular}{lllll}
+            $\PARTY_1$ && $\AD$ && $\PARTY_2$\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_1$}}$&
+            &$\xleftarrow {\makebox[4cm]{$r_1$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$m_1,\hat{r}_1, h(m_1||\hat{r}_1,k)$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\bar{m}_1,\bar{r}_1, h(\bar{m}_1||\bar{r}_1,k)$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_2$}}$&
+            &$\xleftarrow {\makebox[4cm]{$r_2$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$m_2,\hat{r}_2, h(m_2||\hat{r}_2,k)$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\bar{m}_2,\bar{r}_2, h(\bar{m}_2||\bar{r}_2,k)$}}$\\
+        \end{tabular}
+    \end{center}   
+Since the adversary $\AD$ is free to send messages at any time, there are many
+possible interleavings of protocol runs $\AD$ can enforce. Analyse the security
+of the protocol provided that $m_1\neq m_2$ are fixed and the attack $\AD$ is
+considered successful if $\PARTY_2$ accepts $m_2,m_1$ instead of $m_1,m_2$.
+\end{exercise}
+\begin{solution} 
+Although there is large number of potential interleavings, only some of them are
+really relevant. For instance, there is no difference in which order the first
+$\mathsf{Hello}$ messages are sent. Still, the order of some messages is really
+relevant. For instance, there is a big difference whether $\AD$ knows $r_1$
+before he or she sends out $\hat{r}_1$. For clarity, we first consider only pure
+attack strategies that always use a fixed interleaving patterns. Later we show
+how we can describe the success of mixed strategies in terms of pure attack
+strategies. 
+
+Let $a\prec b$ denote that the message $a$ occurs before the message $b$ in the
+protocol. Then a valid interleaving must satisfy certain restrictions by the
+construction, such as $r_1\prec r_2$ and $\hat{r}_1\prec \hat{r}_2$. Although
+these restrictions reduce the analysis space, the number of interleavings is
+still too large for exhaustive analysis. Therefore we further compact the
+analysis space further by showing that certain attack types are inferior
+compared to the other attack types. After that, we analyse only more successful
+attacks. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Simplification step.} For further analysis, note that messages
+$r_1,\hat{r}_1,r_2$ and $\hat{r}_2$ are special in the protocol as these nonces
+are used to enforce causal relations between protocol messages that secure the
+protocol against simple reflection attacks. Hence, it makes sense to consider
+all possible interleavings of $r_1,\hat{r}_1,r_2$ and $\hat{r}_2$.     
+
+\begin{llemma} Let $\ADV(\AD)$ denote the success probability of an attack. Then
+    for any attack $\AD$ where $\hat{r}_1\prec r_1$, there exists an attack
+    $\AD_*$ where $r_1\prec \hat{r}_1$ such that $\ADV(\AD)\leq \ADV(\AD_*)$ and
+    for any attack $\AD$ where $\hat{r}_2\prec r_2$, there exists an attack
+    $\AD_*$ where $r_2\prec \hat{r}_2$ such that $\ADV(\AD)\leq \ADV(\AD_*)$.
+\end{llemma} 
+\begin{proof} Let there be an attack $\AD$ on the protocol where
+    $\hat{r}_1 \prec r_1$. Then we can construct a new algorithm $\AD_*$ that
+    interacts with $\AD$ in order to attack the protocol. Initially, $\AD_*$
+    acts as a wire between $\AD$ and a protocol, that is, it sends all messages
+    acquired form the protocol to $\AD$ and submit all the messages from $\AD$
+    as corresponding protocol messages. This type of execution can continue
+    until $\AD$ sends out $\hat{r}_1$ to $\PARTY_1$. Then $\AD_*$ initiates
+    communication with $\PARTY_2$, sending him $\HELLO$ and receives $r_1$ from
+    $\PARTY_2$. Next, $\AD_*$ stores the value $r_1$ and continues by sending
+    out $\hat{r}_1$ to $\PARTY_1$. After that $\AD_*$ again acts as a wire
+    between the protocol and the $\AD$ with a small exception.  When $\AD$
+    queries $r_1$, $\AD_*$ returns the stored value of $r_1$. This modification
+    guarantees that $r_1\prec\hat{r}_1$ in the modified attack. Also, it is
+    evident that $\PARTY_2$ reaches the same state as in the original protocol,
+    since all received and sent messages are identical in both runs. Thus,
+    $\ADV(\AD) = \ADV(\AD_*)$. The second claim can be proven by similarly
+    delaying $\hat{r}_2$.  
+\end{proof}
+
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{lll|lll|ll}
+            $\PARTY_1$ &&
+            \multicolumn{4}{c}{$\AD_*$} && $\PARTY_2$\\
+            \cline{4-6}
+            &1&&&$\AD$&&\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &&&&&&$\xleftarrow {\makebox[4cm]{$r_1$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_1$}}$&
+            &$\xleftarrow{\makebox[1cm]{$\hat{r}_1$}}$&&&\\
+            &&&&&$\xleftarrow{\makebox[1cm]{$r_1$}}$&\\
+            &$\xrightarrow{\makebox[4cm]{$m_1,\hat{r}_1, h(m_1||\hat{r}_1,k)$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$
+            &$\xrightarrow{\makebox[4cm]{$\bar{m}_1,\bar{r}_1, h(\bar{m}_1||\bar{r}_1,k)$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_2$}}$&
+            &$\xleftarrow{\makebox[1cm]{$\ldots$}}$&
+            &$\xleftarrow{\makebox[1cm]{$\ldots$}}$
+			&$\xleftarrow {\makebox[4cm]{$r_2$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$m_2,\hat{r}_2, h(m_2||\hat{r}_2,k)$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$&
+            &$\xrightarrow{\makebox[1cm]{$\ldots$}}$
+			&$\xrightarrow{\makebox[4cm]{$\bar{m}_2,\bar{r}_2, h(\bar{m}_2||\bar{r}_2,k)$}}$\\
+            \cline{4-6}
+        \end{tabular}
+    \end{center}   
+\caption{Schematic illustration of the delay construction $\AD_*$.}
+\end{figure}
+
+\vspace*{2ex}
+\noindent
+\textsc{Analysis of  a particular scheduling.}
+As a next step towards the full proof, let us analyse the attack where $\AD$ when $r_1\prec\hat{r}_1\prec r_2\prec \hat{r}_2$. The potential interleaving pattern is depicted below.
+
+    \begin{center}
+        \begin{tabular}{lllll}
+            $\PARTY_1$ && $\AD$ && $\PARTY_2$\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &&&$\xleftarrow {\makebox[4cm]{$r_1$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_1$}}$&\\
+            &$\xrightarrow{\makebox[4cm]{$m_1,\hat{r}_1, h(m_1||\hat{r}_1,k)$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\bar{m}_1,\bar{r}_1, h(\bar{m}_1||\bar{r}_1,k)$}}$\\
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+            &&&$\xleftarrow {\makebox[4cm]{$r_2$}}$\\
+            &$\xleftarrow {\makebox[4cm]{$\hat{r}_2$}}$&\\
+            &$\xrightarrow{\makebox[4cm]{$m_2,\hat{r}_2, h(m_2||\hat{r}_2,k)$}}$&
+            &$\xrightarrow{\makebox[4cm]{$\bar{m}_2,\bar{r}_2, h(\bar{m}_2||\bar{r}_2,k)$}}$\\
+        \end{tabular}
+    \end{center}   
+
+The attack is successful if $\PARTY_2$ accepts $m_2, m_1$ instead of $m_1, m_2$. Note that $\PARTY_2$ accepts both messages only if $r_i = \bar{r}_i$ and $h(\bar{m}_i||r_i, k) = \bar{t}_i$ for $i\in\set{1,2}$. Let us analyse the first check more closely. In this case, the adversary $\AD$ sees a message authentication code $h(m_1||\hat{r}_1,k)$ before $\AD$ must provide a valid tag $\bar{t}_1$. However, the tag $t_1$ is not directly useful, since $\bar{m}_1=m_2$ by our requirements. In fact, a successful attack can be viewed as a substitution attack, where $\AD$ replaces the message $m_1,\hat{r}_1$ with $m_1,r_1$.
+
+Thus, we can limit the success probability by direct reduction to the security of the message authentication code. Recall that the security of a message authentication code is defined through the following game 
+\begin{align*}
+  \begin{game}{\BGAME^\ADB}
+    &k\getsu\KSPACE\\
+    & t_0\gets \bot\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}}
+      &x_i\gets \ADB(t_{i-1})\\
+      &t_i\gets h(x_i,k)\\
+    \end{forblock}\\
+    &(x,t)\gets\ADB(t_q)\\
+    &\RETURN [t\iseq h(x,k)]\wedge[(x,t)\notin\set{(x_1,t_1),\ldots,(x_q,t_q)}] \enspace.
+  \end{game}
+\end{align*}
+As $\AD$ receives only one message authentication tag, we can consider the simplified security game  
+\begin{align*}
+    \begin{game}{\BGAME^\ADB}
+        & k \getsu K \\
+        & x_1 \gets \ADB \\
+        & t_1\gets h(x_1,k)\\
+        & (x, t) \gets \ADB(x_1, t_1) \\
+        & \RETURN x_1 \neq x \wedge h(x, k) = t\enspace,
+    \end{game}
+\end{align*}
+which defines $(t,1,\varepsilon)$-secure message authentication codes. Hence, we  can construct $\ADB$ as follows 
+\begin{align*}
+    &\begin{fblock}{\ADB}
+        & r_1 \gets \RSPACE\\
+        & \hat{r}_1\gets \AD(r_1)\\
+        & x_1\gets m_1||\hat{r_1}\\ 
+        & \RETURN x_1
+    \end{fblock}
+    &
+    &\begin{fblock}{\ADB(t_1)}
+        & \bar{t}_1 \gets \AD(m_1,\hat{r}_1, t_1) \\
+        & x = m_2 || r_1\\
+        & \RETURN (x, \bar{t}_1)
+    \end{fblock}
+\end{align*}
+if we omit all $\mathsf{Hello}$ messages received and sent by $\AD$ and resolve ambiguities caused by the ordering of messages similarly to the analysis carried out in Lemma~1. By substituting $\ADB$ into $\BGAME$,  we get a game
+\begin{align*}
+    \begin{game}{\GAME_0}
+        & k \getsu K \\
+        & r_1 \gets \RSPACE \\
+        & \hat{r}_1 \gets \AD(r_1) \\
+        & \bar{t}_1 \gets \AD(m_1,\hat{r}_1, h(m_1||\hat{r}_1, k)) \\
+        & \RETURN [m_2||r_1 \neq m_1 ||\hat{r}_1]\wedge [h(m_2 || r_1, k) \iseq \bar{t}_1]
+    \end{game}
+\end{align*}
+that ends with one only if $\PARTY_2$ accepts the first message. Thus we have proved 
+\begin{align*}
+\pr{\AD \text{ succeeds}}\leq
+\pr{\PARTY_2 \text{ accepts } m_2 \text{ as the first message}} \leq
+    \ADVMAC{h}{\ADB}\enspace.
+\end{align*}
+Since the running time of $\ADB$ is only by a constant larger than the running-time, we can bound $\ADVMAC{h}{\ADB}\leq \varepsilon$.
+
+
+\vspace{2ex}\noindent
+\textsc{Analysis of a particular scheduling.} Let us analyse the attack where $\AD$ when $r_1\prec r_2\prec \hat{r}_1\prec \hat{r}_2$. The potential interleaving pattern is depicted below.
+
+\begin{center}
+    \begin{tabular}{lllll}
+        $\PARTY_1$ && $\AD$ && $\PARTY_2$\\
+        &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&
+        &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+        &&&$\xleftarrow {\makebox[4cm]{$r_1$}}$\\
+        &&&$\xrightarrow{\makebox[4cm]{$\bar{m}_1,\bar{r}_1, h(\bar{m}_1||\bar{r}_1,k)$}}$\\
+        
+        &&&$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$\\
+        &&&$\xleftarrow {\makebox[4cm]{$r_2$}}$\\
+        &$\xleftarrow {\makebox[4cm]{$\hat{r}_1$}}$&\\
+        &$\xrightarrow{\makebox[4cm]{$m_1,\hat{r}_1, h(m_1||\hat{r}_1,k)$}}$&\\
+        &$\xrightarrow{\makebox[4cm]{$\mathsf{Hello}$}}$&\\
+        &$\xleftarrow {\makebox[4cm]{$\hat{r}_2$}}$&\\
+        &$\xrightarrow{\makebox[4cm]{$m_2,\hat{r}_2, h(m_2||\hat{r}_2,k)$}}$&
+        &$\xrightarrow{\makebox[4cm]{$\bar{m}_2,\bar{r}_2, h(\bar{m}_2||\bar{r}_2,k)$}}$\\
+    \end{tabular}
+\end{center}   
+In this case, $\AD$ obtains no message authentication tags before $\AD$ has to construct $\bar{t}_1$, i.e., $\AD$ conducts an impersonation attack. Consequently, $(t,0,\varepsilon)$-secure message authentication codes are sufficient to bound the success probability. Since the previously analysed attack pattern required $(t,1,\varepsilon)$-secure message authentication codes, it makes sense to construct the reduction to this more liberal security game. One of the possible reductions is given below
+\begin{align*}
+    &\begin{fblock}{\ADC}
+        & r_* \gets \RSPACE\\
+        & x_1\gets m_1||r_*\\ 
+        & \RETURN x_1
+    \end{fblock}
+    &
+    &\begin{fblock}{\ADC(t_1)}
+        & r_1\gets \RSPACE\\
+        & \bar{m}_1,\bar{r}_1,\bar{t}_1 \gets \AD(r_1) \\
+        & x = m_2 || r_1\\
+        & \RETURN (x, \bar{t}_1)\enspace.
+    \end{fblock}
+\end{align*}
+A direct substitution of $\ADC$ into $\BGAME$ leads to
+\begin{align*}
+    \begin{game}{\GAME_1}
+        & k \getsu K \\
+        & r_* \gets \RSPACE\\
+        & t_1\gets h(m_1||r_*,k)\\
+        & r_1 \gets \RSPACE \\
+        & \bar{m}_1,\bar{r}_1,\bar{t}_1 \gets \AD(r_1) \\
+        & \RETURN [m_1||r_*\neq m_2||r_1]\wedge h(m_2 || r_1, k) = \bar{t}_1\enspace.
+    \end{game}
+\end{align*}
+By deleting all irrelevant computations, we get
+\begin{align*}
+    \begin{game}{\GAME_1}
+        & k \getsu K \\
+        & r_1 \gets \RSPACE \\
+        & \bar{m}_1,\bar{r}_1,\bar{t}_1 \gets \AD(r_1) \\
+        & \RETURN  h(m_2 || r_1, k) = \bar{t}_1\enspace.
+    \end{game}
+\end{align*}
+Note that the last line is corresponds to a sub-check that must hold in order for 
+$\PARTY_2$ to accept the message. Hence, we have again proven 
+\begin{align*}
+\pr{\AD \text{ succeeds}}\leq
+\pr{\PARTY_2 \text{ accepts } m_2 \text{ as the first message}}\leq
+\ADVMAC{h}{\ADC}\enspace.
+\end{align*}
+
+\vspace{2ex}\noindent
+\textsc{Analysis of mixed attack patterns.}
+To get a final security bound, we must first bound the the success for all adversaries with the fixed interleaving patterns. Although there are $4!=24$ possible combinations of $r_1, r_2, \hat{r}_1, \hat{r}_2$, not all of them are possible. Clearly, attacks  where $r_2 \prec r_1$ or $\hat{r}_2 \prec \hat{r}_1$ are impossible. From the remaining patterns there are three where $\bar{r}_1 \prec r_1$.  Lemma~1 assured that these attacks can be converted to the attacks $r_1 \prec \bar{r}_1$ without being less successful, so we can omit these.
+From the remaining three attack patterns there is one where $\bar{r}_2 \prec
+r_2$. We can omit it as Lemma~1 guarantees that there is an attack with $r_2 \prec \bar{r}_2$
+where the adversary is as successful. As a consequence, we are left with two attack patterns: $r_1 \prec \bar{r}_1
+\prec r_2 \prec \hat{r}_2$ and $r_1 \prec r_2 \prec \hat{r}_1 \prec \hat{r}_2$, whose success we have previously analysed. 
+
+If we apply the same analysis for the adversaries that adaptively choose the interleaving pattern during the attack, then we can conclude that without of loss of generality we can consider adversaries which dynamically decide between the attacks $r_1 \prec \bar{r}_1
+\prec r_2 \prec \hat{r}_2$ and $r_1 \prec r_2 \prec \hat{r}_1 \prec \hat{r}_2$.  
+
+Given such an adversary $\AD$, we can construct two adversaries $\AD_1$ and $\AD_2$ such that $\AD_1$ follows the interleaving pattern $r_1 \prec \bar{r}_1
+\prec r_2 \prec \hat{r}_2$ and $\AD_2$ follows the interleaving pattern  $r_1 \prec r_2 \prec \hat{r}_1 \prec \hat{r}_2$. The corresponding reduction is trivial, we run $\AD$ and halt if it chooses the other attack strategy. Obviously, $\AD$ succeeds only if either $\AD_1$ or $\AD_2$ succeeds. Since $\AD_1$ and $\AD_2$ use fixed attack strategies, we can conclude that for any $t$-time adversary $\AD$:
+\begin{align*}
+\pr{\AD \text{ succeeds}}\leq \pr{\AD_1 \text{ succeeds}}+ \pr{\AD_2 \text{ succeeds}}\leq 2\varepsilon
+\end{align*}      
+\end{solution}
+if $h$ is a $(t,1,\varepsilon)$-secure message authentication code. This reduction is not optimal, as we could directly reduce the success of $\AD$ to MAC forgeries. However, the corresponding reduction is technically more complicated.
+\end{document}
+

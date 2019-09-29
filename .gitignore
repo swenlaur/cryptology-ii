@@ -11,4 +11,5 @@
 **/.DS_Store
 
 # Omnigraffle trash
+**/*.graffle
 lectures/**/illustration-sources

@@ -1,0 +1,127 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Ivo Kubjas}
+\editor{Sven Laur}
+\tags{layered commitment, binding, partial opening, list commitment}
+
+\newcommand{\CS}{\mathfrak{C}}
+\newcommand{\ADCOM}{\AD_\textsf{Com}}
+\newcommand{\ADCR}{\AD_\textsf{CR}}
+\newcommand{\COLL}{\mathsf{Collision}}
+\newcommand{\ADVBIND}[2]{\ADV_{#1}^{\mathsf{bind}}(#2)}
+\newcommand{\ADVCR}[2]{\ADV_{#1}^{\mathsf{cr}}(#2)}
+
+
+\begin{document}
+\begin{exercise}{Security against partial double-opening}
+Let $\CS=(\GEN,\COM,\OPEN)$ be commitment scheme and $\HHH$ be a collision resistant hash function family with an appropriate domain. Then we can build a list commitment scheme on top of the ordinary commitment scheme:
+    \begin{align*}
+      \begin{fblock}{\GEN^\star}
+        &\PK\gets\GEN\\
+        &h\getsu\HHH\\
+        &\RETURN (\PK,h)
+      \end{fblock}
+      \qquad
+      \begin{fblock}{\COM_{\PK,h}^\star(x_1,\ldots,x_{\ell})}
+        &(c_i,d_i)\gets \COM_{\PK}(x_i),\ i\in\set{1,\ldots,\ell}\\ 
+        &c_*\gets h(c_1,\ldots,c_{\ell})\\
+        &\RETURN (c_*,(c_1,\ldots,c_{\ell},d_1,\ldots,d_{\ell})) 
+      \end{fblock}
+    \end{align*}
+where the decommitment procedure just verifies $c_*=h(c_1,\ldots,c_\ell)$ and restores
+$x_i\gets\OPEN_\PK(c_i,d_i)$ for $i\in\set{1,\ldots,\ell}$. Prove that the commitment scheme is secure against partial double openings defined through the following security game
+\begin{align*}
+\begin{game}{\GAME}
+& (\PK,h)\gets\GEN^\star\\
+& (c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell)\gets\AD(\PK,h)\\
+& (i,d_i,\hat{d}_i)\gets\AD(\PK,h)\\
+& \IF c_*\neq h(c_1,\ldots c_\ell) \vee  c_*\neq h(\hat{c}_1,\ldots \hat{c}_\ell)\ \THEN
+   \RETURN 0\\
+& \RETURN \bot\neq\OPEN_\PK(c_i,d_i)\neq \OPEN_\PK(\hat{c}_i,\hat{d}_i)\neq \bot\enspace  
+\end{game}
+\end{align*}
+provided that the base commitment is $(t,\varepsilon_1)$-binding and the hash function family is $(t,\varepsilon_2)$-collision resistant.
+\end{exercise}
+\begin{solution}
+Intuitively, there are two possible ways how the adversary $\AD$ can breach the security. First, the adversary $\AD$ may find a double opening for the base commitment scheme $\CS$. Second, the  adversary $\AD$ can breaking collision resistant hash function $h \in \HHH$. 
+
+Given the output $(c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell)$ is straightforward to decide whether the adversary found a hash collision or not. Namely, the collision occurs if $h(c_1,\ldots c_\ell)=h(\hat{c}_1,\ldots \hat{c}_\ell)$ and there exists $c_i\neq\hat{c}_i$. Thus, we can convert the original adversary $\AD$ into two adversaries $\AD_1$ and $\AD_2$. The adversary $\AD_1$ runs internally $\AD$ and outputs $(c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell)$ only if the event $\COLL$ does not occur, otherwise it halts. The adversary $\AD_2$ also runs internally $\AD$ but continues only if the event $\COLL$ occurs.  By the construction it is straightforward to note that 
+\begin{align*}
+\pr{\GAME^\AD=1}=\pr{\GAME^{\AD_1}=1}+\pr{\GAME^{\AD_2}=1}\enspace
+\end{align*}   
+and thus it is sufficient if we analyse the success of both adversaries separately. 
+
+Note that $\AD_1$ can succeed only if $\AD$ double opens some commitment value $c_i$, since it always outputs $c_i = \hat{c}_i$ for all $i \in \{1, \ldots, \ell\}$. More formally, let 
+\begin{align*}
+        \begin{game}{\BGAME^\ADB}
+            & \PK \gets \GEN \\
+            & (c, d, \hat{d}) \gets \ADB(\PK) \\
+            & \RETURN \bot \neq \OPEN_\PK(c, d) \neq \OPEN_\PK(c, \hat{d}) \neq
+            \bot \enspace
+        \end{game}
+\end{align*}
+be the binding game. Then we can use the following a reduction construction  
+\begin{align*}
+        \begin{fblock}{\ADB(\PK)}
+            & h \getsu \HHH \\
+            & (c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell) \gets \AD_1(\PK, h) \\
+            & (i, d_i, \hat{d}_i) \gets \AD_1(\PK, h) \\
+            & \RETURN (c_i, d_i, \hat{d}_i) \enspace.
+        \end{fblock}
+\end{align*}
+By inlining the definition of $\ADB$ into the game $\BGAME$ we obtain a slightly modified game
+\begin{align*}
+        \begin{game}{\GAME_1}
+            & \PK,\gets \GEN, h\getsu \HHH\\ 
+            & (c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell) \gets \AD_1(\PK, h) \\
+            & (i, d_i, \hat{d}_i) \gets \ADCOM(\PK, h) \\
+            & \RETURN \bot \neq \OPEN_\PK(c_i, d_i) \neq \OPEN_\PK(c_i,
+            \hat{d}_i) \neq
+            \bot \enspace
+        \end{game}
+\end{align*}
+which is more liberal compared to the original security game $\GAME$ due to omitted tests. As a result, we get
+\begin{align*}
+\pr{\GAME^{\AD_1}=1}\leq\pr{\smash{\GAME_1^{\AD_1}=1}}=\pr{\BGAME^\ADB=1}=\ADVBIND{\CS}{\ADB}\enspace.
+\end{align*}
+Now note that the time needed to check whether the collision exists or not is $\Theta(\ell)$ and thus the running time of $\AD_1$ and $\ADB$ is only $\Theta(\ell)$ bigger that the running time for $\AD$. Hence for $(t-\Oh(\ell))$-time adversaries $\AD$, we can conclude that $\pr{\GAME^{\AD_1}=1}\leq\varepsilon_1$ if the commitment is $(t,\varepsilon_1)$-binding.
+ 
+
+By the construction, $\AD_2$ can succeed only if $\AD_1$ finds a hash collision and thus its success is bounded by $\varepsilon_2$. Formally, we must still prove it by providing an explicit reduction to the collision-resistance game 
+\begin{align*}
+        \begin{game}{\QQQ'}
+            & h \getsu \HHH \\
+            & (m_1, m_2) \gets \ADB(h) \\
+            & \RETURN m_1 \neq m_2 \land h(m_1) = h(m_2)\enspace.
+        \end{game}
+\end{align*}
+The reduction is trivial
+\begin{align*}
+        \begin{fblock}{\ADB(h)}
+            & \PK \gets \GEN \\
+            & (c_*, c_1,\ldots c_\ell, \hat{c}_1,\ldots \hat{c}_\ell) \gets \AD_2(\PK, h) \\
+            & m_1\gets (c_1,\ldots, c_\ell)\\
+            & m_2\gets (\hat{c}_1,\ldots, \hat{c}_\ell)\\
+            & \RETURN (m_1,m_2) \enspace.
+        \end{fblock}
+\end{align*}
+By inlining this adversary definition in to the game $\BGAME$, we obtain a more liberal game 
+\begin{align*}
+        \begin{game}{\GAME_2}
+            & \PK,\gets \GEN, h\getsu \HHH\\ 
+            & (c_1, \ldots, c_\ell, \hat{c}_1, \ldots, \hat{c}_\ell) \gets
+            \AD_2(\PK, h) \\
+            & \RETURN h(c_1, \ldots, c_\ell) = h(\hat{c}_1, \ldots,
+            \hat{c}_\ell)\wedge (c_1, \ldots, c_\ell) \neq (\hat{c}_1, \ldots,
+            \hat{c}_\ell)
+        \end{game}
+\end{align*} 
+compared to the game $\GAME$. Thus, we arrive at 
+\begin{align*}
+\pr{\GAME^{\AD_2}=1}\leq\pr{\smash{\GAME_2^{\AD_2}=1}}=\pr{\BGAME^\ADB=1}=\ADVCR{\HHH}{\ADB}\enspace.
+\end{align*}
+Again, the overhead in the running-time of $\ADB$ is $\Oh(\ell)$ and thus for all $(t-\Oh(\ell))$-time adversaries $\AD$, we can conclude that $\pr{\GAME^{\AD_2}=1}\leq\varepsilon_2$ if the hash function family is $(t,\varepsilon_2)$-collision resistant.  
+\end{solution}
+
+\end{document}

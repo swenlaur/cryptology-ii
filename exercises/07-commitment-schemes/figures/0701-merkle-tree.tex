@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage[paperwidth=14cm,paperheight=8cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\begin{document}
+\thispagestyle{empty}
+\begin{pspicture}(-4.5,1.0)(5,5.5)
+% Root
+\cnodeput( 0,5){QS}{$c_{00}$}
+% L1
+\cnodeput(-3.0,4){Q0}{$c_{10}$}
+\cnodeput( 3.0,4){Q1}{$c_{11}$}
+% L2
+\cnodeput(-4.5,2.5){Q00}{$c_{20}$}
+\cnodeput(-1.5,2.5){Q01}{$c_{21}$}
+\cnodeput( 1.5,2.5){Q10}{$c_{22}$}
+\cnodeput( 4.5,2.5){Q11}{$c_{23}$}
+% L3
+\cnodeput(-5.25,1){Q000}{$c_{30}$}
+\cnodeput(-3.75,1){Q001}{$c_{31}$}
+\cnodeput(-2.25,1){Q010}{$c_{32}$}
+\cnodeput(-0.75,1){Q011}{$c_{33}$}
+\cnodeput( 0.75,1){Q100}{$c_{34}$}
+\cnodeput( 2.25,1){Q101}{$c_{35}$}
+\cnodeput( 3.75,1){Q110}{$c_{36}$}
+\cnodeput( 5.25,1){Q111}{$c_{37}$}
+% L4
+\rput(-5.25,-0.0){\rnode{P000}{\fbox{$m_0$}}}
+\rput(-3.75,-0.0){\rnode{P001}{\fbox{$m_1$}}}
+\rput(-2.25,-0.0){\rnode{P010}{\fbox{$m_2$}}}
+\rput(-0.75,-0.0){\rnode{P011}{\fbox{$m_3$}}}
+\rput( 0.75,-0.0){\rnode{P100}{\fbox{$m_4$}}}
+\rput( 2.25,-0.0){\rnode{P101}{\fbox{$m_5$}}}
+\rput( 3.75,-0.0){\rnode{P110}{\fbox{$m_6$}}}
+\rput( 5.25,-0.0){\rnode{P111}{\fbox{$m_7$}}}
+
+% L1
+\ncline{->}{Q0}{QS}%\bput{:D}{0}
+\ncline{->}{Q1}{QS}%\aput{:U}{1}
+
+% L2
+\ncline{->}{Q10}{Q1}%\bput{:D}{0}
+\ncline{->}{Q11}{Q1}%\aput{:U}{1}
+\ncline{->}{Q00}{Q0}%\bput{:D}{0}
+\ncline{->}{Q01}{Q0}%\aput{:U}{1}
+% L3
+\ncline{->}{Q000}{Q00}%\bput{:D}{0}
+\ncline{->}{Q001}{Q00}%\aput{:U}{1}
+\ncline{->}{Q010}{Q01}%\bput{:D}{0}
+\ncline{->}{Q011}{Q01}%\aput{:U}{1}
+\ncline{->}{Q100}{Q10}%\bput{:D}{0}
+\ncline{->}{Q101}{Q10}%\aput{:U}{1}
+\ncline{->}{Q110}{Q11}%\bput{:D}{0}
+\ncline{->}{Q111}{Q11}%\aput{:U}{1}
+% L4
+\ncline{<-}{Q000}{P000}
+\ncline{<-}{Q001}{P001}
+\ncline{<-}{Q010}{P010}
+\ncline{<-}{Q011}{P011}
+\ncline{<-}{Q100}{P100}
+\ncline{<-}{Q101}{P101}
+\ncline{<-}{Q110}{P110}
+\ncline{<-}{Q111}{P111}
+
+\end{pspicture}
+\end{document}

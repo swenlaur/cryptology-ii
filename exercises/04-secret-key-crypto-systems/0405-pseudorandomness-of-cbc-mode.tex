@@ -1,0 +1,267 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor[Initial solution]{Janno Siim}
+\contributor[Hybrid argument]{Sven Laur}
+\editor{Sven Laur}
+\tags{pseudorandom permutation, CBC mode of operation, block cipher}
+
+\newcommand{\ELIF}{\mathsf{else\ if}}
+\newenvironment{elifblock}[1]
+{\begin{aligned} &\hspace{0.3em}\ELIF\ #1 \THEN \\ &\left[\begin{aligned}}{\end{aligned}\right.\end{aligned}}
+
+
+\begin{document}
+\begin{exercise}{CBC mode as a pseudorandom function}
+Let $\FFF$ be $(t,\ell,\varepsilon)$-secure pseudorandom function with the domain $\set{0,1}^n$. Show that a single outcome of Cipher Block Chaining mode of operation
+\begin{align*}
+c_1=f(c_0\oplus m_1),\ c_2=f(c_1\oplus m_2),\ \ldots,\ c_\ell=f(c_{\ell-1}\oplus m_\ell)
+\end{align*}
+is indistinguishable from a random string even $c_0,m_1,\ldots, m_{\ell}$ are known or chosen by the adversary. Generalise the proof for the case when the adversary can query many inputs of the same size.
+More precisely, treat the mode as a randomised function $\textsc{Cbc}_f(m_1,\ldots,m_{\ell})=(c_0, c_1,\ldots,c_\ell)$ for $c_0\getsu\set{0,1}^n$. Show that  $\textsc{Cbc}_f$ is a pseudorandom function if one considers adversaries that query the same argument $(m_1,\ldots,m_\ell)$ only once.
+\end{exercise}
+\begin{solution}\ \vspace*{1ex}\\
+\textsc{Indistinguishability for a single $\textsc{Cbc}$ query.}
+Let us first correctly model the problem statement. Obviously, we need two games where the adversary $\AD$ first specifies $c_0,m_1,\ldots, m_{\ell}$, then obtains $c_1, \ldots, c_\ell$ and finally makes its decision. Note that in both games $\AD$ cannot have oracle access to the function $f$ or otherwise it could redo the computations and directly verify whether $c_i=f(c_{i-1}\oplus m_i)$ or not. Consequently, the right formalisation of the problem is  
+\begin{align*}
+\begin{game}{\GAME_0}
+& f \gets \FFF \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& \begin{forblock}{i\in \set{1, \dots, \ell}}
+& c_i \gets \set{0, 1}^n
+& \end{forblock} \\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\qquad\qquad\qquad\qquad
+\begin{game}{\GAME_1}
+&f \gets \FFF \\
+&(c_0, m_1, \dots, m_\ell) \gets \AD \\
+&\begin{forblock}{i\in \set{1, \dots, \ell}}
+&c_i \gets f(c_{i - 1} \oplus m_i)
+&\end{forblock} \\
+&\RETURN \AD(c_1, c_2, \dots, c_\ell)\enspace
+\end{game}
+\end{align*}
+where the first game models random reply and the second game models behaviour of $\textsc{Cbc}_f$.   
+
+
+As the first step, we replace function family $\FFF$ with the family of all functions $\FFFALL$. 
+Recall that a function family $\FFF$ is a $(t, \ell, \varepsilon)$-secure pseudorandom function family if for any $t$-time adversary $\ADB$ games
+\begin{align*}
+\begin{game}{\BGAME_0}
+&f \gets \FFFALL \\
+&\RETURN \ADB^f
+\end{game}
+\qquad\qquad
+\begin{game}{\BGAME_1}
+&f \gets \FFF \\
+&\RETURN \ADB^f
+\end{game}
+\end{align*}
+are $(t, \varepsilon)$-indistinguishable if $\ADB$ makes at most $\ell$ queries to $f$. 
+Now if we plug the following adversary 
+\begin{align*}
+\begin{game}{\ADB^f}
+&(c_0, m_1, \dots, m_\ell) \gets \AD \\
+&\begin{forblock}{i\in \set{1, \dots, \ell}}
+&c_i \gets f(c_{i - 1} \oplus m_i)
+&\end{forblock} \\
+&\RETURN \AD(c_1, c_2, \dots, c_\ell).
+\end{game}
+\end{align*}
+into the $\BGAME_1$ then we get the game $\GAME_1$ where $\ADB$ makes $\ell$ queries. 
+If we plug $\ADB$ into the game $\BGAME_0$ then we get a game $\GAME_2$ where the function family $\FFF$ is replaced
+\begin{align*}
+\begin{game}{\GAME_2}
+&f \gets \FFFALL \\
+&(c_0, m_1, \dots, m_\ell) \gets \AD \\
+&\begin{forblock}{i\in \set{1, \dots, \ell}}
+&c_i \gets f(c_{i - 1} \oplus m_i)
+&\end{forblock} \\
+&\RETURN \AD(c_1, c_2, \dots, c_\ell)\enspace.
+\end{game}
+\end{align*}
+Therefore, we obtain a bound 
+\begin{align*}
+\abs{\pr{\smash{\GAME_1^\AD = 1}} - \pr{\smash{\GAME_2^\AD = 1}}} \leq \varepsilon 
+\end{align*}
+provided that $\AD$ is $(t-c\ell)$-time adversary where the constant $c>1$ captures the overhead in the reduction.
+
+For a conceptual clarity, we will unroll the for loop and try to use hybrid argument to bound the maximal success in the game $\GAME_2$. Let us first define the sequence of following 
+\begin{align*}
+\begin{game}{\GAME_2}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \gets f(c_{0} \oplus m_1)\\
+& c_2 \gets f(c_{1} \oplus m_2)\\
+& \cdots\\
+& c_{\ell-1} \gets f(c_{\ell-2} \oplus m_{\ell-1})\\
+& c_\ell \gets f(c_{\ell-1} \oplus m_\ell)\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\qquad\qquad
+\begin{game}{\GAME_3}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \gets f(c_{0} \oplus m_1)\\
+& c_2 \gets f(c_{1} \oplus m_2)\\
+& \cdots\\
+& c_{\ell-1} \gets f(c_{\ell-2} \oplus m_{\ell-1})\\
+& c_\ell \getsu \set{0,1}^n\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\quad\cdots\quad
+\begin{game}{\GAME_{2+\ell}}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& c_2 \getsu \set{0,1}^n\\
+& \cdots\\
+& c_{\ell-1} \getsu \set{0,1}^n\\
+& c_\ell \getsu \set{0,1}^n\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)\enspace.
+\end{game}
+\end{align*}
+where each game replaces a function call with a random sample. 
+Clearly, the only difference in games $\GAME_2$ and $\GAME_3$ is how $c_\ell$ is computed: $c_\ell$ is a function call $f(c_{\ell-1} \oplus m_\ell)$ in $\GAME_2$ and a uniform choice over $\set{0,1}^n$ in $\GAME_3$.    
+As $f$ is chosen uniformly form all functions $\FFFALL$, the value of a function $f(x)$ is uniformly distributed and independent form all other inputs. However, the input $c_{\ell-1} \oplus m_\ell$ might be already computed as
+\begin{align*}
+ c_0\oplus m_1,\quad  c_1\oplus m_2,\quad \ldots,\quad c_{\ell-1}\oplus m_{\ell-1}\enspace.
+\end{align*} 
+In this case, replacing $f(c_{\ell-1} \oplus m_\ell)$ with a uniformly chosen value alters the game and thus might influence the outcome of the game. Consequently, we need to estimate the probability of collision
+\begin{align*}
+\pr{\begin{aligned}
+&f\gets\FFFALL, c_1\gets f(c_0\oplus m_1),c_2 \gets f(c_1\oplus m_2), \ldots, c_{\ell-1}\gets f(c_{\ell-2}\oplus m_{\ell-1}):\\
+&c_0\oplus m_1=c_{\ell-1} \oplus m_\ell \vee c_1\oplus m_2=c_{\ell-1} \oplus m_\ell \vee \ldots \vee c_{\ell-2}\oplus m_{\ell-1}= c_{\ell-1} \oplus m_\ell
+\end{aligned}}
+\end{align*}
+which is technically hard as we must consider many function calls at once. Let us therefore abandon the initial attempt and define the sequence differently so that the modifications start from the beginning:
+\begin{align*}
+\begin{game}{\GAME_2}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \gets f(c_{0} \oplus m_1)\\
+& c_2 \gets f(c_{1} \oplus m_2)\\
+& \cdots\\
+& c_{\ell-1} \gets f(c_{\ell-2} \oplus m_{\ell-1})\\
+& c_\ell \gets f(c_{\ell-1} \oplus m_\ell)\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\qquad\qquad
+\begin{game}{\GAME_3}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& c_2 \gets f(c_{1} \oplus m_2)\\
+& \cdots\\
+& c_{\ell-1} \gets f(c_{\ell-2} \oplus m_{\ell-1})\\
+& c_\ell \gets f(c_{\ell-1} \oplus m_\ell)\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\quad\cdots\quad
+\begin{game}{\GAME_{2+\ell}}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& c_2 \getsu \set{0,1}^n\\
+& \cdots\\
+& c_{\ell-1} \getsu \set{0,1}^n\\
+& c_\ell \getsu \set{0,1}^n\\
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)\enspace.
+\end{game}
+\end{align*}
+Again, the only difference in games $\GAME_2$ and $\GAME_3$ is how $c_1$ is computed: $c_1$ is a function call $f(c_{0} \oplus m_1)$ in $\GAME_2$ and a uniform choice over $\set{0,1}^n$ in $\GAME_3$. Note that the replacement is correct only if the subsequent function calls are different from $c_{0} \oplus m_1$ and thus we must estimate the probability of a collision
+\begin{align*}
+\pr{\begin{aligned}
+&f\gets\FFFALL, c_1 \gets f(c_0\oplus m_1), c_2 \gets f(c_1\oplus m_2)\ldots, c_{\ell} \gets f(c_{\ell-1}\oplus m_{\ell}):\\
+&c_0\oplus m_1= c_1\oplus m_2 \vee c_0\oplus m_1= c_2\oplus m_3 \vee \ldots\vee c_0\oplus m_1= c_{\ell-1} \oplus m_\ell
+\end{aligned}}\enspace.
+\end{align*}
+Again, this is technically quite difficult as we must consider many function calls at once.
+
+As the final attempt, let us model function calls without errors. This leads to the following definition
+\begin{align*}
+\begin{game}{\GAME_3}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& \IF c_0\oplus m_1 = c_1\oplus m_2\ \THEN c_2\gets c_1\\ 
+& \ELSE c_2\getsu \set{0,1}^n \\ 
+& \IF c_0\oplus m_1 = c_2\oplus m_3\ \THEN c_3\gets c_1\\ 
+& \ELIF c_1\oplus m_2 = c_2\oplus m_3\ \THEN c_3\gets c_2\\ 
+& \ELSE c_3\getsu \set{0,1}^n\\ 
+& \cdots\\
+& \cdots\\
+& \IF c_0\oplus m_1 = c_{\ell-1}\oplus m_1\ \THEN c_\ell\gets c_1\\ 
+& \cdots\\
+& \ELSE c_\ell\getsu \set{0,1}^n\\ 
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\end{align*}
+where each function call is replaced with an if-else block that checks if the argument $c_{i-1}\oplus m_i$ has not been queried before and if such a query was made then provides a consistent answer. As a result $\GAME_2$ and $\GAME_3$ are identical. Now we can start to simplify $\GAME_3$ by omitting the effect of if branches. The effect of the first change
+\begin{align*}
+\begin{game}{\GAME_3}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& \IF c_0\oplus m_1 = c_1\oplus m_2\ \THEN c_2\gets c_1\\ 
+& \ELSE c_2\getsu \set{0,1}^n \\ 
+& \IF c_0\oplus m_1 = c_2\oplus m_3\ \THEN c_3\gets c_1\\ 
+& \ELIF c_1\oplus m_2 = c_2\oplus m_3\ \THEN c_3\gets c_2\\ 
+& \ELSE c_3\getsu \set{0,1}^n\\ 
+& \cdots\\
+& \cdots\\
+& \IF c_0\oplus m_1 = c_{\ell-1}\oplus m_1\ \THEN c_\ell\gets c_1\\ 
+& \cdots\\
+& \ELSE c_\ell\getsu \set{0,1}^n\\ 
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\quad\quad\quad\quad
+\begin{game}{\GAME_4}
+& f \gets \FFFALL \\
+& (c_0, m_1, \dots, m_\ell) \gets \AD \\
+& c_1 \getsu \set{0,1}^n\\
+& \IF c_0\oplus m_1 = c_1\oplus m_2\ \THEN c_2\getsu \set{0,1}^n\\ 
+& \ELSE c_2\getsu \set{0,1}^n \\ 
+& \IF c_0\oplus m_1 = c_2\oplus m_3\ \THEN c_3\gets c_1\\ 
+& \ELIF c_1\oplus m_2 = c_2\oplus m_3\ \THEN c_3\gets c_2\\ 
+& \ELSE c_3\getsu \set{0,1}^n\\ 
+& \cdots\\
+& \cdots\\
+& \IF c_0\oplus m_1 = c_{\ell-1}\oplus m_1\ \THEN c_\ell\gets c_1\\ 
+& \cdots\\
+& \ELSE c_\ell\getsu \set{0,1}^n\\ 
+& \RETURN \AD(c_1, c_2, \dots, c_\ell)
+\end{game}
+\end{align*}
+is easy to describe. The first if branch is selected only if a collision
+$c_0\oplus m_1 = c_1\oplus m_2$ occurs. As $c_1$ is uniformly chosen this collision occurs with probability $2^{-n}$ and we obtain a nice bound 
+\begin{align*}
+\abs{\pr{\smash{\GAME_3^\AD = 1}} - \pr{\smash{\GAME_4^\AD = 1}}} \leq 2^{-n}\enspace. 
+\end{align*}
+In the modified game $\GAME_4$ the variable $c_2$ is uniformly chosen and thus the probability that one of the conditions $c_0\oplus m_1 = c_2\oplus m_3$ and $c_1\oplus m_2 = c_2\oplus m_3$ is satisfied is $2\cdot 2^{-n}$ and thus defining $c_3\getsu\set{0,1}^n$ alters the outcome of the game only by $2\cdot 2^{-n}$. By repeating the simplification procedure, we indeed end up in the game were $c_1,\ldots,c_\ell$ are uniformly sampled and this costs us 
+\begin{align*}
+\abs{\pr{\smash{\GAME_3^\AD = 1}} - \pr{\smash{\GAME_{3+\ell}^\AD = 1}}}\leq 2^{-n}+2\cdot 2^{-n}\cdots+(\ell-1)\cdot 2^{-n}= \frac{\ell(\ell-1)}{2^{n+1}}\enspace.
+\end{align*} 
+Since the last game $\GAME_{3+\ell}$ is identical to $\GAME_0$, we have proven 
+\begin{align*}
+\abs{\pr{\smash{\GAME_0^\AD = 1}} - \pr{\smash{\GAME_1^\AD = 1}}}
+\leq \abs{\pr{\smash{\GAME_0^\AD = 1}} - \pr{\smash{\GAME_2^\AD = 1}}}
++\abs{\pr{\smash{\GAME_2^\AD = 1}} - \pr{\smash{\GAME_1^\AD = 1}}}
+\leq\frac{\ell(\ell-1)}{2^{n+1}}+\varepsilon\enspace.
+\end{align*}
+
+Alternatively, we could have estimated directly the probability of a collision event
+\begin{align*}
+\pr{f\gets\FFFALL:\exists i\neq j:\quad c_{i-1} \oplus m_i  = c_{j-1} \oplus m_{j}} \enspace.
+\end{align*}
+However, this would have been tractable only by considering all function calls simultaneously and decomposing the formula into tree of comparison events. The latter together with over-estimations would have been equivalent to the gradual nullification of collision cases described in the sequence of games $\GAME_3, \GAME_4, \ldots, \GAME_{3+\ell}$. 
+
+\ \\
+  
+\noindent
+\textsc{Generalisation to many $\textsc{Cbc}$ queries.}
+\textbf{To be completed!}
+\end{solution}
+\end{document}

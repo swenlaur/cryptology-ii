@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=13cm,paperheight=7.5cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-plot}
+\usepackage{colortbl}
+\usepackage{crypto-ii}
+
+%\usepackage[table]{xcolor}
+
+%\newcommand{\getsu}{\gets_{\scriptscriptstyle \hspace*{-0.65em} u\hspace*{0.0em}}}
+
+\newcommand{\squigglyline}{\psline[linearc=2pt, arrowsize = 4pt 2]{->}(0.0,0.0)(0.0,0.05)(0.05,0.10)(-0.05,0.20)(0.05,0.30)
+(-0.05,0.40)(0.05,0.50)(-0.05,0.60)(0.05,0.70)(-0.05,0.80)(0.05,0.90)(0.0,0.95)(0.0,1.15)
+}
+%\psset{unit=.25,linewidth=1.5pt} 
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\psset{xunit=1cm, yunit=1cm}
+\psset{arrowsize = 4pt 2}
+\begin{pspicture}(0.5,1)(10,5.3)
+\psaxes[linewidth=1.2pt, dx = 0.5, Dx=1, Dy = 0.5, labels=none]{->}(0,0)(10,5)
+\rput(0,-0.35){$0$}
+\rput(1,-0.35){$2$}
+\rput(2,-0.35){$4$}
+\rput(3,-0.35){$6$}
+\rput(4,-0.35){$8$}
+\rput(5,-0.35){$10$}
+\rput(6,-0.35){$12$}
+\rput(7,-0.35){$14$}
+\rput(8,-0.35){$16$}
+\rput(9,-0.35){$18$}
+\rput(10.3,0){$\ell$}
+\rput[r](-0.2,0){$2^{-0}$}
+\rput[r](-0.2,1){$2^{-2}$}
+\rput[r](-0.2,2){$2^{-4}$}
+\rput[r](-0.2,3){$2^{-6}$}
+\rput[r](-0.2,4){$2^{-8}$}
+\rput(0,5.3){$p_{\mathrm{fail}}$}
+
+% eps=1/2
+%\rput{45}(2,2.35){$\varepsilon_\circ=0$}
+\psline[linewidth=1.pt, linecolor=black](0,0)(4.5,4.5)
+\psline[linewidth=0.5pt, linecolor=gray](0,0)(4.709054, 4.5) % 2^-6
+\psline[linewidth=0.5pt, linecolor=gray](0,0)(4.931306, 4.5) % 2^-5
+\psline[linewidth=0.5pt, linecolor=gray](0,0)(5.421197, 4.5) % 2^-4
+\psline[linewidth=0.5pt, linecolor=gray](0,0)(6.636464, 4.5) % 2^-3
+%\rput{33}(5.5,4.1){$\varepsilon_\circ=\frac{1}{8}$}
+\psline[linewidth=0.5pt, linecolor=gray](0,0)(10, 4.150375) % 2^-2
+%\rput{23}(7,3.2){$\varepsilon_\circ=\frac{1}{4}$}
+\psline[linestyle=dashed](0,0)(10,2.5)
+
+\end{pspicture}
+\end{document}
+
+
+\multirput(0.1,0.0)(0.2,0.0){5}{\psline[linewidth=0.5pt](0,-0.02)(0,0.02)}
+\multirput(0.0,0.125)(0.0,0.25){4}{\psline[linewidth=0.5pt](-0.02,0)(0.02,0)}
+\rput(1.15,0){$\pr{\cdot}$}
+%
+\psline{c-c}(0.000000,1.000000)(0.500000,1.000000)
+\pscurve{c-c}(0.500000,1.000000) (0.600000,0.327680) (0.700000,0.077760) (0.800000,0.010240) (0.900000,0.000320) (1.000000,0.000000) 
+\psline{c-c}(0.000000,0.000000)(0.500000,0.500000)
+\pscurve{c-c}(0.500000,0.500000) (0.600000,0.196608) (0.700000,0.054432) (0.800000,0.008192) (0.900000,0.000288) (1.000000,0.000000) 
+%
+\psdot(0.5,0.5)
+\psline[linestyle=dashed, dash=1pt 3pt](0,0.5)(0.5,0.5)
+\psline[linestyle=dashed, dash=1pt 3pt](0.5,0.0)(0.5,0.5)
+\rput[u](0.5,-0.118){$\kappa$}
+\end{pspicture}
+\end{document}
+

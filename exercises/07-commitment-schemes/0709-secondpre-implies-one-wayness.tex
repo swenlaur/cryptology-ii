@@ -1,0 +1,187 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Prastudy Fauzi}
+\contributor[Severely modified solution]{Sven Laur}
+\editor{Sven Laur}
+\tags{hash functions, second pre-image resistance, one-wayness}
+
+\newcommand{\ADVOW}[2]{\ADV^{\mathsf{ow}}_{#1}(#2)}
+\newcommand{\ADVSPRE}[2]{\ADV^{\mathsf{2nd\text{-}pre}}_{#1}(#2)}
+
+\begin{document}
+\begin{exercise}{Precise analysis of 2PRE$\,\Rightarrow\,$OW}
+There are several other properties that hash function families can have besides collision resistance. A hash function family $\HHH$  with the domain $\MMM$ and range $\YYY$ is $(t,\varepsilon)$-secure one-way function family if for any $t$-time adversary $\AD$
+    \begin{align*}
+      \pr{h\getsu\HHH, m_0\getsu\MSPACE, m_1\gets\AD(h,h(m_0)): h(m_0)=h(m_1)}\leq\varepsilon\enspace.
+    \end{align*}
+A hash function family $\HHH$ is $(t,\varepsilon)$-secure against second preimage if for any $t$-time adversary $\AD$
+    \begin{align*}
+      \pr{
+        \begin{aligned}
+         & h\getsu\HHH, m_0\getsu\MSPACE, m_1\gets \AD(h,m_0):\\
+         & m_0\neq m_1\wedge h(m_0)=h(m_1)
+        \end{aligned}}\leq\varepsilon\enspace.
+    \end{align*}
+Show that a compressing function that is a second-preimage resistant must be also one-way function. 
+\end{exercise}
+\begin{solution}
+We start the analysis by formalising the security games for one-way and 2nd pre-image resistance:
+\begin{align*}
+ \begin{game}{\GAME_0^\AD}
+ &h\getsu\HHH \\
+ &m_0\getsu\MSPACE\\
+ &m_1\gets\AD(h,h(m_0))\\
+ &\RETURN [h(m_0)\iseq h(m_1)]
+\end{game}
+&&
+\begin{aligned}
+\begin{game}{\BGAME^\ADB}
+ & h\getsu\HHH\\
+ &m_0\getsu\MSPACE\\
+ &m_1\gets \ADB(h,m_0)\\
+ &\RETURN [m_0\neq m_1]\wedge [h(m_0)\iseq h(m_1)]\enspace.
+\end{game}      
+\end{aligned}
+\end{align*}
+Since the hash function is compressing there are many originals and it is highly unlikely that the inversion algorithm $\AD$ manages to restore $m$ from $h(m)$. Thus, it makes sense to consider the following adversary:
+\begin{align*}
+ \begin{game}{\ADB^\AD(h,m_0)}
+ &m_1\gets\AD(h,h(m_0))\\
+ &\RETURN m_1 \enspace.
+\end{game}
+\end{align*}
+By substituting this definition to the second preimage game $\BGAME$ we get a game
+\begin{align*}
+\begin{game}{\GAME_1^\AD}
+ & h\getsu\HHH\\
+ &m_0\getsu\MSPACE\\
+ &m_1\gets \AD(h,h(m_0))\\
+ &\RETURN [m_0\neq m_1]\wedge [h(m_0)\iseq h(m_1)]\enspace.
+\end{game}      
+\end{align*}
+that is more strict form the game $\GAME_0$, which is used to evaluate $\ADVOW{\HHH}{\AD}$. Hence, we get the inequality with the wrong sign: $\ADVSPRE{\HHH}{\ADB}\leq \ADVOW{\HHH}{\AD}$. For a more useful estimate, note that 
+\begin{align*}
+\pr{\GAME_0^\AD=1}=\pr{\GAME_1^\AD=1}+\pr{\GAME_2^\AD=1}
+\end{align*}
+where 
+\begin{align*}
+\begin{game}{\GAME_2^\AD}
+ & h\getsu\HHH\\
+ &m_0\getsu\MSPACE\\
+ &m_1\gets \AD(h,h(m_0))\\
+ &\RETURN [m_0\iseq m_1]\wedge h(m_0)\iseq h(m_1)\enspace.
+\end{game}      
+\end{align*}
+The same equality can be written in terms of advantages 
+\begin{align*}
+\ADVOW{\HHH}{\AD}=\ADVSPRE{\HHH}{\ADB}+\pr{\GAME_2^\AD=1}\enspace.
+\end{align*}
+Consequently, we must upper bound the $\pr{\GAME_2^\AD=1}$ to bound $\ADVOW{\HHH}{\AD}$. For that, we relax the game by omitting the check $h(m_0)\iseq h(m_1)$. This leads to the following game:
+\begin{align*}
+\begin{game}{\GAME_3^\AD}
+ & h\getsu\HHH\\
+ &m_0\getsu\MSPACE\\
+ &y_0 \gets h(m_0)\\ 
+ &m_1\gets \AD(h,y_0)\\
+ &\RETURN [m_0\iseq m_1]\enspace.
+\end{game}      
+\end{align*}
+For further analysis recall that we can use sampling idiom for restructuring the process that creates $(m_0,y)$.  
+Recall that the procedure $m_0\gets \MSPACE, y_0\gets h(m_0)$ defines a unique distribution $\YYY_0$ of hash values $y_0$. Moreover, there exists a family of sets $\MMM_y=\set{m: f(m)=y}$ such that the procedure $y_0\gets\YYY_0, m_0\getsu\MMM_y$ defines the same distribution of $(m_0,y_0)$  as the first procedure. Consequently, we can express $\GAME_3$ as follows:
+\begin{align*}
+\begin{game}{\GAME_4^\AD}
+ & h\getsu\HHH\\
+ &y_0\gets\YYY_0\\
+ &m_0\getsu\MSPACE_y\\
+ &m_1\gets \AD(h,y_0)\\
+ &\RETURN [ m_0 \iseq m_1] \enspace.
+\end{game}      
+\end{align*}
+Since $m_1$ does not depend on $m_0$ we can simplify the game further:
+\begin{align*}
+\begin{game}{\GAME_5^\AD}
+ & h\getsu\HHH\\
+ & y_0\gets\YYY_0\\
+ &m_1\gets \AD(h,y_0)\\
+ &m_0\getsu\MSPACE_y\\
+ &\RETURN [ m_0 \iseq m_1] \enspace.
+\end{game}      
+\end{align*}
+for which we can easily derive the success bound 
+\begin{align*}
+\pr{\GAME_5^\AD=1}&= \sum_{y_0\in\YYY}\pr{y\gets\YYY_0:y=y_0}\cdot\pr{m_0\gets\MMM_{y_0}: m_0=\AD(h,y_0)}\\
+ &\leq \sum_{y_0\in\YYY}\frac{\abs{\MMM_{y_0}}}{\abs{\MMM}}\cdot \frac{1}{\abs{\MMM_{y_0}}}\leq  \frac{\abs{\YYY}}{\abs{\MMM}}\enspace.
+\end{align*}
+The last inequality follows from the facts that probability of $y_0$ is proportional to the number of originals and the probability of collision is inversely proportional to the set of originals $\MMM_{y_0}$ if $m_1\in\MMM_{y_0}$ and zero otherwise. As a result, we have proved that
+\begin{align*}
+\ADVOW{\HHH}{\AD} \leq \ADVSPRE{\HHH}{\ADB} + \frac{\abs{\YYY}}{\abs{\MMM}}\enspace.
+\end{align*}
+Since the running time of $\ADB$ is only by o constant larger than the running time of $\AD$, we can conclude that $(t,\varepsilon)$-second preimage resistant function is also $(t,\varepsilon+\frac{\abs{\YYY}}{\abs{\MMM}})$-one-way function. 
+
+\vspace*{2ex}
+\noindent
+\textsc{On the optimality.}
+The proof given above is rather loose, since just dropped the condition $h(m_0)=h(m_1)$ from the game $\GAME_2$ to obtain an easily tractable upper bound. Maybe we more careful analysis would have given us better result. There are two objections which nullify this argument. First, as we have made no assumptions about the function $h$, the analysis of our construction must hold also when $h$ is an easily invertible permutation $h$. In this case,  we can always assume that $h(m_1)=h(m_0)$ and thus the relaxation does not change the probabilities. For bigger domains, we can mix easily invertible singletons with hard to invert elements with large set of originals. For instance, let $f:\MSPACE\to\YYY$ be $(t,\varepsilon)$-second preimage resistant function. Then we can define a function $h: \ZZ_2\times\MMM\to\YYY\cup\MMM$ as follows:
+\begin{align*}
+ h(b||m)&=
+ \begin{cases}
+  m, &\text{if } b=0\enspace,\\
+  f(m), &\text{if } b=1\enspace.\\
+\end{cases} 
+\end{align*}
+By the construction $h$ is also $(t, \frac{\varepsilon}{2})$-preimage resistant function, since the necessary pair occurs only if $b=1$. As it is straightforward to invert $h$ with probability $\frac{1}{2}$,  we the derived bound is rather close
+\begin{align*}
+\frac{1}{2}\leq \ADVOW{\HHH}{\ADB}\leq \frac{\varepsilon}{2}+\frac{\abs{\YYY}+\abs{\MMM}}{2\abs{\MMM}}\leq \frac{1}{2}+\frac{\varepsilon}{2}+\frac{\abs{\YYY}}{2\abs{\MMM}}
+\end{align*}
+where the last two terms can be considered negligible for practical hash function families.  
+
+\vspace*{2ex}
+\noindent
+\textsc{Analysis for regular hash functions.}
+We can obtain more tight results when we restrict the class of hash functions. For instance, if any $y\in\YYY$ has the same number of originals, we can directly estimate the success probability of $\GAME_2$: 
+\begin{align*}
+\pr{\GAME_2^\AD=1}=\sum_{y_0\in\YYY}\frac{1}{\abs{\YYY}}\cdot \pr{m_1\gets\AD(h,y): h(m_1)=y}\cdot \frac{\abs{\YYY}}{\abs{\MMM}}=\frac{\abs{\YYY}}{\abs{\MMM}}\cdot\ADVOW{\HHH}{\AD}
+\end{align*}
+which yields much better bound without the additive term:
+\begin{align*}
+\ADVOW{\HHH}{\AD}=\frac{\abs{\MMM}}{\abs{\MMM}-\abs{\YYY}}\cdot\ADVSPRE{\HHH}{\ADB}\approx \ADVSPRE{\HHH}{\ADB}\enspace.
+\end{align*}
+Thus, we can conclude that the additive term in the universal bound mostly accounts the effect of singletons.   
+
+\vspace*{2ex}
+\noindent
+\textsc{Common fallacies.}
+We can express the game $\GAME_2$ with the help of sampling idiom as follows:
+\begin{align*}
+\begin{game}{\GAME_3^\AD}
+ & h\getsu\HHH\\
+ & y\gets\TTT\\
+ &m_1\gets \AD(h,y)\\
+ &\IF h(m_1)\neq y\ \RETURN 0\\
+ &m_0\getsu\MSPACE_y\\
+&\RETURN [ m_0 \iseq m_1] \enspace.
+\end{game}      
+\end{align*}
+And now it would be tempting to say that the probability that we pass the last test is equivalent to the probability that $\AD$ wins the game  
+\begin{align*}
+\begin{game}{\GAME_5^\AD}
+ & h\getsu\HHH\\
+ & y\gets\TTT\\
+ &m_1\gets \AD(h,y)\\
+ &m_0\getsu\MSPACE_y\\
+&\RETURN [ m_0 \iseq m_1] 
+\end{game}      
+\end{align*}
+fow which we know the success bound and conclude that  
+\begin{align*}
+\pr{\GAME_3^\AD=1}\leq \frac{\abs{\TTT}}{\abs{\MMM}}\cdot \ADVOW{\HHH}{\ADB} \enspace.
+\end{align*}
+However, this is not the case because the ability of $\AD$ to invert elements might vary and the latter  changes the distribution of hash values $y$ and the formula, i.e., the equation
+\begin{align*}
+\pr{h\getsu\HHH, y\gets\TTT, m_1\gets \AD(h,y): y | h(m_1)= y}= \frac{\abs{\MMM_y}}{\abs{\MMM}}
+\end{align*}
+does not hold in general. The easiest way to see this is to consider what are the probabilities in the counter-example discussed in the optimality section.  
+\end{solution}
+\end{document}
+

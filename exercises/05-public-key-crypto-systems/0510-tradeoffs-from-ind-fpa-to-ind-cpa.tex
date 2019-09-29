@@ -1,0 +1,126 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{ind-fpa, ind-cpa, tradeoffs}
+
+\begin{document}
+\begin{exercise}{Tradeoffs for IND-FPA $\Rightarrow$ IND-CPA transformation}
+In a fixed plaintext attack (FPA), an adversary has to fix the queried messages ahead of other interactions. Consequently, it might be possible to achieve a security goal against fixed plaintext attacks (CPA) that is infeasible against chosen ciphertext attacks. This separation manifests already if we consider indistinguishability as a security goal. Recall that there exists a simple reduction that proves that for any $t$-time IND-CPA adversary $\AD$ the advantage is bounded:
+\begin{align*}
+\advINDCPAXX{}{\AD}\leq \frac{n(n-1)}{2}\cdot\varepsilon
+\end{align*}
+provided that the cryptosystem is $(t,\varepsilon)$-IND-FPA secure. Give a corresponding construction that converts any IND-FPA
+secure encryption scheme to the IND-CPA secure encryption scheme so that the advantage bound decreases logarithmically with respect to the message space size. 
+\end{exercise}
+\begin{solution}
+\textsc{Security of vectorised encryption}. A vectorised encryption rule is defined as follows:
+\begin{align*}
+\overline{\ENC}_\PK(m_1,\ldots, m_k)=(\ENC_\PK(m_1),\ldots,\ENC_\PK(m_k)) \enspace.  
+\end{align*}
+and the corresponding IND-CPA games are following with non-standard indices:
+\begin{align*}
+&
+\begin{game}{\GAME_k^\AD}
+ &(\SK,\PK)\gets\GEN\\
+ &(m_1^0,\ldots,m_k^0),(m_1^1,\ldots,m_k^1)\gets\AD(\PK)\\ 
+ &c_1\gets \ENC_\PK(m_1^0),\ldots, c_k\gets \ENC_\PK(m_k^0)\\     
+ &\RETURN \AD(c_1,\ldots,c_k)
+\end{game}
+&&
+\begin{game}{\GAME_0^\AD}
+ &(\SK,\PK)\gets\GEN\\
+ &(m_1^0,\ldots,m_k^0),(m_1^1,\ldots,m_k^1)\gets\AD(\PK)\\      
+ &c_1\gets \ENC_\PK(m_1^1),\ldots, c_k\gets \ENC_\PK(m_k^1)\\     
+ &\RETURN \AD(c_1,\ldots,c_k)
+\end{game}
+\end{align*}
+To bound the distance, we can consider hybrid games
+\begin{align*}
+&
+\begin{game}{\GAME_{i}^\AD}
+ &(\SK,\PK)\gets\GEN\\
+ &(m_1^0,\ldots,m_k^0),(m_1^1,\ldots,m_k^1)\gets\AD(\PK)\\ 
+ &c_1\gets \ENC_\PK(m_1^0)\\
+ &\cdots\\ 
+ &c_i\gets \ENC_\PK(m_i^0)\\
+ &c_{i+1}\gets \ENC_\PK(m_{i+1}^1)\\
+ &\cdots\\ 
+ &c_k\gets \ENC_\PK(m_k^1)\\     
+ &\RETURN \AD(c_1,\ldots,c_k)
+\end{game}
+&&
+\begin{game}{\GAME_{i+1}^\AD}
+ &(\SK,\PK)\gets\GEN\\
+ &(m_1^0,\ldots,m_k^0),(m_1^1,\ldots,m_k^1)\gets\AD(\PK)\\      
+ &c_1\gets \ENC_\PK(m_1^0)\\
+ &\cdots\\ 
+ &c_i\gets \ENC_\PK(m_i^0)\\
+ &c_{i+1}\gets \ENC_\PK(m_{i+1}^0)\\
+ &\cdots\\ 
+ &c_k\gets \ENC_\PK(m_k^1)\\     
+ &\RETURN \AD(c_1,\ldots,c_k)\enspace.
+\end{game}
+\end{align*}
+Note that the games $\GAME_i$ and $\GAME_{i+1}$ differ only by a single line and thus we can do a direct reduction to IND-CPA games of the original cryptosystem: 
+\begin{align*}
+&\begin{game}{\BGAME_0}
+      &(\SK,\PK)\gets\GEN\\
+      &(m_0,m_1)\gets\ADB(\PK)\\
+      &\RETURN \ADB(\ENC_\PK(m_0))
+\end{game}
+&&
+\begin{game}{\BGAME_1}
+      &(\SK,\PK)\gets\GEN\\
+      &(m_0,m_1)\gets\ADB(\PK)\\
+      &\RETURN \ADB(\ENC_\PK(m_1)) \enspace.
+\end{game}
+\end{align*}
+The corresponding reduction is following:
+\begin{align*}
+\begin{fblock}{\ADB(\PK)}
+ &(m_1^0,\ldots,m_k^0),(m_1^1,\ldots,m_k^1)\gets\AD(\PK)\\ 
+ &\RETURN (m_{i+1}^0, m_{i+1}^1)     
+\end{fblock}
+\end{align*} 
+\begin{align*}
+\begin{fblock}{\ADB(c)}
+&\hspace*{-0.5em}\begin{forblock}{j\in\set{1,\ldots,i}\ }
+& c_j\gets\ENC_\PK(m_j^0)\\
+\end{forblock}\\
+&c_{i+1}\gets c\\
+&\hspace*{-0.5em}\begin{forblock}{j\in\set{i+2,\ldots,k}\ }
+& c_j\gets\ENC_\PK(m_j^1)
+\end{forblock}\\
+&\RETURN \AD(c_1,\ldots,c_k)
+\end{fblock}
+\end{align*} 
+It is straightforward to see that $\BGAME_0^\ADB\equiv\GAME_i^\AD$ and $\BGAME_1^\ADB\equiv\GAME_{i+1}^\AD$. Since the running time of $\ADB$ is only by $\Oh(k)$ steps longer we get 
+\begin{align*}
+\abs{\pr{\smash{\GAME_i^\AD=1}}-\pr{\smash{\GAME_{i+1}^\AD=1}}}\leq \varepsilon
+\end{align*}
+and thus triangle inequality yields 
+\begin{align*}
+\abs{\pr{\smash{\GAME_k^\AD=1}}-\pr{\smash{\GAME_{0}^\AD=1}}}\leq k\cdot\varepsilon.
+\end{align*}
+\vskip 3ex
+\noindent
+\textsc{Tradeoffs.}
+The size of the message space of the vectorised encryption depends on the number of potential values $n$ for each slot and the length of the vector $k$. Similarly, the security depends on both parameter as we start with IND-FPA secure cryptosystem. By noting that IND-FPA security cannot decrease if we reduce the message space and by combining two bounds, we get
+\begin{align*}
+\advINDCPAXX{\overline{\ENC}}{\AD}\leq \frac{kn(n-1)\varepsilon}{2}\enspace.
+\end{align*}
+The size of vectorised message space is obviously $n^k$ and thus the security degradation per available bits is 
+\begin{align*}
+\delta=\frac{kn(n-1)\varepsilon}{\varepsilon k\log n}=\frac{n(n-1)}{2\log n}\enspace,
+\end{align*} 
+which increases when we use more than two states for each slot. If we consider length blowup (encoding rate), we get a different measure
+\begin{align*}
+\varrho=\frac{kc}{k\log n}=\frac{c}{\log n}
+\end{align*} 
+where $c$ is the length of an individual ciphertext. In other words, the larger the number of available states for each slot means less communication. Since $\delta$ and $\varrho$ find their optimum in different ends of the set of feasible solutions, the problem has no unique solution. One has either fix the maximum security degradation level and based on that choose the largest $n$ to minimise the communication overhead or fix the maximum communication overhead and then find the minimal $n$ that meets this demand to reduce security degradation.  
+  
+
+\end{solution}
+\end{document}

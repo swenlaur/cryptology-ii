@@ -1,0 +1,84 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Initial solution and proof scheme]{Prastudy Fauzi}
+\editor{Sven Laur}
+\tags{Decisional Diffie-Hellman problem, random self-reducibility, success amplification}
+\begin{document}
+
+\begin{exercise}{Full proof for randomised self-reducibility of DDL}
+Show that for any $\ADB$ defined as above there exists an algorithm $\AD$, which has roughly the same running-time as $\ADB$ and for any three group elements $g^a, g^b, g^c$, distinguish $g^{ab}$ from $g^c$ with roughly the same advantage as  $\ADVDDH{\GG}{\ADB}$. More precisely, let the following games 
+  \begin{align*}
+   &\begin{game}{\GAME_0^{\AD}}
+      & c \neq ab\\
+      & \RETURN \AD(g^a,g^b,g^c)
+    \end{game}
+   &&\begin{game}{\GAME_1^{\AD}}
+      & c \gets ab\\
+      & \RETURN \AD(g^a,g^b,g^c)
+    \end{game}
+  \end{align*}
+  model the distinguishing task. Then the corresponding advantage is
+  \begin{align*}
+  \ADV_{\GG,a,b, c}^{\mathsf{f\text{-}ddh}}(\AD)=\abs{\pr{\GAME_0^{\AD}=1}-\pr{\GAME_1^{\AD}=1}}\enspace.
+  \end{align*}
+Show that if $q$ is prime then for any $a,b\in\ZZ_q$, the advantage $\ADV_{\GG,a,b}^{\mathsf{f\text{-}ddh}}(\AD)$ can be bounded from below by a multiple of $\ADVDDH{\GG}{\ADB}$, while the running-time of $\AD$ is linear  wrt the running-time of $\ADB$. 
+
+\end{exercise}
+  
+
+\begin{solution} 
+Recall that the weak self-reducibility construction re-randomises only the first two elements $g^a$ and $g^b$ of the Diffie-Hellman tuple. The corresponding correction relies on the equation 
+\begin{align*}
+(a+x)(b+y) = (xy + ay + bx) + ab  
+\end{align*}
+where the first three terms on the right are correction terms, i.e., the new randomised tuple is
+\begin{align*}
+g^{a+x}, g^{b+y}, g^{xy}\cdot (g^{a})^y\cdot (g^{b})^x \cdot g^c \qquad\text{ for } x,y\getsu \ZZ_q\enspace.
+\end{align*}
+Note that for fixed $ab\neq c$ the distribution  of $xy + ay + bx$ is not guaranteed to be uniform over $\ZZ_q$. Hence also the sum $xy + ay + bx +c$ is not guaranteed to be uniform, which itself implies that a re-randomised non-Diffe-Hellman tuple is a uniformly chosen triple and thus $\ADB$ is not guaranteed to preserve its advantage. 
+
+To avoid this pitfall, we use a more complex re-randomisation for the first two tuple elements:
+\begin{align*}
+g^a\leadsto g^{a+x}, \qquad g^b\leadsto g^{by+z}\enspace.
+\end{align*}       
+The corresponding correction is based on the equation
+\begin{align*}
+(a+x)(by+z) = xz + az + bxy + ab\cdot y
+\end{align*}
+which leads to the following re-randomisation
+\begin{align*}
+g^{a+x}, (g^{b})^y\cdot g^z, g^{xz}\cdot (g^{a})^z\cdot (g^{b})^{xy} \cdot (g^c)^y \qquad\text{ for } x,y,z\getsu \ZZ_q\enspace.
+\end{align*}
+Again, note that if $ab\neq c$ then the discrete logarithm of the third element is 
+\begin{align*}
+\Delta = xz + az + bxy + c\cdot y=(bx + c) y + (a + x) z\enspace.
+\end{align*} 
+To analyse the distribution of $\Delta$ further, we must use the following fact.  
+
+\begin{lemma}
+Let $z$ be an invertible element of $\ZZ_q$. Then the product $x \cdot z$ has uniform distribution over $\ZZ_q$ whenever $x$ is picked uniformly from $\ZZ_q$.
+\end{lemma}
+\noindent The claim follows from the fact that the equation $xz=y$ has a single solution for any $y$ and thus
+\begin{align*}
+ \pr{x\getsu\ZZ_q: zx=y}=\pr{x\getsu\ZZ_q: x=z^{-1} y}= \frac{1}{q}\enspace. 
+\end{align*}
+
+Let us continue the analysis of $\Delta$ by fixing the values of $x$, $y$. Since $z\getsu\ZZ_q$ we know that $(a+x)z$ is uniformly distributed whenever $a+x$ is invertible. As we assumed that the group $\GG$ has a prime order $q$, the term is uniformly distributed for any $a+x\neq 0$. The latter also implies that $\Delta$ is uniformly distributed for any fixed $x,y\in\ZZ_q$ such that $x\neq -a$. If $x=-a$ then $\Delta=(bx+c)y=(c-ab)y$. By same reasoning $\Delta$ has a uniform distribution as long as $ab\neq c$, i.e., we do not re-randomise Diffie-Hellman tuples.   
+
+As a consequence, we can conclude that the new re-randomisation takes Diffie-Hellman tuple to a random Diffie-Hellman tuple and non-Diffie-Hellman tuple to a random triple of group elements. This leads to the following random self-reduction:
+ \begin{align*}
+   &\begin{fblock}{\AD(g^a,g^b,g^c)}
+      & x, y, z \getsu \ZZ_q\\
+      & \RETURN \ADB(g^{a}\cdot g^{x}, (g^{b})^y\cdot g^{z}, (g^{c})^y \cdot (g^{a})^z \cdot (g^b)^xy \cdot g^{xz})\enspace.
+    \end{fblock}
+\end{align*}    
+Notice that all parameters thrown to $\ADB$ can be calculated in a constant time $\delta$. Hence, the $\AD$ is $(t+\delta)$-time algorithm whenever $\ADB$ is $t$-time algorithm. By our extensive reasoning
+\begin{align*}
+\pr{\GAME_0^\AD=1}=\pr{\BGAME_0^\ADB=1} \text{ and }
+\pr{\GAME_1^\AD=1}=\pr{\BGAME_1^\ADB=1}
+\end{align*}
+where $\BGAME_0$ and $\BGAME_1$ denote ordinary DDH games. Hence, $\ADV_{\GG,a,b, c}^{\mathsf{f\text{-}ddh}}(\AD)=\ADVDDH{\GG}{\ADB}$. 
+\end{solution}
+
+
+\end{document}

@@ -1,0 +1,222 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{Sander Siim}
+\editor{Sven Laur}
+\tags{Goldwasser-Micali cryptosystem, quadratic residuocity}
+
+\begin{document}
+\begin{exercise}{Security of Goldwasser-Micali cryptosystem}
+Show that the Goldwasser-Micali cryptosystem is IND-CPA secure if the Quadratic Residuosity Problem is hard. 
+\end{exercise}
+  
+\begin{solution}
+Before we can give a corresponding proof we must define several concepts. Without them we cannot even define the Goldwasser-Micali cryptosystem.    
+  
+
+\vspace*{3ex}
+\noindent
+\textsc{Quadratic residioucity.}
+A prime $p$ is a Blum prime if $p\equiv 3\mod 4$. Let $N=pq$ where $p,q$ are Blum primes. Then for each element $a\in\ZZ_N$, we can efficiently compute the Jacobi symbol $\bigl(\frac{a}{n}\bigr)$. One can show that Jacobi symbols satisfies following conditions:
+\begin{align*}
+ \biggl(\frac{ab}{n}\biggl)=\biggl(\frac{a}{n}\biggr)\cdot\biggl(\frac{b}{n}\biggr)
+    \qquad\text{and}\qquad
+    \biggl(\frac{a}{n}\biggr)=\pm 1\enspace.
+\end{align*}
+Also, recall that an element $b$ is a quadratic residue if there exists $a$ such that $b=a^2\mod N$.  The set of quadratic residues is denoted by $QR_N$. By the properties of Jacobi symbols all quadratic residues must be inside the following set
+\begin{align*}
+   J_N(1)=\set{x\in\ZZ_N:\brak{\frac{x}{n}}=1}\enspace.   
+\end{align*}
+Moreover, it can be shown using the Chinese Reminder Theorem that the set of quadratic non-residues $J_N(1)\setminus QR_N$ is as big as the set of quadratic residues $QR_N$.
+
+\vspace*{3ex}
+\noindent
+\textsc{Quadratic residuosity problem.}  
+Let $\PP_n$ denote uniform distribution over $n$-bit Blum primes. We say that the set of $n$-bit Blum primes is $(t,\varepsilon)$-secure with respect to quadratic residuosity problem if for all $t$-time adversaries $\ADB$ the advantage 
+\begin{align*}
+  \advQRPXX{\PP_n}{\ADB}=\abs{\pr{\smash{\BGAME_0^\ADB=1}}-\pr{\smash{\BGAME_1^\ADB=1}}}\leq\varepsilon
+\end{align*}
+where the security games are defined as follows:
+\begin{align*}
+    \begin{game}{\BGAME_0^\ADB}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu QR_N\\
+      &\RETURN \ADB(x,N)
+    \end{game}
+    \qquad\qquad
+       \begin{game}{\BGAME_1^\ADB}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu J_N(1)\setminus QR_N\\
+      &\RETURN \ADB(x,N)\enspace.
+    \end{game}
+\end{align*}
+
+\vspace*{3ex}
+\noindent
+\textsc{Definition of a cryptosystem.}
+Goldwasser-Micali cryptosystem uses Blum primes and quadratic residuosity to encrypt bits using following algorithms. 
+\begin{itemize}
+\item \textbf{Key generation.}  Sample primes $p,q\in\PP(n)$ and choose quadratic non-residue $y\in J_N(1)$ modulo $N=pq$. Use $(N,y)$ as a public key $\PK$ and $(p,q)$ as a private key $\SK$.
+
+\item\textbf{Encryption.} First choose a random $x\gets\ZZ_N^*$ and then compute
+    \begin{align*}
+      \enc{0}=x^2\mod N \quad\text{and}\quad \enc{1}=yx^2\mod N.
+    \end{align*}
+  \item\textbf{Decryption.} Output $0$ if the ciphertext $c$ is
+    quadratic residue and $1$ otherwise. The latter is easy if the
+    factorisation of $N$ is known.
+\end{itemize}
+
+\vspace*{3ex}
+\noindent
+\textsc{IND-CPA security.} Recall that IND-CPA security is defined through the following security games:
+\begin{align*}
+&\begin{game}{\GAME_0}
+& (\PK,\SK) \gets \GEN\\
+& (m_0,m_1) \gets \AD(\PK)\\
+&\RETURN \AD(\ENC_\PK(m_0))
+\end{game}
+&
+&\begin{game}{\GAME_1}
+& (\PK,\SK) \gets \GEN\\
+& (m_0,m_1) \gets \AD(\PK)\\
+&\RETURN \AD(\ENC_\PK(m_1))\enspace.
+&\end{game}
+\end{align*}
+More precisely, a public key cryptosystem is ($t,\varepsilon$)-IND-CPA secure, if the advantage of any $t$-time adversary $\AD$ against games $\GAME_0$ and $\GAME_1$ is bounded:
+\begin{align*}
+\advINDCPAXX{}{\AD}=\abs{\pr{\GAME_0^\AD=1} - \pr{\GAME_1^\AD = 1}}\leq \varepsilon\enspace.
+\end{align*}
+If we instantiate the IND-CPA security games for Goldwasser-Micali cryptosystem we get the following games:
+\begin{align*}
+&\begin{game}{\GAME_0}
+& p,q \getsu \PP_n\\
+& N \gets pq\\
+& y \getsu J_N \setminus QR_N\\
+& \PK \gets (N,y)\\
+& (m_0,m_1) \gets \AD(\PK)\\
+& x \getsu \ZZ_N^*\\
+& \begin{ifblock}{m_0 = 0 \ } 
+& c \gets x^2 \bmod N 
+&\end{ifblock}\\
+&\begin{elseblock}
+& c \gets yx^2 \bmod N 
+&\end{elseblock}\\
+&\RETURN \AD(c)
+\end{game}
+&
+&\begin{game}{\GAME_1}
+& p,q \getsu \PP_n\\
+& N \gets pq\\
+& y \getsu J_N \setminus QR_N\\
+& \PK \gets (N,y)\\
+& (m_0,m_1) \gets \AD(\PK)\\
+& x \getsu \ZZ_N^*\\
+& \begin{ifblock}{m_1 = 0 \ } 
+& c \gets x^2 \bmod N 
+&\end{ifblock}\\
+&\begin{elseblock}
+& c \gets yx^2 \bmod N 
+&\end{elseblock}\\
+&\RETURN \AD(c)
+&\end{game}
+\end{align*}
+
+
+Let us assume that there is an adversary $\AD$ which breaks the IND-CPA security of Goldwasser-Micali cryptosystem. We will perform a reduction to the quadratic residuosity problem, by constructing an adversary $\ADB$. The adversary construction is presented below:
+
+\begin{align*}
+&\begin{game}{\ADB(x,N)}
+& \PK \gets (N,x)\\
+& (m_0,m_1) \gets \AD(\PK)\\
+& \hat{x} \getsu \ZZ_N^*\\
+& b \getsu \set{0,1}\\
+& \begin{ifblock}{m_b = 0 \ } 
+& c \gets \hat{x}^2 \bmod N 
+&\end{ifblock}\\
+&\begin{elseblock}
+& c \gets y\hat{x}^2 \bmod N 
+&\end{elseblock}\\
+&\RETURN [b \iseq \AD(c)]
+&\end{game}
+\end{align*}
+Note that the construction is valid, since the adversary $\ADB$ knows $N$ and can therefore perform all the required operations. By inlining $\ADB$ into the games $\BGAME_0$ and $\BGAME_1$ defining the hardness of quadratic residuosity, we  get the the following games:
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &p,q\getsu\PP(n)\\
+    &N\gets pq\\ 
+    &x\getsu QR_N\\
+    & \PK \gets (N,x)\\
+    & (m_0,m_1) \gets \AD(\PK)\\
+    & \hat{x} \getsu \ZZ_N^*\\
+    & b \getsu \set{0,1}\\
+    & \begin{ifblock}{m_b = 0 \ } 
+    & c \gets \hat{x}^2 \bmod N 
+    &\end{ifblock}\\
+    &\begin{elseblock}
+    & c \gets x\hat{x}^2 \bmod N 
+    &\end{elseblock}\\
+    &\RETURN [\AD(c)\smash \iseq b]
+  \end{game}
+    &
+    &\begin{game}{\BGAME_1^\ADB}
+    &p,q\getsu\PP(n)\\
+    &N\gets pq\\ 
+    &x\getsu J_N\setminus QR_N\\
+    & \PK \gets (N,x)\\
+    & (m_0,m_1) \gets \AD(\PK)\\
+    & \hat{x} \getsu \ZZ_N^*\\
+    & b \getsu \set{0,1}\\
+    & \begin{ifblock}{m_b = 0 \ } 
+    & c \gets \hat{x}^2 \bmod N 
+    &\end{ifblock}\\
+    &\begin{elseblock}
+    & c \gets x\hat{x}^2 \bmod N 
+    &\end{elseblock}\\
+    &\RETURN [\AD(c)\smash\iseq b]
+  \end{game}
+\end{align*}
+
+Let us first compute the probability $\pr{\BGAME_0^\ADB = 1}$. For that note that $\hat{x}^2$ and $x\hat{x}^2$ are completely indistinguishable to the adversary. Since $x$ is a quadratic residue, it can be written as $x = a^2 \bmod N$ for some $a\in \ZZ_N^*$ and thus $x\hat{x}^2 = (a\hat{x})^2 \bmod N$. Since $\hat{x}$ is generated uniformly randomly after $a$ has been fixed, the element $a\hat{x}$ is a random element from $\ZZ_N^*$. Consequently, $\hat{x}^2$ and $x\hat{x}^2$ have the same distributions and we can further simplify the game:
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &p,q\getsu\PP(n)\\
+    &N\gets pq\\ 
+    &x\getsu QR_N\\
+    & \PK \gets (N,x)\\
+    & (m_0,m_1) \gets \AD(\PK)\\
+    & \hat{x} \getsu \ZZ_N^*\\
+    & b \getsu \set{0,1}\\
+    & c \gets \hat{x}^2 \bmod N \\
+    &\RETURN [\AD(c)\smash \iseq b]
+  \end{game}
+\end{align*}
+As the adversary $\AD$ receiver no information about $b$, the probability $\pr{\BGAME_0^\ADB = 1} = \frac{1}{2}$.
+
+
+Let us now analyse the game $\BGAME_1^\ADB$. The game returns $1$ only if the adversary $\AD$ guesses the bit $b$. Thus, we must split the game into two sub-games based on the value of $b$. When $b=0$ the game $\BGAME_1^\ADB$ is equivalent to the game $\GAME_0^\AD$ and when $b=1$ the game $\BGAME_1^\ADB$ is equivalent to the game $\GAME_1^\AD$. Consequently, we can express the success probability as follows:
+\begin{align*}
+\pr{\BGAME_1^\ADB = 1} &= \pr{b = 0}\cdot\pr{\GAME_0^\AD = 0} + \pr{b = 1}\cdot\pr{\GAME_1^\AD = 1} \\
+&= \frac{1}{2}\left(1 - \pr{\GAME_0^\AD = 1}\right) + \frac{1}{2}\cdot\pr{\GAME_1^\AD = 1} \\ 
+&= \frac{1}{2} + \frac{1}{2}\cdot\pr{\GAME_1^\AD = 1} - \frac{1}{2}\cdot\pr{\GAME_0^\AD = 1} \enspace.
+\end{align*}
+As a result, we get a direct connection between the advantages of $\AD$ and $\ADB$:
+\begin{align*}
+\advQRPXX{\PP_n}{\ADB}&=\abs{\pr{\BGAME_0^\ADB = 1} - \pr{\BGAME_1^\ADB = 1}}\\
+ &= \abs{\frac{1}{2} - \frac{1}{2} - \frac{1}{2}\cdot\pr{\GAME_1^\AD = 1} + \frac{1}{2}\cdot\pr{\GAME_0^\AD = 1}}\\
+ &= \frac{1}{2}\cdot\abs{\pr{\GAME_0^\AD = 1} - \pr{\GAME_1^\AD = 1} }\\
+ &= \frac{1}{2}\cdot\advINDCPAXX{}{\AD}\enspace.
+\end{align*}
+
+To complete the proof, we must also find the relation between the running-times of $\AD$ and $\ADB$. It is easy to see that the running-time of $\ADB$ is only by a constant $c$ larger than the running-time $\AD$. Consequently, the advantage of a $(t-c)$-time $\AD$ adversary is bounded:
+\begin{align*}
+\advINDCPAXX{}{\AD} \leq 2 \cdot \advQRPXX{\PP_n}{\ADB}\leq 2\varepsilon 
+\end{align*}
+and we have shown that Goldwasser-Micali cryptosystem is $(t-c,2\varepsilon)$-IND-CPA secure given that the set of $n$-bit Blum integers is $(t,\varepsilon)$-secure with respect to the quadratic residuosity problem.
+
+\end{solution}
+
+
+
+\end{document}

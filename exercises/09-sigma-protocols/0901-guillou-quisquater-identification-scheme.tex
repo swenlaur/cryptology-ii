@@ -1,0 +1,122 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{sigma protocol, RSA problem, special soundness}
+
+\begin{document}
+\begin{exercise}{Guillou-Quisquater identification scheme}
+The Guillou-Quisquater identification scheme (GQ scheme) is directly based on the RSA problem. The identification scheme is a honest verifier zero-knowledge proof that the prover knows $x$ such that $x^e=y\mod n$ where $n$ is an RSA modulus, i.e., the public information $\PK=(n,e,y)$ and the secret is $x$. The protocol itself
+is following.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r\getsu\ZZ_n$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha=r^e $}}$ \\
+    && $\beta\getsu\set{0,1}$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= rx^\beta$}}$\\
+    && $\bigl[\gamma^{e}\iseq \alpha y^\beta\bigr]$\\  
+  \end{tabular}
+\end{center}  
+Prove that the Guillou-Quisquater identification scheme is a sigma protocol and amplify soundness guarantees with parallel and sequential composition and derive the corresponding knowledge bounds.
+\end{exercise}
+
+\begin{solution}
+As the protocol has the right message structure, we must show only that the protocol is functional and has special soundness and zero-knowledge property. 
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Functionality.} 
+According to the protocol definition, we can deduce 
+\begin{align*}
+\gamma^e=(rx^\beta)^e=r^e(x^e)^\beta=\alpha y^\beta
+\end{align*}
+when both parties are honest and thus the verifier reaches accepting state.
+
+\vspace*{2ex}
+\noindent
+\textsc{Special soundness property.} 
+We need to show that there exists an efficient algorithm that can extract the secret knowledge given transcripts of two successful protocol runs with same $\alpha$ message. As the challenge space is $\set{0,1}$, the existence of colliding transcripts means that we observe  accepting transcripts $(\alpha_0, 0, \gamma_0)$ and $(\alpha_1, 0, \gamma_1)$. If the prover is semihonest then it is easy to see that the ratio
+\begin{align*}
+\xi=\frac{\gamma_1}{\gamma_0}=\frac{rx}{r}=x\enspace
+\end{align*}
+is the desired secret. If the prover is malicious, we can still conclude that 
+\begin{align*}
+\xi^e=\biggl(\frac{\gamma_1}{\gamma_0}\biggr)^e=\frac{\gamma_1^e}{\gamma_0^e}=\frac{\alpha y}{\alpha}=y\enspace,
+\end{align*}
+as both transcripts are accepting. Hence, the ratio $\xi$ is always the desired secret.
+
+\vspace*{2ex}
+\noindent
+\textsc{Zero-knowledge property.} 
+For zero-knowledge, we must to show that we are able to simulate protocol transcripts between the honest prover and honest verifier. Differently form the real protocol execution, we can generate the messages in different order than they appear in the protocol. Let us first construct a simulator that correctly creates the first and last message if the challenge $\beta$ is known ahead. For $\beta=0$, the protocol transcripts are in the form $(\alpha, 0, r)$. If $\beta=1$ then protocol transcripts are in the form $(\alpha, 1, r x)$ for uniformly distributed $\alpha$. If $x$ is invertible, then $rx$ is also uniformly distributed over $\ZZ_n$ and we can use the following simulator construction:
+\begin{align*}
+\begin{fblock}{\SSS(\beta)}
+ &\gamma\getsu\ZZ_n\\
+ &\alpha \gets \gamma^e\cdot y^{-\beta}\\
+ &\RETURN (\alpha,\beta,\gamma)\enspace.
+\end{fblock}
+\end{align*}
+For $\beta=0$, the correspondence between the real and simulated runs are evident
+\begin{align*}
+\gamma=r \quad\Longrightarrow\quad \alpha =r^e =\gamma^e\enspace.
+\end{align*}
+The acceptance criterion $\gamma^e=\alpha y$ for $\beta=1$ assures that for fixed $\beta$ and $\gamma$ there is only one $\alpha$ value $\gamma^e\cdot y^{-1}$. Hence, the simulator generates the same triples as real protocol run. 
+
+If $x$ is not invertible, then the simulation construction described above fails. Indeed, if $x=0$ then $\gamma=0$ whenever $\beta=1$ while the simulator generates all possible elements of $\ZZ_n$ for $\gamma$. Thus we need a more advanced simulator. First, note that $rx$ and $x^er$ generate the same distribution for $r\getsu\ZZ_n$. The claim is follows directly from the Chinese Reminder Theorem. If $x\equiv 0 \pmod p $ then $x^e\equiv 0 \pmod p$ for a prime factor of $n$. Hence, $xr$ and $x^e r$ generate both uniform distribution over the set $p\ZZ_n$. As a result, we can use the following simulator:
+\begin{align*}
+\begin{fblock}{\SSS(\beta)}
+ &r_*\getsu\ZZ_n\\
+ &\gamma\getsu y^\beta\cdot r_*\\
+ &\alpha \gets \gamma^e\cdot y^{-\beta}\\
+ &\RETURN (\alpha,\beta,\gamma)\enspace.
+\end{fblock}
+\end{align*}
+The details that the simulator indeed works as expected are left for the reader.
+
+
+Note that we can use the simulator $\SSS$ together with message guessing to simulate the conversation with honest prover to any verifier by using the following algorithm: 
+\begin{align*}
+\begin{fblock}{\SIM(\phi,y, n)}
+& \omega\gets\Omega\\
+&\begin{forblock}{i\in\set{1,\ldots,\ell}\ }
+ & \beta_*\getsu\set{0,1}\\
+ & (\alpha,\beta_*,\gamma)\gets\SSS(\beta_*)\\
+ & \beta \gets \VVV_*(\phi, \alpha; \omega)\\
+ & \IF \beta=\beta_*\ \THEN \RETURN \VVV_*(\gamma)
+&\end{forblock} \\
+& \RETURN \bot  
+\end{fblock}
+\end{align*}
+where $\phi$ is the auxiliary input of the malicious verifier $\VVV_*$ which captures the information gathered by $\VVV_*$ before the execution of the Guillou-Quisquater identification scheme. By convention, we restart $\VVV_*$ and seed with the same randomness in each cycle. As $\alpha$ is independent form $\beta_*$ the probability that $\beta=\beta_*$ is exactly $\frac{1}{2}$ and thus the simulator returns failure $\bot$ with probability $2^{-\ell}$.       
+
+It can be shown that the statistical distance between the output distribution of a malicious verifier $\VVV_*$ and the output distribution of the simulator $\SIM$ are exactly $2^{\ell}$, i.e., we can see the difference only if $\SIM$ fails. Exact details are let as an exercise to the reader.
+
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Soundness amplification.} 
+By guessing the challenge and using the dedicated simulator $\SSS$ we can clearly bypass the verification with probability $\frac{1}{2}$. Hence, single protocol instance has knowledge error $\kappa=\frac{1}{2}$. By running the protocol sequentially $\ell$ times the probability that we succeed all these runs is $2^{-\ell}$. By running all these protocol in parallel we get again a sigma protocol with three rounds: 
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r_1,\ldots,r_\ell\getsu\ZZ_n$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1=r_1^e,\ldots,\alpha_\ell=r_\ell^e $}}$ \\
+    && $\beta_1,\ldots,\beta_\ell\getsu\set{0,1}$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta_1,\ldots,\beta_\ell$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma_1= r_1x^{\beta_1},\ldots,\gamma_\ell= r_1x^{\beta_\ell}$}}$\\
+    && $\bigwedge\limits_{i=1}^\ell\bigl[\gamma_i^{e}\iseq \alpha_i y^{\beta_i}\bigr]$\\  
+  \end{tabular}
+\end{center} 
+Again, we can show that trivial guessing strategy leads to the success probability $2^{-\ell}$ and thus the knowledge error for this protocol is also $2^{-\ell}$. However, the protocol has several drawbacks if we consider knowledge extraction and simulation for malicious verifier. As the challenge space is exponential in $\ell$, the guessing strategy for simulation outlined above is very inefficient for moderately large values of $\ell\geq 80$. Similarly, the challenge space is so big that we cannot look through all potential challenges when we are probing a malicious prover in knowledge extraction. This leads to much looser security guarantees. 
+
+
+
+
+\end{solution}
+\end{document}

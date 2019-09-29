@@ -1,0 +1,179 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\editor{Sven Laur}
+\tags{message authentication code, poly-AES, polynomial message authentication code, pseudorandom function, seed streching}
+
+\newcommand{\CTRMAC}{\textsc{CtrPolyMac}}
+\newcommand{\RMAC}{\textsc{RndPolyMac}}
+
+
+\begin{document}
+\begin{exercise}{Polynomial Authentication Code + PRF = MAC}
+The polynomial message authentication code is secure only if we do not reuse the authentication key. This weakness can be alleviated by using a pseudorandom function, such as the AES block cipher, to stretch the initial seed to many session keys.  Let $h$ be a polynomial message authentication code over the field $\FF$ and let $\FFF$ be a $(t,\varepsilon)$-pseudorandom function family over $\FF\times\FF$. During the key generation sender and receiver agree on a function $f\getsu\FFF$. To authenticate a message $\vec{m}=(m_\ell,\ldots, m_1)$, we first generate a nonce $n\getsu \FF\times\FF$ and then one-time keys $k_1,k_0\gets f(n)$ and the polynomial authentication code $t=h(\vec{m}, k_1,k_0)$. The resulting message authentication code is $(t, n)$. To verify a tuple $(\vec{m},t, n)$, receiver repeats the computation to verify that $t= h(\vec{m}, k_1,k_0)$. Prove that this
+construction is a computationally secure message authentication code.
+ \end{exercise}
+
+\begin{solution}
+Let $\RMAC$ denote the message authentication code defined above. Before we consider its security, it is instructive to consider the security of a stateful message authentication code $\CTRMAC$ instead. The only difference between $\RMAC$ and $\CTRMAC$ is the way nonce is generated. In the $\CTRMAC$, nonces are generated sequentially starting form one. As a consequence, the pseudorandom function is always queried on different values, which simplifies the security analysis.   
+
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Security analysis of $\CTRMAC$.}
+To show that $\CTRMAC$ is secure we have estimate how successful can adversary $\AD$ be in the game that defines security of message
+authentication code:
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &f\getsu\FFF\\
+    &n_0\gets 0,\ t_0\gets \bot\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}} 
+      & \vec{m}_i\gets \AD(n_{i-1}, t_{i-1})\\
+      & n_i\gets n_{i-1}+1\\
+      & k_1,k_0\gets f(n_i)\\
+      & t_i\gets h(\vec{m}_i, k_1, k_0)\\
+    \end{forblock}\\
+    &\overline{\vec{m}},\overline{n},\overline{t}\gets\AD(n_q,t_q)\\
+    &\IF (\overline{\vec{m}},\overline{n},\overline{t})\in\set{
+         (\vec{m}_1,n_1,t_1), \ldots, (\vec{m}_q,n_q,t_q)}\THEN \RETURN 0\\
+    &\overline{k}_1,\overline{k}_0\gets f(\overline{n})\\
+    &\RETURN [\overline{t}\iseq h(\overline{\vec{m}}, \overline{k}_1, \overline{k}_0)]\enspace.\\
+  \end{game}
+\end{align*}
+This game models the attack where the adversary $\AD$ can query message authentication codes for distinct nonces $1,\ldots, i,\ldots, q$, after which $\AD$ can come up with any valid nonce  $\overline{n}$. Such a choice is justified, since the sender can control in which order nonces are generated, while the receiver has no control over the order message-tag pairs arrive. Thus, the easiest option for the receiver is to accept all messages with valid authentication tags regardless of nonces. Alternatively, the receiver can keep the database of received nonces and check for duplicates or  accept only messages of with sequentially increasing nonces. Neither of these alternatives is practical. The first option requires additional space and time for seeking duplicates, while the second one makes it easy to halt all communications by removing a single message from the channel. 
+    
+As the first proof step, note that we can replace $\FFF$ with a function family $\FFFALL$. The adversaries success can only change by $\varepsilon$ if the running time of $\AD$ is sufficiently small\footnote{To determine the true bound we have to do the reduction. Intuition says that $t_\AD\leq t-\Oh(q)$}. Let $\GAME_1$ be the corresponding game. Next note that there are essentially two possibilities. First, the nonce $\overline{n}$ can be distinct, i.e., $\overline{n}\neq n_i$. Then the random function is evaluated in $q+1$
+distinct points and we replace its values by random samples. The following game 
+\begin{align*}
+  \begin{game}{\GAME_2^\AD}
+    &n_0\gets 0,\ t_0\gets \bot\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}} 
+      & \vec{m}_i\gets \AD(n_{i-1},t_{i-1})\\
+      & n_i\gets n_{i-1}+1\\
+      & k_1,k_0\gets \FF\\
+      & t_i\gets h(\vec{m}_i, k_1, k_0)\\
+    \end{forblock}\\
+    &\overline{\vec{m}},\overline{n},\overline{t}\gets\AD(n_q,t_q)\\
+    &\IF \overline{n}\in \set{n_1,\ldots, n_q}\THEN \RETURN 0\\
+    &\overline{k}_1,\overline{k}_0\gets \FF\\
+    &\RETURN [\overline{t}\iseq h(\overline{\vec{m}}, \overline{k}_1, \overline{k}_0)]\\
+  \end{game}
+\end{align*}
+measures the success of $\AD$ in this setting. Note that the condition
+$(\overline{\vec{m}},\overline{n},\overline{t})\notin\set{
+  (\vec{m}_1,n_1,t_1), \ldots, (\vec{m}_q,n_q,t_q)}$ by the
+construction, as $\overline{n}$ is distinct form other nonces. Hence,
+we could remove the irrelevant if sentence from $\GAME_2$. Next, note
+that the keys of the final challenge are created after $\AD$ outputs
+its forgery $\overline{\vec{m}},\overline{n},\overline{t}$.  As a
+result, it is easy to see that $\AD$ conducts impersonation attack
+against $h$. By the security of polynomial message authentication code
+\begin{align*}
+  \pr{\GAME_2^\AD=1}\leq \frac{1}{\abs{\FF}}\enspace.
+\end{align*}
+The second case when the nonce $\overline{n}$ coincides with $n_j$ for some $j\in\set{1,\ldots,n_q}$ is a bit more difficult to analyse. By the construction the keys $\overline{k}_1, \overline{k}_0$ generated to check the
+message tag $\overline{t}$ coincide with the keys
+$k_0^{(j)},k_1^{(j)}=f(n_j)$. The corresponding situation is modelled
+by the following game:
+\begin{align*}
+  \begin{game}{\GAME_{2+j}^\AD}
+    &n_0\gets 0,\ t_0\gets \bot\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}} 
+      & \vec{m}_i\gets \AD(n_{i-1},t_{i-1})\\
+      & n_i\gets n_{i-1}+1\\
+      & k_1^{(i)},k_0^{(i)}\gets \FF\\
+      & t_i\gets h(\vec{m}_i, k_1, k_0)\\
+    \end{forblock}\\
+    &\overline{\vec{m}},\overline{n},\overline{t}\gets\AD(n_q,t_q)\\
+    &\IF \overline{n}\neq n_j\ \THEN \RETURN 0\\
+    &\IF \overline{\vec{m}} = \vec{m}_j\ \THEN \RETURN 0\\
+    &\RETURN [\overline{t}\iseq h(\overline{\vec{m}}, k_1^{(j)}, k_0^{(j)})]\\
+  \end{game}
+\end{align*}
+where the check $\overline{\vec{m}} = \vec{m}_j$ assures that the
+adversary does not submit a message and a tag that she has seen
+before.  Now it is easy to see that $\AD$ succeeds in the game
+$\GAME_{2+j}$ only if she manages to conduct a successful substitution
+attack against the polynomial message authentication code with keys
+$k_1^{(j)}, k_0^{(j)}$. Consequently 
+\begin{align*}
+  \pr{\GAME_{2+j}^\AD=1}\leq \frac{\ell}{\abs{\FF}}\enspace.
+\end{align*}
+Since one of the events $\overline{n}\notin\set{n_1,\ldots,n_q}$ or
+$\overline{n}=n_j$ must occur during a successful attack we get
+\begin{align*}
+  \pr{\GAME_1^\AD=1}&=\pr{\GAME_2^\AD=1}+\pr{\GAME_3^\AD=1}+\cdots +\pr{\GAME_{1+q}^\AD=1}
+  \leq \frac{q\ell+1}{\abs{\FF}}\enspace.  
+\end{align*}
+Consequently, we have proven that for all $(t-\Oh(q))$-time adversaries $\AD$: 
+\begin{align*}
+  \pr{\GAME^\AD=1}&\leq \frac{q\ell+1}{\abs{\FF}}+\varepsilon\enspace  
+\end{align*}
+and thus the $\CTRMAC$ is indeed computationally secure. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Refined analysis.}
+The bound obtained above is very loose, since we do not take into account the probability that outputs the nonce in the right format. By taking this into account, we get much sharper bounds
+\begin{align*}
+  \pr{\GAME_2^\AD=1}&=\pr{\overline{n}\notin\set{n_1,\ldots, n_q}}\cdot\frac{1}{\abs{\FF}}\\ 
+  \pr{\GAME_{2+j}^\AD=1}&=\pr{\overline{n}=j}\cdot\frac{\ell}{\abs{\FF}}
+\end{align*}
+We emphasise that this is possible only because the security of
+polynomial message authentication code is unconditional. If we would
+have had computational security guarantees, then this type of success
+estimation would have been impossible---to get a bound, we have to construct a reduction but this would require efficient sampling over the runs which satisfy the condition $\overline{n}\notin\set{n_1,\ldots, n_q}$ or $\overline{n}=j$ and the latter is non-trivial task in if the computing power is limited.  Now improved upper bounds allow us to obtain better bound
+\begin{align*}
+  \pr{\GAME_1^\AD=1}\leq \pr{\overline{n}\notin\set{n_1,\ldots,
+      n_q}}\cdot\frac{1}{\abs{\FF}}+\cdots+\pr{\overline{n}=q}\cdot\frac{\ell}{\abs{\FF}}\leq
+  \frac{\ell}{\abs{\FF}}
+\end{align*}
+where the last inequality follows from the fact that maximum is larger
+than average.  As a result we have obtained that if the running time
+of $\AD$ is sufficiently small then
+\begin{align*}
+  \pr{\GAME^\AD=1}\leq  \frac{\ell}{\abs{\FF}}+\varepsilon
+\end{align*}
+and thus $\CTRMAC$ is indeed secure. \qed
+\end{solution}
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Security analysis of $\RMAC$.}
+The security game for  $\RMAC$ differs only by the way the nonce is computed:
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &f\getsu\FFF\\
+    &n_0\gets 0,\ t_0\gets \bot\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}} 
+      & \vec{m}_i\gets \AD(n_{i-1}, t_{i-1})\\
+      & n_i\gets \FF\times\FF\\
+      & k_1,k_0\gets f(n_i)\\
+      & t_i\gets h(\vec{m}_i, k_1, k_0)\\
+    \end{forblock}\\
+    &\overline{\vec{m}},\overline{n},\overline{t}\gets\AD(n_q,t_q)\\
+    &\IF (\overline{\vec{m}},\overline{n},\overline{t})\in\set{
+         (\vec{m}_1,n_1,t_1), \ldots, (\vec{m}_q,n_q,t_q)}\THEN \RETURN 0\\
+    &\overline{k}_1,\overline{k}_0\gets f(\overline{n})\\
+    &\RETURN [\overline{t}\iseq h(\overline{\vec{m}}, \overline{k}_1, \overline{k}_0)]\enspace.\\
+  \end{game}
+\end{align*}
+It is easy to see that the analysis of $\CTRMAC$ would be sufficient if all nonces would be distinct. Since nonces are drawn randomly form a large set, the probability of nonce collisions is negligible:
+\begin{align*}
+\pr{\exists i,j: n_i=n_j}=\binom{q}{2}\cdot \frac{1}{\abs{\FF}^2}=\frac{q(q-1)}{2\abs{\FF}^2}\enspace.
+\end{align*}   
+Secondly, it is straightforward to see that if we always query message pairs $(0,\ldots,0,0)$ and $(0,\ldots,0,1)$, then the colliding nonces allow us to restore both sub keys $k_0$ and $k_1$ and thus authenticate any message corresponding to this nonce. Consequently, the $\RMAC$ scheme is insecure in case of nonce collisions. Thus we can estimate the success probability as follows:
+\begin{align*}
+\pr{\GAME_1^\AD=1}&=\pr{\GAME_1^\AD=1\wedge\exists i,j: n_i=n_j}+\pr{\GAME_1^\AD=1\wedge\forall i,j: n_i\neq n_j}\enspace.
+\end{align*}   
+As the first probability can be bounded by the collision probability and the second by the the bounds from $\CTRMAC$ analysis, we obtain:
+\begin{align*}
+\pr{\GAME^\AD=1}&\leq \frac{q(q-1)}{2\abs{\FF}^2}+ \frac{\ell}{\abs{\FF}}+ \varepsilon\enspace.
+\end{align*}   
+The latter concludes our security proof.  
+
+
+\end{document}

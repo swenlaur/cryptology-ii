@@ -1,0 +1,36 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{}
+\tags{Subgroup Hiding problem, random self-reducibility}
+
+\newcommand{\ADVSH}[2]{\ADV_{#1}^{\mathsf{sgh}}(#2)}
+
+\begin{document}
+\begin{exercise}{Random self-reducibility of Subgroup Hiding}
+ Let $\GG_1=\langle g_1\rangle$ be a $q$-element subgroup of a finite group $\GG$. 
+ We say that $\GG_*$ is $(t,\varepsilon)$-indistinguishable from $\GG$ if for any $t$-time
+ adversary $\AD$
+  \begin{align*}
+  \ADVSH{\GG}{\AD}=\abs{\pr{x\getsu\GG:\AD(x)=1}-\pr{x\getsu\GG_1:\AD(x)=1}}
+  \leq\varepsilon\enspace.
+  \end{align*}
+ Show that if $\GG$ is a cyclic subgroup of $n$ elements then $\GG_1$ cannot be 
+ indistinguishable form $\GG$. As a consequence, there must exist a base set 
+ $\set{g_1,\ldots,g_\ell}$ such that any element of $\GG$ is uniquely representable as
+ $g_1^{\alpha_1}\cdots g_\ell^{\alpha_\ell}$ for $\alpha_1,\ldots,\alpha_\ell\in\ZZ_q$. 
+ Show that under this assumption subgroup hiding is randomly self-reducible. For that,
+ define an algorithm $\ADB$ such that 
+ \begin{align*}
+ \abs{\pr{\ADB(x)=1}-\pr{\ADB(y)=1}}=\ADVSH{\GG}{\AD}
+ \end{align*} 
+ for any $x\in\GG_1$ and for any $y\in\GG\setminus\GG_*$. What is the additional requirement to 
+ $q$ and what happens if this assumption is not satisfied? How one can define subgroup hiding 
+ for cyclic groups?  
+\end{exercise}
+\begin{solution}
+\textbf{Hint:} Let $g$ be the generator of $\GG$ how $g_*$ looks like and what can you tell about 
+the structure of $\GG_*$ in terms of powers of $g$.
+\textbf{Clarification:} Last question can be neglected.
+	
+\end{solution}
+\end{document}

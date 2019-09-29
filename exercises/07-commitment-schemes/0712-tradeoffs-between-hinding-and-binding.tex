@@ -1,0 +1,40 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author[Folclore result]{Sven Laur}
+\tags{commitment, statistical hiding, statistical binding}
+
+\newcommand{\CS}{\mathfrak{C}}
+\theoremstyle{plain}\newtheorem{stmt}{Statement}
+\renewcommand{\qedsymbol}{}
+
+
+\newcommand{\gen}[1]{\langle{#1}\rangle}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\Hash}{\mathcal{H}}
+%\newcommand{\D}{\mathcal{D}ealer}
+\newcommand{\R}{\mathcal{R}}
+%\newcommand{\getsu}{\stackrel{u}{\gets}}
+\newcommand{\Gen}{\mathsf{Gen}}
+\newcommand{\Enc}{\mathsf{Enc}}
+\newcommand{\Dec}{\mathsf{Dec}}
+\newcommand{\Com}{\mathsf{Com}}
+\newcommand{\Mac}{\mathsf{Mac}}
+\newcommand{\Ver}{\mathsf{Ver}}
+\newcommand{\Open}{\mathsf{Open}}
+\newcommand{\INDCPA}{\mathsf{IND\text{-}CPA}}
+
+
+
+\begin{document}
+
+
+\begin{exercise}{Statistical hiding versus statistical binding} 
+Show  that a commitment scheme can be statistically $\varepsilon_1$-hiding and $\varepsilon_2$-binding only if $\varepsilon_1+\varepsilon_2\geq 1$.
+\end{exercise}
+\begin{solution}
+\end{solution}
+\textsc{Hint.} Split public parameters $\PK$ into binding and non-binding keys.
+\end{document}

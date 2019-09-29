@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage[paperwidth=14cm,paperheight=6cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\newcommand{\dnode}[4]{\rput(#1){\rnode{#2}{\begin{tabular}{|c|}\hline #3\\ \hline #4\\\hline\end{tabular}}}}
+\begin{document}
+\thispagestyle{empty}
+\begin{pspicture}(-4.5,1.5)(5,5.0)
+% Root
+\cnodeput( 0,5){QS}{$c_{00}$}
+% L1
+\dnode{-3.0,4}{Q0}{$c_{10}$}{$\overline{c}_{10}$}
+\dnode{ 3.0,4}{Q1}{$c_{11}$}{$\overline{c}_{11}$}
+% L2
+\dnode{-4.5,2.5}{Q00}{$c_{20}$}{$\overline{c}_{20}$}
+\dnode{-1.5,2.5}{Q01}{$c_{21}$}{$\overline{c}_{21}$}
+\dnode{ 1.5,2.5}{Q10}{$c_{22}$}{$\overline{c}_{22}$}
+\dnode{ 4.5,2.5}{Q11}{$c_{23}$}{$\overline{c}_{23}$}
+% L3
+\dnode{-5.25,1}{Q000}{$c_{30}$}{$\overline{c}_{30}$}
+\dnode{-3.75,1}{Q001}{$c_{31}$}{$\overline{c}_{31}$}
+\dnode{-2.25,1}{Q010}{$c_{32}$}{$\overline{c}_{32}$}
+\dnode{-0.75,1}{Q011}{$c_{33}$}{$\overline{c}_{33}$}
+\dnode{ 0.75,1}{Q100}{$c_{34}$}{$\overline{c}_{34}$}
+\dnode{ 2.25,1}{Q101}{$c_{35}$}{$\overline{c}_{35}$}
+\dnode{ 3.75,1}{Q110}{$c_{36}$}{$\overline{c}_{36}$}
+\dnode{ 5.25,1}{Q111}{$c_{37}$}{$\overline{c}_{37}$}
+
+% L1
+\ncline{->}{Q0}{QS}%\bput{:D}{0}
+\ncline{->}{Q1}{QS}%\aput{:U}{1}
+
+% L2
+\ncline{->}{Q10}{Q1}%\bput{:D}{0}
+\ncline{->}{Q11}{Q1}%\aput{:U}{1}
+\ncline{->}{Q00}{Q0}%\bput{:D}{0}
+\ncline{->}{Q01}{Q0}%\aput{:U}{1}
+% L3
+\ncline{->}{Q000}{Q00}%\bput{:D}{0}
+\ncline{->}{Q001}{Q00}%\aput{:U}{1}
+\ncline{->}{Q010}{Q01}%\bput{:D}{0}
+\ncline{->}{Q011}{Q01}%\aput{:U}{1}
+\ncline{->}{Q100}{Q10}%\bput{:D}{0}
+\ncline{->}{Q101}{Q10}%\aput{:U}{1}
+\ncline{->}{Q110}{Q11}%\bput{:D}{0}
+\ncline{->}{Q111}{Q11}%\aput{:U}{1}
+
+\end{pspicture}
+\end{document}

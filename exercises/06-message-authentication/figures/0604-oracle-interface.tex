@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{crysymb}
+\usepackage[paperwidth=14cm,paperheight=6cm]{geometry}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{colortbl}
+%\usepackage[table]{xcolor}
+
+\begin{document}
+\noindent
+\thispagestyle{empty}
+\begin{pspicture}(-4,0.5)(4,4.5)
+\rput(0,2.5){
+	\psframe[fillstyle=solid,fillcolor=red,linecolor=black,framearc=0.1](0,0)(1.5,1.5)
+	\rput(0.75,0.75){$\AD$}
+	\pnode(0.0,0.75){A0}
+	\pnode(1.5,0.75){A1}
+}
+
+\rput(-0.25,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=olive,linecolor=black,framearc=0.1](0,0)(2.0,1.0)
+	\rput(1.00,0.50){$\mathsf{Key\text{-}Gen}$}
+	\pnode(0.0,0.5){G0}
+	\pnode(2.0,0.5){G1}
+}
+
+\rput(-5.0,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=teal!50,linecolor=black,framearc=0.1](0,0)(2.0,1.0)
+	\rput(1.0,0.50){$\mathsf{Auth\text{-}Enc}$}
+	\pnode(0.0,0.5){E0}
+	\pnode(2.0,0.5){E1}
+	\pnode(1.0,1.0){E2}
+	\pnode(1.0,1.0){E3}
+}
+
+\rput(+4.,0.5)
+{
+	\psframe[fillstyle=solid,fillcolor=teal!50,linecolor=black,framearc=0.1](0,0)(2.0,1.0)
+	\rput(1.00,0.50){$\mathsf{Auth\text{-}Dec}$}
+	\pnode(0.0,0.5){D0}
+	\pnode(2.0,0.5){D1}
+	\pnode(1.0,1.0){D2}
+	\pnode(1.0,1.0){D3}
+}
+
+\ncline[arrowsize=6pt]{->}{G0}{E1}
+\bput{:D}{$\SK,k$}
+\ncline[arrowsize=6pt]{->}{G1}{D0}
+\aput{:U}{$\SK,k$}
+\ncangle[angleA=180,angleB=90,arrowsize=6pt]{->}{A0}{E2}
+\rput(-1.75,3.5){$m_1,\ldots,m_q$}
+\ncangle[angleA=180,angleB=90,arrowsize=6pt]{->}{A1}{D2}
+\rput(+3.0,3.5){$\hat{c}_1,\ldots,\hat{c}_n$}
+
+\end{pspicture}
+\end{document}

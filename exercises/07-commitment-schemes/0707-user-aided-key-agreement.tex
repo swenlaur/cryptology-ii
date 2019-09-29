@@ -1,0 +1,121 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Prastudy Fauzi}
+\contributor[Streamlining]{Sven Laur}
+
+\editor{Sven Laur}
+\tags{user-aided key agreement, ind-cca2 security, non-malleable encryption}
+
+\newcommand{\ADVNMCPA}[2]{\ADV^{\mathsf{nm\text{-}cpa}}_{#1}{(#2)}}
+\newcommand{\CS}{\mathfrak{C}}
+
+\begin{document}
+\begin{exercise}{Security of user-aided key agreement}
+Consider the following simple user-aided key agreement protocol. The public key $\PK$ of a server $\PARTY_1$ is known to all participants. If a participant $\PARTY_2$ wants to connect to $\PARTY_1$ it generates a random session key $k\getsu\KSPACE$ and a short authentication nonce $r\getsu\set{0,\ldots,9999}$ and sends $\ENC_\PK(k\|r)$ to $\PARTY_1$. Next $\PARTY_1$ recovers $k$ and $r$ and sends $r$ as an SMS back to $\PARTY_2$. The client $\PARTY_2$ halts if the SMS does not correspond to his or her authentication nonce.
+Prove that a $t$-time adversary can alter the ciphertext without being detected with probability at most $10^{-4}+\varepsilon$ provided that the cryptosystem is $(t,\varepsilon)$-NM-CPA secure and no adversary cannot alter the SMS message.
+\end{exercise}
+\begin{solution}
+For brevity, let $\RRR=\set{0000,\ldots,9999}$ denote the nonce space. Then we can formalise the security goal through the following game: 
+\begin{align*}
+\begin{game}{\GAME_0}
+ &(\PK,\SK)\gets\GEN\\
+ &k\getsu\KSPACE, r\getsu\RRR\\
+ &c\gets\ENC_\PK(k||r)\\
+ &\hat{c}\gets\AD(c)\\
+ &\hat{k}||\hat{r}\gets\DEC_\SK(\hat{c})\\
+ &\IF r\neq \hat{r}\ \RETURN 0\\
+ &\RETURN \neg[k\iseq \hat{k}]\enspace.
+\end{game}
+\end{align*}
+Note that if the adversary return $\hat{c}=c$, he or she is guaranteed to lose the game.
+Hence, we can consider only adversaries that always return $\hat{c}\neq c$. More formally, it is straightforward to modify any adversary to output a different encryption if $\hat{c}=c$. This would only increase the adversaries success probability with the cost of constant overhead in running time. 
+
+Now consider a small change in the game, where instead of getting an encryption of $(k || r)$, the adversary gets an encryption of a random message $(\bar{k} || \bar{r})$. To emphasise the change, let us incorporate the generation of this encryption into the original game without no further use of it. This leads to the game pair 
+\begin{align*}
+&\begin{game}{\GAME_0}
+ &(\PK,\SK)\gets\GEN\\
+ &k\getsu\KSPACE, r\getsu\RRR\\
+ &\bar{k}\getsu\KSPACE, \bar{r}\getsu\RRR\\
+ &c\gets\ENC_\PK(k||r)\\
+ &\overline{c}\gets\ENC_\PK(\bar{k}||\bar{r})\\
+ &\hat{c}\gets\AD(c)\\
+ &\hat{k}||\hat{r}\gets\DEC_\SK(\hat{c})\\
+ &\IF r\neq \hat{r}\ \RETURN 0\\
+ &\RETURN \neg[k\iseq \hat{k}]\enspace
+\end{game}
+&
+&\begin{game}{\GAME_1}
+ &(\PK,\SK)\gets\GEN\\
+ &k\getsu\KSPACE, r\getsu\RRR\\
+ &\bar{k}\getsu\KSPACE, \bar{r}\getsu\RRR\\
+ &c\gets\ENC_\PK(k||r)\\
+ &\overline{c}\gets\ENC_\PK(\bar{k}||\bar{r})\\
+ &\hat{c}\gets\AD(c_1)\\
+ &\hat{k}||\hat{r}\gets\DEC_\SK(\hat{c})\\
+ &\IF r\neq \hat{r}\ \RETURN 0\\
+ &\RETURN \neg[k\iseq \hat{k}]\enspace.
+\end{game}
+\end{align*}
+Note that it is straightforward to rewrite the end-game correctness check as a relation between plaintexts
+\begin{align}
+\label{eq:target-relation}
+\pi(k||r, \hat{k}||\hat{r})= [r \iseq \hat{r}] \wedge [k \neq \hat{k}]\enspace.
+\end{align}
+Hence, we can directly reduce these games to the non-malleability games
+\begin{align*}
+&\begin{game}{\BGAME_0}
+ &(\PK,\SK)\gets\GEN\\
+ &\MSPACE_0\gets\ADB(\PK)\\
+ &m\gets\MSPACE_0, \overline{m}\gets\MSPACE_0\\ 
+ &c\gets\ENC_\PK(m)\\
+ &\overline{c}\gets\ENC_\PK(\overline{m})\\
+ &\pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(c)\\
+ &\IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN\RETURN 0\\
+ &\hat{m}_i\gets\DEC_\SK(\hat{m}_i)\text{ for }i\in\set{1,\ldots,n}\\
+ &\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+ &(\PK,\SK)\gets\GEN\\
+ &\MSPACE_0\gets\ADB(\PK)\\
+ &m\gets\MSPACE_0, \overline{m}\gets\MSPACE_0\\ 
+ &c\gets\ENC_\PK(m)\\
+ &\overline{c}\gets\ENC_\PK(\overline{m})\\
+ &\pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(\overline{c})\\
+ &\IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN\RETURN 0\\
+ &\hat{m}_i\gets\DEC_\SK(\hat{m}_i)\text{ for }i\in\set{1,\ldots,n}\\
+ &\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+\end{align*}
+The corresponding reduction is following. First, $\ADB(\PK)$ returns an algorithm $\MSPACE_0$ that return a uniformly chosen element form $\KSPACE\times\RSPACE$. Second, $\ADB(c)$ runs $\AD(c)$ and returns the description of the relation given as the equation~\eqref{eq:target-relation}. Since $\AD$ is guaranteed never to return $\hat{c}=c$, the direct substitutions gives $\BGAME_0^\ADB\equiv \GAME_0^\AD$ and $\BGAME_1^\ADB\equiv \GAME_1^\AD$. The latter implies  
+\begin{align*}
+\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq\ADVNMCPA{\CS}{\ADB}\enspace.
+\end{align*}
+
+Let us now concentrate on the simplification of the game $\GAME_1$. Since the adversaries reply does not depend on $c$, $r$ and $k$, we can simplify the game by delaying these random choices:
+\begin{align*}
+&\begin{game}{\GAME_2}
+ &(\PK,\SK)\gets\GEN\\
+ &\bar{k}\getsu\KSPACE, \bar{r}\getsu\RRR\\
+ &\overline{c}\gets\ENC_\PK(\bar{k}||\bar{r})\\
+ &\hat{c}\gets\AD(c_1)\\
+ &\hat{k}||\hat{r}\gets\DEC_\SK(\hat{c})\\
+ &k\getsu\KSPACE, r\getsu\RRR\\
+ &\IF r\neq \hat{r}\ \RETURN 0\\
+ &\RETURN \neg[k\iseq \hat{k}]\enspace.
+\end{game}
+\end{align*}
+Since $r$ is chosen uniformly after $\hat{r}$ is fixed, we get 
+\begin{align*}
+\pr{\GAME_1^\AD=1}=\pr{\GAME_2^\AD=1}\leq \frac{1}{\abs{\RSPACE}}
+\end{align*}      
+where the last inequality follows from the fact that we must pass the $\hat{r}\iseq r$ test in order to end the game with one. Consequently, we have proven that for $t$-time adversaries $\AD$, the success is bounded by
+\begin{align*}
+\pr{\GAME_0^\AD=1}\leq\frac{1}{\abs{\RSPACE}}+\varepsilon\enspace
+\end{align*} 
+provided that the cryptosystem is $(t+\Oh(1),\varepsilon)$-NM-CPA secure. 
+
+\end{solution}
+
+\end{document}

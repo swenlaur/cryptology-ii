@@ -1,0 +1,188 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Complete rewrite]{Sven Laur}
+\editor{Sven Laur}
+\tags{collision resistant hash function, message authentication code, horizon splitting}
+
+\newcommand{\ADVMAC}[2]{\ADV^{\mathsf{mac}}_{#1}(#2)}
+\newcommand{\ADVCR}[2]{\ADV^{\mathsf{cr}}_{#1}(#2)}
+
+\newcommand{\VER}{\mathsf{Ver}}
+\newcommand{\HASH}{\mathsf{Hash}}
+\newcommand{\MACH}{\mathsf{HashMac}}
+
+
+\begin{document}
+\begin{exercise}{HASH + MAC = MAC}
+Let $\HHH$ be a collision resistant hash function family form $\MSPACE$ to $\XXX$ and let $\MAC:\XXX\times\KSPACE\to\TSPACE$ be a secure message authentication code. Show that the  following function
+\begin{align*}
+\MACH(m,k,h)=\MAC(h(m),k)
+\end{align*}
+is secure message message authentication code with a signature
+$\MACH:\MSPACE\times\KSPACE\times\HHH\to\TSPACE$, i.e., the usage of collision resistant functions allows us to extend the domain of a message authentication code.
+
+\end{exercise}
+
+\begin{solution}
+Recall that according to the security definition for message authentication we must show that the probability that a $t$-time adversary $\AD$ wins the following game 
+\begin{align*}
+  \begin{game}{\GAME^{\AD}}
+    &k\gets\KSPACE\\
+    &h\gets\HHH\\
+    & t_0\gets \AD(h)\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets \AD(t_{i-1})\\
+    & t_i\gets \MACH(m_i, k, h)\\
+    \end{forblock}\\
+    & (m,t)\gets\AD(t_q) \\
+    & \IF (m,t)\in \set{(m_1,t_1),\ldots,(m_q,t_q)} \ \RETURN 0\\
+    &\RETURN [t\iseq \MACH(m,k,h)]
+  \end{game}
+\end{align*}
+is bounded from above. By substituting the definition of $\MACH$ into the game, we obtain 
+\begin{align*}
+  \begin{game}{\GAME_0^{\AD}}
+    &k\gets\KSPACE\\
+    &h\gets\HHH\\
+    &t_0\gets \AD(h)\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets \AD(t_{i-1})\\
+    & x_i\gets h(m_i)\\
+    & t_i\gets \MAC(x_i, k)\\
+    \end{forblock}\\
+    & (m,t)\gets\AD(t_q) \\
+    & \IF (m,t)\in \set{(m_1,t_1),\ldots,(m_q,t_q)} \ \RETURN 0\\
+    & x\gets h(m)\\
+    &\RETURN [t\iseq \MAC(x,k)]\enspace.
+  \end{game}
+\end{align*}
+Note that $\AD$ wins the game, if $\AD$ creates $m$ such that $h(m)=h(m_i)$ while $m\neq m_i$. Then $t_i$ is a known and valid message authentication tag for $m$. To handle this issue explicitly, we can define the following games:
+\begin{align*}
+  &\begin{game}{\GAME_1^{\AD}}
+    &k\gets\KSPACE\\
+    &h\gets\HHH\\
+    & t_0\gets \AD(h)\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets \AD(t_{i-1})\\
+    & x_i\gets h(m_i)\\
+    & t_i\gets \MAC(x_i, k)\\
+    \end{forblock}\\
+    & (m,t)\gets\AD(t_q) \\
+    & \IF [h(m)\notin \set{h(m_1),\ldots, h(m_q)}]\ \RETURN 0\\
+    & \IF m\in \set{m_1,\ldots, m_q} \ \RETURN 0\\
+    & \RETURN [t\iseq \MAC(h(m),k)]\enspace
+  \end{game}
+  &&
+  \begin{aligned}
+  \begin{game}{\GAME_2^{\AD}}
+    &k\gets\KSPACE\\
+    &h\gets\HHH\\
+    & t_0\gets \AD(h)\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets \AD(t_{i-1})\\
+    & x_i\gets h(m_i)\\
+    & t_i\gets \MAC(x_i, k)\\
+    \end{forblock}\\
+    & (m,t)\gets\AD(t_q) \\
+    & \IF h(m)\in \set{h(m_1),\ldots, h(m_q)} \ \RETURN 0\\
+    &\RETURN [t\iseq \MAC(h(m),k)]\enspace.
+  \end{game}\\
+  \ \\
+  \end{aligned}
+\end{align*}
+Clearly, we can split all runs of $\GAME^\AD$ into two classes depending whether 
+the event $h(m)\notin \set{h(m_1),\ldots, h(m_q)}$ holds or not. As the event $h(m)\notin \set{h(m_1),\ldots, h(m_q)}$ also implies $m\notin\set{m_1,\ldots,m_q}$, we do not have to check the condition $(m,t)\in \set{(m_1,t_1),\ldots,(m_q,t_q)}$ any more in $\GAME_2$. For the game $\GAME_1$, we still have to check that $m\notin \set{m_1,\ldots,m_q}$.
+Thus, by the construction of games we have established  
+\begin{align*}
+\pr{\GAME_0^\AD=1}= \pr{\GAME_1^\AD=1} + \pr{\GAME_2^\AD=1}\enspace.
+\end{align*}
+The game $\GAME_2$ is very close to the security game for the message authentication codes.  In fact, if we define an adversary $\ADB$ such that 
+\begin{align*}
+  \begin{game}{\ADB(t_0)}
+    &h \getsu \HHH\\
+    &m_1\gets \AD(t_0)\\
+    &\RETURN h(m_1) 
+  \end{game}
+  \qquad\qquad
+  \begin{aligned}
+  \begin{game}{\ADB(t_{i-1})}
+    &m_i \gets \AD(t_{i-1})\\
+    &\RETURN h(m_i)
+  \end{game}\\
+  \ \\
+  \end{aligned}
+  \qquad\qquad
+  \begin{game}{\ADB(t_q)}
+    &(m,t)\gets \AD(t_0)\\
+    &\RETURN h(m_1), t 
+  \end{game}
+\end{align*}
+then direct substitution to the security game of message authentication code
+\begin{align*}
+  \begin{game}{\BGAME^{\ADB}}
+    &k\gets\KSPACE\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & x_i\gets \ADB(t_{i-1})\\
+    & t_i\gets \MAC(x_i, k)\\
+    \end{forblock}\\
+    & (x,t)\gets\AD(t_q) \\
+    & \IF (x,t)\in \set{(x_1,t_1),\ldots,(x_q,t_q)} \ \RETURN 0\\
+    &\RETURN [t\iseq \MAC(x,k)]
+  \end{game}
+\end{align*}
+leads to the game that is equivalent to the game $\GAME_2^\AD$. The only difference after the mechanical substitution is in the last check. In the game $\GAME_2^\AD$, the check 
+\begin{align*}
+h(m)\in \set{h(m_1),\ldots,h(m_q))}
+\end{align*}
+is more stringent than the check $(h(m),t)\in \set{(h(m_1),t_1),\ldots,(h(m_q),t_q)}$ used 
+in $\BGAME^\ADB$. Consequently, 
+\begin{align*}
+\pr{\GAME_2^\AD=1}\leq\pr{\BGAME^\ADB=1}\leq\ADVMAC{\MAC}{\ADB}\enspace.
+\end{align*}
+Note that the overhead in the running time of $\ADB$ is linear in the number of queries $q$ and thus $(t+\Oh(q),\varepsilon_1)$-secure message  authentication code is sufficient for bounding the success probability in the game $\GAME_2$.
+
+For the game $\GAME_1$, it is important to note that $\AD$ passes first two checks only if $\AD$ creates a hash collision: $h(m)=h(m_i)$ for $m\neq m_i$. Consequently, the following adversary 
+\begin{align*}
+  &\begin{fblock}{\ADC(h)}
+    &k\gets\KSPACE\\
+    & t_0\gets \AD(h)\\
+    &\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets \AD(t_{i-1})\\
+    & x_i\gets h(m_i)\\
+    & t_i\gets \MAC(x_i, k)\\
+    \end{forblock}\\
+    & (m,t)\gets\AD(t_q) \\
+    & \IF [h(m)\notin \set{h(m_1),\ldots, h(m_q)}]\ \RETURN 0\\
+    & i\gets\set{i:h(m_i)=h(m)}\\ 
+    & \RETURN (m,m_i)
+  \end{fblock}
+\end{align*}
+can be used for the collision resistance game
+\begin{align*}
+  \begin{game}{\BGAME^{\ADC}}
+    &h\getsu\HHH\\
+    &(m_0,m_1)\gets \ADB(h)\\
+    &\RETURN [h(m_0) = h(m_1)] \wedge [m_0 \neq m_1]\enspace.
+  \end{game}
+\end{align*}
+Again, the success criterion in the game $\BGAME$ is more relaxed than in the game $\GAME_1$ and thus direct substitution allows us to prove:
+\begin{align*}
+\pr{\GAME_1^\AD=1}\leq\pr{\BGAME^\ADC=1}\leq\ADVCR{\HHH}{\ADC}\enspace.
+\end{align*}
+Again, the overhead in the running time of $\ADC$ is $\Oh(q)$. Thus, usage of $(t+\Oh(q),\varepsilon_2)$-collision resistant hash function family $\HHH$ is sufficient for bounding the success probability in the game $\GAME_1$.
+ 
+To summarise, we have proven that $\MACH$ is $(t,q,\varepsilon_1+\varepsilon_2)$-secure message authentication code provided that $\HHH$ is a $(t+\Oh(q),\varepsilon_2)$-collision resistant hash function family and $\MAC$ is $(t+\Oh(q),\varepsilon_1)$-secure message authentication code.  
+ 
+\vspace*{2ex}
+\noindent
+\textsc{On the optimality of bounds.}
+It is easy to see that $\AD$ can win $\GAME_1$ as soon as it produces a hash collision $h(m)=h(m_i)$, since $\AD$ can set $t=t_i$ and pass the last check, as well. Most message authentication codes are deterministic and thus the conditions
+\begin{align*}
+h(m)\in \set{h(m_1),\ldots,h(m_q))}\quad\text{and}\quad
+(h(m),t)\in \set{(h(m_1),t_1),\ldots,(h(m_q),t_q)}
+\end{align*}
+are equivalent. The latter implies that also the second bound is optimal.
+\end{solution}
+\end{document}  

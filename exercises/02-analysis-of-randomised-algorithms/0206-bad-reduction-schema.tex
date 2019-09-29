@@ -1,0 +1,195 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\editor{Sven Laur}
+\tags{PRP/PRF switching lemma, bad-reduction, diverging games}
+
+
+\begin{document}
+\begin{exercise}{Analysis of bad events}
+Prove that statistical distance between the games 
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    & y_0\gets \bot\\
+    &\begin{fblock}{\text{For $i\in\set{1,\ldots,q}$ do}}
+      & x_i\gets\AD(y_{i-1})\\
+      &\IF x_i=\bot\ \THEN \BREAK\\
+      & y_i\getsu \MSPACE\\ 
+      & \IF y_i\in\set{y_1,\ldots,y_{i-1}}\ \THEN\\
+      &\!\!\begin{cblock}
+      & \mathsf{do\ nothing}\\
+      \end{cblock}\\
+    \end{fblock}\\
+    &\RETURN \AD
+  \end{game}
+  \begin{game}{\GAME_1^\AD}
+    & y_0\gets \bot\\
+    &\begin{fblock}{\text{For $i\in\set{1,\ldots,q}$ do}}
+      & x_i\gets\AD(y_{i-1})\\
+      &\IF x_i=\bot\ \THEN \BREAK\\
+      & y_i\getsu \MSPACE\\
+      & \IF y_i\in\set{y_1,\ldots,y_{i-1}}\ \THEN\\
+      &\!\!\begin{cblock}
+      &y_i\getsu\MSPACE\setminus\set{y_1,\ldots,y_{i-1}}\\         
+      \end{cblock}\\
+    \end{fblock}\\
+    &\RETURN \AD
+  \end{game}
+\end{align*}
+is the cumulative probability that one of the if branches gets
+executed.
+\end{exercise}
+
+
+\begin{solution}
+Let us first consider the simplified case where the
+adversary $\AD$ makes exactly two queries. Then the corresponding
+games can be simplified:
+\begin{align*}
+  &\begin{game}{\GAME_0^\AD}
+    & x_1\gets\AD\\
+    & y_1\getsu \MSPACE\\
+    & x_2\gets\AD(y_1)\\
+    & y_2\getsu \MSPACE\\
+    & \IF y_2=y_1\ \THEN\\
+    &\!\!\begin{cblock}
+      & \mathsf{do\ nothing}\\
+    \end{cblock}\\
+    &\RETURN \AD(y_2)
+  \end{game}
+  &&
+  &\begin{game}{\GAME_1^\AD}
+    & x_1\gets\AD\\
+    & y_1\getsu \MSPACE\\
+    & x_2\gets\AD(y_1)\\
+    & y_2\getsu \MSPACE\\
+    & \IF y_2=y_1\ \THEN\\
+    &\!\!\begin{cblock}
+      &y_2\getsu\MSPACE\setminus\set{y_1}\\         
+    \end{cblock}\\
+    &\RETURN \AD(y_2)
+  \end{game}
+\end{align*}
+We present two ways how to analyse this problem. First, we can do
+direct computations of probabilities and derive
+\begin{align*}
+  \pr{\GAME_0^\AD=1}&=\pr{y_1=y_2\wedge \AD(y_2) = 1} + 
+  \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\\
+  &\leq\pr{y_1=y_2} + \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\enspace,\\
+  \pr{\GAME_1^\AD=1}&=\pr{y_1=y_2\wedge \AD(y_2) = 1} +
+   \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\\
+  &\geq \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\enspace,\\
+  \pr{\GAME_0^\AD=1}&=\pr{y_1=y_2\wedge \AD(y_2) = 1} +
+   \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\\
+  &\geq  \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\enspace,\\
+  \pr{\GAME_1^\AD=1}&=\pr{y_1=y_2\wedge \AD(y_2) = 1} +
+   \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\\
+  &\leq \pr{y_1=y_2}+ \pr{y_1\neq y_2\wedge \AD(y_2) = 1}\enspace.
+\end{align*}
+Note that probabilities $\pr{y_1=y_2}$ and $ \pr{y_1\neq y_2\wedge \AD(y_2) =
+  1}$ are exactly the same in both games (a formal proof is lengthy
+but straightforward) and thus combining all these inequalities yields
+\begin{align*}
+  -\pr{y_1=y_2}\leq\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\leq\pr{y_1=y_2}\enspace. 
+\end{align*}
+As a second possible solution let us align use of randomness in both
+games. To make it absolutely clear, let us consider the following
+games:
+\begin{align*}
+  &\begin{game}{\GAME_0^\AD}
+    & x_1\gets\AD\\
+    & y_1\getsu \MSPACE\\
+    & x_2\gets\AD(y_1)\\
+    & y_2\getsu \MSPACE\\
+    & \IF y_2=y_1\ \THEN\\
+    &\!\!\begin{cblock}
+      & z\getsu\MSPACE\setminus\set{y_1}\\         
+    \end{cblock}\\
+    &\RETURN \AD(y_2)
+  \end{game}
+  &&
+  &\begin{game}{\GAME_1^\AD}
+    & x_1\gets\AD\\
+    & y_1\getsu \MSPACE\\
+    & x_2\gets\AD(y_1)\\
+    & y_2\getsu \MSPACE\\
+    & \IF y_2=y_1\ \THEN\\
+    &\!\!\begin{cblock}
+      &y_2\getsu\MSPACE\setminus\set{y_1}\\         
+    \end{cblock}\\
+    &\RETURN \AD(y_2)
+  \end{game}
+\end{align*}
+As both games now use the same set of randomness
+$\omega\in\Omega_\AD\times\MSPACE\times \MSPACE\setminus\set{y_1}$
+where $\Omega_\AD$ stands for the randomness space of $\AD$, we can
+treat both games as deterministic functions $\GAME_0^\AD(\omega)$ and
+$\GAME_1^\AD(\omega)$. By the construction
+$\GAME_0^\AD(\omega)\neq\GAME_1^\AD(\omega)$ only if we reach the if
+branch. Consequently,
+\begin{align*}
+  \set{\omega: \GAME_0^\AD(\omega)\neq\GAME_1^\AD(\omega)}\subseteq
+  \set{\omega:y_1(\omega)\neq y_2(\omega)}
+\end{align*}
+and thus also by definition 
+\begin{align*}
+  \pr{\omega: \GAME_0^\AD(\omega)\neq\GAME_1^\AD(\omega)}\leq
+  \pr{\omega:y_1(\omega)\neq y_2(\omega)}.
+\end{align*}
+Now note that 
+\begin{align*}
+  \abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq  \pr{\omega: \GAME_0^\AD(\omega)\neq\GAME_1^\AD(\omega)}\enspace,
+\end{align*}
+since all other terms cancel out. The claim follows.
+
+To give a general proof, lets modify the code so that the used
+randomness is again aligned:
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    & y_0\gets \bot\\
+    &\begin{fblock}{\text{For $i\in\set{1,\ldots,q}$ do}}
+      & x_i\gets\AD(y_{i-1})\\
+      &\IF x_i=\bot\ \THEN \BREAK\\
+      & y_i\getsu \MSPACE\\ 
+      & \IF y_i\in\set{y_1,\ldots,y_{i-1}}\ \THEN\\
+      &\!\!\begin{cblock}
+      &z\getsu\MSPACE\setminus\set{y_1,\ldots,y_{i-1}}\\         
+      \end{cblock}\\
+    \end{fblock}\\
+    &\RETURN \AD
+  \end{game}
+  \begin{game}{\GAME_1^\AD}
+    & y_0\gets \bot\\
+    &\begin{fblock}{\text{For $i\in\set{1,\ldots,q}$ do}}
+      & x_i\gets\AD(y_{i-1})\\
+      &\IF x_i=\bot\ \THEN \BREAK\\
+      & y_i\getsu \MSPACE\\
+      & \IF y_i\in\set{y_1,\ldots,y_{i-1}}\ \THEN\\
+      &\!\!\begin{cblock}
+      &y_i\getsu\MSPACE\setminus\set{y_1,\ldots,y_{i-1}}\\         
+      \end{cblock}\\
+    \end{fblock}\\
+    &\RETURN \AD
+  \end{game}
+\end{align*}
+Again by construction, the deterministic functions
+$\GAME_0^\AD(\omega)$ and $\GAME_1^\AD(\omega)$ can diverge
+$\GAME_0^\AD(\omega)\neq \GAME_1^\AD(\omega)$ on arguments $\omega$
+for which some if branch is executed. Hence
+\begin{align*}
+    \abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq 
+    \pr{\omega:\text{some if branch is reached}}\enspace.
+\end{align*}
+
+\paragraph{Remark.} This divergence argument generalises for any game
+pair with aligned randomness. As if branches containing different code
+can be aligned to use the same randomness, the statistical distance of
+games with different if branches is always bounded by the probability
+of executing one of these branches. The corresponding code
+transformation is known as the \textsc{Bad} reduction schema.
+
+\end{solution}
+
+\end{document}
+

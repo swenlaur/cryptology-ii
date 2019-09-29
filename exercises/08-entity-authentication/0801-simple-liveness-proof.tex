@@ -1,0 +1,81 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor{Kristiina Rahkema}
+\editor{Sven Laur}
+\tags{one-way function, liveness proof}
+
+\newcommand{\advOWXX}[2]{\ADV^{\mathsf{ow}}_{#1}(#2)}
+
+
+\begin{document}
+\begin{exercise}{Security of simple liveness proof}
+Entity authentication protocols are often used to prove liveness of a device or a person. For instance, ATM machines normally ask PIN codes several times during long transactions to assure that the person is still present. Such liveness proofs can be implemented with one-way functions. Let $f:\XXX\to\YYY$ be a one-way function and let $n$ be the maximal number of protocol invocations. Then a secret key $\SK$ can be chosen as a tuple of random values $x_{1},\ldots x_{n}\getsu \XXX$ and the corresponding public key $\PK$ as a tuple of hash values $f(x_1),\ldots,f(x_n)$. Each time when a party wants to prove liveness he or she will release non-published sub-key $x_i$.  The proof is successful if $f(x_i)=y_i$ where $y_i$ is the $i$th component of the public key $\PK$. Prove that if $f$ is $(t,\varepsilon_1)$-secure one-way function and protocols are executed sequentially, then the probability that a $t$-time adversary succeeds in the $i$th authentication without seeing $x_i$ is at most $\varepsilon$.
+\end{exercise}
+
+\begin{solution}
+Recall that one-wayness of a function $f$ is defined through the following security game:
+\begin{align*}
+&\begin{game}{\BGAME}
+&x\getsu\XXX\\
+&y\gets f(x)\\
+& \hat{x}\gets\ADB(y)\\
+&\RETURN [y \smash\iseq f(\hat{x})]\enspace.
+\end{game}
+\end{align*}
+The function $f$ is $(t,\varepsilon)$-secure one-way function if for any  $t$-time adversary $\ADB$ the corresponding advantage is bounded:
+\begin{align*} 
+\advOWXX{f}{\ADB}=\pr{\BGAME^\ADB=1}\leq\varepsilon\enspace.
+\end{align*} 
+Now the scenario of guessing an $i$th subkey $\hat{x}_i$ such that $f(\hat{x}_i)=f(x_i)$ can be modelled in the following game:
+\begin{align*}
+&\begin{game}{\GAME_i^\AD}
+ &x_1\getsu\XXX\\
+ &y_1\gets f(x_1)\\
+ &\ldots\\ 
+ &x_n\getsu\XXX\\
+ &y_n\gets f(x_n)\\
+ & \hat{x}_i\gets\AD(y_1,\ldots,y_n,x_1,\ldots, x_{i-1}) \\
+ &\RETURN [y_i\smash\iseq f(\hat{x}_i)]
+\end{game}
+\end{align*}
+where the inputs $y_1,\ldots,y_n$ for $\AD$ correspond to the public key used in the liveness proof and inputs $x_1,\ldots,x_{i-1}$ correspond to secrets leaked during previous protocol instances. Recall that in each liveness proof the honest prover reveals the corresponding sub-secret $x_j$. Since the communication between the prover and verifier is not secured a malicious adversary can snatch corresponding values. Moreover, the verifier itself might become malicious at some time-point. Hence, we cannot assume that the adversary does not know $x_1, \ldots, x_{i-1}$ during the attack even if communication channels are indeed secure.   
+
+To bound the success of an adversary $\AD$ in the game $\GAME_i$, note that we can use a simple wrapper:
+\begin{align*}
+&\begin{fblock}{\ADB(y)}
+ &x_1\getsu\XXX\\
+ &y_1\gets f(x_1)\\
+ &\ldots\\ 
+ &x_n\getsu\XXX\\
+ &y_n\gets f(x_n)\\
+ &\hat{x}_i\gets\AD(y_1,\ldots,y_{i-1},y,y_{i+1},\ldots,y_n,x_1,\ldots, x_{i-1}) \\
+ &\RETURN \hat{x}_i
+\end{fblock}
+\end{align*}
+to convert the adversary against the game $\GAME_i$ to the adversary against the game $\BGAME$. Simple inlining of the adversary construction $\ADB$ into the game $\BGAME$ yields:
+\begin{align*}
+&\begin{game}{\BGAME}
+ &x\getsu\XXX\\
+ &y\gets f(x)\\
+ &x_1\getsu\XXX\\
+ &y_1\gets f(x_1)\\
+ &\ldots\\ 
+ &x_n\getsu\XXX\\
+ &y_n\gets f(x_n)\\
+ &\hat{x}_i\gets\AD(y_1,\ldots,y_{i-1},y,y_{i+1},\ldots,y_n,x_1,\ldots, x_{i-1}) \\
+ &\RETURN [y \smash\iseq f(\hat{x})]\enspace,
+\end{game}
+\end{align*}
+which is completely equivalent to the game $\GAME_i^\AD$. Indeed, instead of $x_i$ and $y_i$ the game $\BGAME^\AD$ uses $x$ and $y$. However, these have exactly the same distribution. Thus, we have established that   
+\begin{align*}
+\pr{\GAME_i^\AD=1} =\pr{\BGAME^\ADB=1}\leq\varepsilon
+\end{align*}
+as long as the running-time of $\ADB$ is smaller or equal to $t$. As the overhead of $\ADB$ compared to the running-time of $\AD$ is $\Theta(n)$, we get the desired security claim. Note that the extra penalty $\Theta(n)$ is small but still worth noting -- the bound on the running-time of $\AD$ decreases linearly if we increase the number sub-secrets $n$.
+
+Finally, note that the overall probability that an adversary manages to succeed in any of the liveness proofs is bounded by $n\varepsilon$. Although the adversary might adaptively choose which liveness proofs it tries to attack, we can still consider probabilities that it succeeds against the $i$th liveness proof. As success means that the adversary succeeds against some proof, union bound gives the desired result:
+\begin{align*}
+\pr{\AD \text{ succeeds in some protocol}}\leq\sum_{i=1}^n\pr{\GAME_i^\AD=1}\leq n\varepsilon\enspace.
+\end{align*}
+
+\end{solution}
+\end{document}

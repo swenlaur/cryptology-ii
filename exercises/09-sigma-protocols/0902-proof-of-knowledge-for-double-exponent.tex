@@ -1,0 +1,191 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Sander Siim}
+\editor{Sven Laur}
+\tags{sigma protocol, RSA problem, special soundness}
+
+\begin{document}
+\begin{exercise}{Proof of knowledge for double-exponent}
+ Let $\GG$ be a cyclic group with prime number of elements $q$
+  and let $g_1$ and $g_2$ be generators of the group. Now consider a
+  sigma protocol for proving the knowledge of $x$ such that
+  $g_1^x=y_1$ and $g_2^x=y_2$, i.e., the public information is
+  $(g_1,g_2,y_1,y_2)$ and the secret knowledge is $x$.  The protocol itself
+is following.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1=g_1^r,\, \alpha_2=g_2^r $}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= x\beta+r$}}$\\
+    && $\bigl[g_1^{\gamma}\iseq \alpha_1 y_1^\beta\bigr] \wedge \bigl[g_2^{\gamma}\iseq \alpha_2 y_2^\beta\bigr] $\\  
+  \end{tabular}
+\end{center} 
+Prove that the protocol is a sigma protocol and show how this protocol can be used to prove knowledge of plaintext $m$ for an ElGamal encryption $(c_1,c_2)$. 
+\end{exercise}
+
+\begin{solution}
+
+As the protocol has the right message structure, we must show only that the protocol is functional and has special soundness and zero-knowledge property. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Functionality.} 
+According to the protocol definition, we can deduce the following equalities: 
+\begin{align*}
+g_1^\gamma &= g_1^{x\beta + r} = g_1^r g_1^{x\beta} = \alpha_1 y_1^\beta\enspace, \\
+g_2^\gamma &= g_2^{x\beta + r} = g_2^r g_2^{x\beta} = \alpha_2 y_2^\beta \enspace.
+\end{align*}
+Therefore, if the prover and verifier both correctly follow the protocol, the verifier reaches accepting state at the end of the protocol, since the checks $\bigl[g_1^{\gamma}\iseq \alpha_1 y_1^\beta\bigr]$ and $\bigl[g_2^{\gamma}\iseq \alpha_2 y_2^\beta\bigr]$ are both true.
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Special soundness property.} 
+We need to show that there exists an efficient algorithm that can extract the secret knowledge given transcripts of two successful protocol runs with same alpha message. Let us assume that $(\alpha_1, \alpha_2, \beta_1, \gamma_1)$ and $(\alpha_1, \alpha_2, \beta_2, \gamma_2)$ are different accepting transcripts. For simplicity, let us first assume that the prover is semihonest and thus replies 
+\begin{align*}
+\gamma_1&=x\beta_1+r\enspace,\\
+\gamma_2&=x\beta_2+r\enspace.
+\end{align*}
+To solve the system of linear equations for $x$, we can first express the difference
+\begin{align*}
+\gamma_1 - \gamma_2 = x\beta_1 + r - x\beta_2 - r = x(\beta_1 - \beta_2)\enspace
+\end{align*}
+and then use the fact that $\beta_1 \neq \beta_2$. As a result, we obtain an expression 
+\begin{align*}
+x =\frac{ x(\beta_1 - \beta_2)}{\beta_1 - \beta_2} = \frac{\gamma_1 - \gamma_2}{\beta_1 - \beta_2} 
+\end{align*}
+where the right-hand side consist of quantities that are present in the transcripts. 
+
+To complete the argument, we are going to show that the same expression for $x$ is valid even if the prover can send arbitrarily formed messages. Since we assumed that $(\alpha_1, \alpha_2, \beta_1, \gamma_1)$ and $(\alpha_1, \alpha_2, \beta_2, \gamma_2)$ are accepting transcripts the following equalities that the verifier checks must hold:
+\begin{align*}
+&\begin{cases}
+g_1^{\gamma_1} = \alpha_1 y_1^{\beta_1}\\
+g_1^{\gamma_2} = \alpha_1 y_1^{\beta_2}
+\end{cases}
+&
+&\begin{cases}
+g_2^{\gamma_1} = \alpha_2 y_2^{\beta_1}\\
+g_2^{\gamma_2} = \alpha_2 y_2^{\beta_2}\enspace.
+\end{cases}
+\end{align*}
+As $\GG$ is a cyclic group with prime order elements $g_1$ and $g_2$ are the generators of $\GG$. Hence, there must exist $x_1$ and $x_2$ such that $y_1=g_1^{x_1}$ and $y_2=g_2^{x_2}$. Keeping this in mind, we can represent $\alpha_1$ in two ways as a power of $g_1$ and $\alpha_1$ in two ways as a power of $g_2$: 
+\begin{align*}
+g_1^{\gamma_1} = \alpha_1 y_1^{\beta_1}\quad&\Rightarrow\quad \alpha_1 = g_1^{\gamma_1}\cdot y_1^{-\beta_1} = g_1^{\gamma_1 - x_1\beta_1}\enspace,\\
+g_1^{\gamma_2} = \alpha_1 y_1^{\beta_2}\quad&\Rightarrow\quad \alpha_1 =  g_1^{\gamma_2}\cdot y_1^{-\beta_2} = g_1^{\gamma_2 - x_1\beta_2}\enspace,\\
+g_2^{\gamma_1} = \alpha_2 y_2^{\beta_1}\quad&\Rightarrow\quad \alpha_2 = g_2^{\gamma_1}\cdot y_2^{-\beta_1} = g_1^{\gamma_1 - x_2\beta_1}\enspace,\\
+g_2^{\gamma_2} = \alpha_2 y_2^{\beta_2}\quad&\Rightarrow\quad \alpha_2 =  g_2^{\gamma_2}\cdot y_2^{-\beta_2} = g_2^{\gamma_2 - x_2\beta_2}\enspace.
+\end{align*}
+Since the discrete logarithm is unique if we consider the exponent as a residue in $\ZZ_q$, we get two equations for determining $x_1$ and $x_2$: 
+\begin{align*}
+\gamma_1 - x_1\beta_1 = \gamma_2 - x_1\beta_2 \\
+\gamma_1 - x_2\beta_1 = \gamma_2 - x_2\beta_2 
+\end{align*}
+which we can solve for $x_1$ and $x_2$:
+\begin{align*}
+x_1 = \frac{\gamma_1 - \gamma_2}{\beta_1 - \beta_2}=x_2\enspace.
+\end{align*}
+As result, we have shown that $x_1=x_2$ and the knowledge extraction algorithm always computes the correct witness $x$ corresponding to both $y_1$ and $y_2$. This concludes the proof of special soundness, since the knowledge extractor computes the secret in constant time with probability 1.
+
+There is a more straightforward way to check whether the candidate expression for $x$ is valid or not. Even if the prover is malicious, the knowledge extractor can still compute
+\begin{align*}
+x = \frac{\gamma_1 - \gamma_2}{\beta_1 - \beta_2}\enspace.
+\end{align*}
+However, we do not know whether $x$ satisfies the requirements $g_1^x=y_1$ and $g_2^x=y_2$. Hence, we must formally check it. Note that we can use verifier checks to simplify expressions:
+\begin{align*}
+g_1^x=g^{\frac{\gamma_1 - \gamma_2}{\beta_1 - \beta_2}}\quad&\Leftrightarrow\quad g_1^{x(\beta_1-\beta_2)}=g_1^{\gamma_1-\gamma_2}=\frac{\alpha_1 y_1^{\beta_1}}{\alpha_1y_1^{\beta_2}}=y_1^{\beta_1-\beta_2}\enspace,\\
+g_2^x=g^{\frac{\gamma_1 - \gamma_2}{\beta_1 - \beta_2}}\quad&\Leftrightarrow\quad g_2^{x(\beta_1-\beta_2)}=g_2^{\gamma_1-\gamma_2}=\frac{\alpha_2 y_2^{\beta_1}}{\alpha_2y_2^{\beta_2}}=y_2^{\beta_1-\beta_2}\enspace.
+\end{align*}
+To continue note that the inverse of $\beta_1-\beta_2$ exists in $\ZZ_q$ and thus we can continue derivations:
+\begin{align*}
+g_1^{x(\beta_1-\beta_2)}=y_1^{\beta_1-\beta_2}\quad&\Leftrightarrow\quad g_1^x=\Bigl(g_1^{x(\beta_1-\beta_2)}\Bigr)^{\frac{1}{\beta_1-\beta_2}}= \Bigl(y_1^{\beta_1-\beta_2}\Bigr)^{\frac{1}{\beta_1-\beta_2}}=y_1 \enspace,\\
+g_2^{x(\beta_1-\beta_2)}=y_2^{\beta_1-\beta_2}\quad&\Leftrightarrow\quad g_2^x=\Bigl(g_2^{x(\beta_1-\beta_2)}\Bigr)^{\frac{1}{\beta_1-\beta_2}}= \Bigl(y_2^{\beta_1-\beta_2}\Bigr)^{\frac{1}{\beta_1-\beta_2}}=y_2\enspace,
+\end{align*}
+which finally prove the desired claim. Thes second proof has the virtue that it does not assume $g_1$ and $g_2$ are generators of the group $\GG$ and thus we do not have to separately consider cases $g_1=1$ or $g_2=1$. 
+   
+
+\vspace*{2ex}
+\noindent
+\textsc{Zero-knowledge property.} 
+For zero-knowledge, we must to show that we are able to simulate protocol transcripts between the honest prover and honest verifier. Differently form the real protocol execution, we can generate the messages in different order than they appear in the protocol. Let us first construct a simulator that correctly creates the first and last message if the challenge $\beta$ is known ahead. The corresponding simulator construction for is following:
+\begin{align*}
+\begin{fblock}{\SSS(\beta)}
+ &\gamma\getsu\ZZ_q\\
+ &\alpha_1 \gets g_1^\gamma\cdot y_1^{-\beta}\\
+ &\alpha_2 \gets g_2^\gamma\cdot y_2^{-\beta}\\
+ &\RETURN (\alpha_1,\alpha_2,\beta,\gamma)
+\end{fblock}
+\end{align*}
+Note that even if we fix $\beta$ in the protocol runs and consider corresponding protocol transcripts of real protocol runs, the $\gamma$ value still varies. More precisely, we can conclude that $\gamma = x\beta + r$ is uniformly random, since $r$ is generated uniformly randomly from $\ZZ_q$. Thus $\SSS$ generates $\gamma$ with correct distribution. By the protocol construction, the $\beta$ and $\gamma$ uniquely determine the values of $\alpha_1$ and $\alpha_2$:  
+\begin{align*}
+g_1^\gamma &= \alpha_1 y_1^\beta\qquad\Leftrightarrow\qquad \alpha_1 = g_1^\gamma\cdot y_1^{-\beta}\enspace, \\
+g_2^\gamma &= \alpha_2 y_2^\beta\qquad\Leftrightarrow\qquad \alpha_2 = g_2^\gamma\cdot y_2^{-\beta}\enspace.
+\end{align*}
+Since $\beta$ is uniformly distributed in the real protocol runs, we can fully simulate the transcript between honest prover and honest verifier as follows: 
+\begin{align*}
+\begin{fblock}{\SIM}
+& \beta \getsu \ZZ_q\\
+& (\alpha_1,\alpha_2,\beta,\gamma)\gets\SSS(\beta)\\
+& \RETURN (\alpha_1,\alpha_2,\beta,\gamma) \enspace.
+\end{fblock}
+\end{align*}
+This construction can be further extended to simulate the output of semihonest verifier $\VVV_*$ without access to the prover. Let $(g_1,g_2,y_1,y_2)$ be the verifier's input of the sigma protocol and let $\phi$ be some auxiliary information gathered by $\VVV_*$ so far and $\omega\in\Omega$ be the randomness used by $\VVV_*$. As $\VVV_*$ is semihonest, its challenge $\beta$ does not depend on $\alpha_1$ and $\alpha_2$. More formally, we can express this as follows:
+\begin{align*}
+\forall \phi\in\set{0,1}^*,\,\forall \omega\in\Omega,\,\forall \alpha_1,\alpha_2\in\GG: \exists\beta\in\ZZ_q:\ \VVV_*(\phi, g_1,g_2,y_1,y_2,\alpha_1,\alpha_2; \omega)=\beta\enspace.
+\end{align*}
+Consequently, the following simulator
+\begin{align*}
+\begin{fblock}{\SIM(\phi, g_1,g_2,y_1,y_2)}
+& \omega\gets\Omega\\
+& \alpha_1^*\getsu\GG, \alpha_2^*\getsu\GG\\
+& \beta \gets \VVV_*(\phi, g_1,g_2,y_1,y_2,\alpha_1^*,\alpha_2^*; \omega)\\
+& (\alpha_1,\alpha_2,\beta,\gamma)\gets\SSS(\beta)\\
+& \beta_* \gets \VVV_*(\phi, g_1,g_2,y_1,y_2,\alpha_1,\alpha_2; \omega)\\
+& \RETURN \VVV_*(\gamma)  
+\end{fblock}
+\end{align*}
+provides a perfect simulation of real protocol runs between honest prover and semihonest verifier $\VVV_*$. Indeed, note that the semihonest behaviour assures that $\beta_*$ coincides with $\beta$. Since $\SSS$ provides a valid response $\gamma$ for the challenge $\beta$ and there is only one valid response, the final output $\VVV_*(\gamma)$ would be the same as for interacting with the honest prover who has previously output commitment messages $\alpha_1$ and $\alpha_2$. Since we already proved that the simulator $\SSS$ generates $\alpha_1$ and $\alpha_2$ with the same distribution as the honest prover, we have the informal justification that the output distributions of the semihonest verifier is the same as in the real protocol runs. The formal proof is left as a tedious exercise for the reader. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Knowledge of plaintext.} 
+Note that ElGamal encryption is defined over a cyclic group $\GG$ with prime number of elements as required by the sigma protocol analysed above and recall that a valid ElGamal ciphertext is in the form $(g^r, m y^r)$. If we do not want to hide the message $m$ then we can prove that the ciphertext $(c_1,c_2)$ corresponds to a message $m$ by proving that we know $r$ such that $c_1=g^r$ and $c_2\cdot m^{-1}= y^r$.  Thus, we should take $g_1$ as the public generator $g$ and $g_2$ as the public key $y=g^x$ in the sigma protocol. As a result, the prover proves knowledge of secret $r \in \ZZ_q$ such that $c_1=g^r$ and $c_2\cdot m^{-1}=y^r$, where the public information is $(g,y,c_1,c_2,m)$.  The resulting protocol itself is the following.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $s\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha_1=g^s,\, \alpha_2=y^s $}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= r\beta+s$}}$\\
+    && $\bigl[g^{\gamma}\iseq \alpha_1 c_2^\beta\bigr] \wedge \bigl[y^{\gamma}\iseq \alpha_2 \left(c_1 m^{-1}\right)^\beta\bigr] $\\  
+  \end{tabular}
+\end{center} 
+ 
+This protocol is structurally similar to the double-exponent sigma protocol discussed above and the corresponding security proofs for special-soundness and zero-knowledge properties are analogous. It is easy to see that the protocol is functional due to following equalities:
+
+\begin{align*}
+g^\gamma &= g^{r\beta + s} = g^s g^{r\beta} = \alpha_1 c_2^\beta\enspace, \\
+y^\gamma &= y^{r\beta + s} = y^s y^{r\beta} = \alpha_2 \left(\frac{m y^r}{m}\right)^\beta = \alpha_2 \left(\frac{c_1}{m}\right)^\beta \enspace.
+\end{align*}
+
+To prove knowledge of a plaintext corresponding to an ElGamal ciphertext without revealing the message, we can first assume that $m$ is from some limited set $m \in \set{m_1, m_2}$. Then we can use the previous protocol to construct a standard disjunctive composition sigma protocols to prove knowledge of the plaintext without actually revealing it. Formally we will construct a sigma protocol for proving
+\begin{align*}
+ \POK[r\in\ZZ_q : \ENC(m_1, r) = (c_1, c_2) \vee \ENC(m_2, r) = (c_1, c_2)]\enspace ,\\
+\end{align*}
+which is obviously equivalent to
+\begin{align*}
+ \POK[m\in\set{m_1,m_2}, r\in\ZZ_q : \ENC(m, r) = (c_1, c_2)] \enspace.\\
+\end{align*}
+
+This construction can also be generalized to a larger set $\MSPACE \subseteq \GG$, by constructing nested disjunctive proofs, but the communication complexity will be linear to the size of $\MSPACE$. Alternatively, every bit of a message $m\in\GG$ could be encrypted separately, and the above protocol could be run in parallel for all the encrypted bits. That way communication complexity is much better: $\Oh(\log \abs{\MSPACE})$.
+
+
+
+\end{solution}
+\end{document}

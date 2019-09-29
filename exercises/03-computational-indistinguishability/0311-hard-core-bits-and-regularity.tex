@@ -1,0 +1,45 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{indistinguishability, hard-core bit, regularity}
+
+
+\begin{document}
+\begin{exercise}{Hard-core bits and regularity}
+A predicate $\pi:\SSS\to\set{0,1}$ is said to be a
+  \emph{$\varepsilon$-regular} if the output distribution for uniform
+  input distribution is nearly uniform:
+  \begin{align*}
+   \Delta(\pi)=\abs{\pr{s\getsu\SSS:\pi(s)=0}-\pr{s\getsu\SSS:\pi(s)=1}}
+   \leq\varepsilon\enspace.     
+  \end{align*}
+  A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable} also
+  known as \emph{$(t,\varepsilon)$-hardcore predicate} for a function
+  $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f,\pi}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+  \end{align*}
+Let us first define two sets:
+\begin{align*}
+\SSS_0&=\set{s\in\SSS: \pi(s)=0}\\
+\SSS_1&=\set{s\in\SSS: \pi(s)=1}\enspace.
+\end{align*}    
+Then we can define following distinguishing games:
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & s\getsu \SSS_0\\
+ & x\gets f(s)\\
+ & \RETURN \AD(x)
+\end{game}
+&&\begin{game}{\GAME_1}
+ & s\getsu \SSS_1\\
+ & x\gets f(s)\\
+ & \RETURN \AD(x)
+\end{game}
+\end{align*} 
+Show that even if $\SSS_0$ and $\SSS_1$ are completely indistinguishable, the predicate does not have to be $(t,\varepsilon)$-unpredictable if the predicate $\pi$ is not regular.  
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}

@@ -1,0 +1,257 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Ivo Kubjas}
+\contributor[Better treatment of corner cases]{Sven Laur}
+\editor{Sven Laur}
+\tags{non-malleability, IND-CPA security, target relation}
+
+\newcommand{\ADVNMCPA}[2]{\ADV^{\mathsf{s\text{-}nm\text{-}cpa}}_{#1}{(#2)}}
+\newcommand{\CS}{\mathfrak{C}}
+\theoremstyle{plain}\newtheorem{stmt}{Statement}
+\renewcommand{\qedsymbol}{}
+\begin{document}
+
+
+\begin{exercise}{SNM-CPA implies IND-CPA} Let $\CS=(\GEN,\ENC,\DEC)$ be a public key cryptosystem. We say that the crypto-system is $(t,t_\pi,t_m,\varepsilon)$-non-malleable against statically chosen relations (SNM-CPA) if for all $t$-time adversaries $\AD$ the advantage
+\begin{align*}
+\ADVNMCPA{\CS}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq \varepsilon
+\end{align*}
+where the security games are defined as follows 
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+	&\pi(\cdot)\gets\AD\\
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\PK(m)\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(c)\\
+    &\IF c\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots,\dec{\hat{c}_n})
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+	&\pi(\cdot)\gets\AD\\
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0,\overline{m}\gets{\MSPACE_0}\\
+    &\overline{c}\gets\ENC_\PK(\overline{m})\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(\overline{c})\\
+    &\IF \overline{c}\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots,\dec{\hat{c}_n})
+  \end{game}
+\end{align*}
+and the sampling algorithm $\MSPACE_0$ is guaranteed to be a $t_m$-time algorithm and the predicate $\pi$ is guaranteed to  be $t_\pi$-time algorithm. Show that SNM-CPA security implies IND-CPA security by giving an explicit definition of the target relation $\pi$. Also, give the explicit quantification of running-time bounds. Interpret the results. 
+\end{exercise}
+  
+\begin{solution} 
+Let $\ADB$ be an adversary against IND-CPA. Then we construct the tree stage adversary $\AD$. The first stage of the adversary $\AD$ always outputs the binary relation $\pi(x,y)=[x= y]$ and the second and the third stage of the adversary are defined as follows 
+\begin{align*}
+& \begin{game}{\AD(\PK)}
+& (m_0, m_1) \gets \ADB(\PK) \\
+& \MSPACE_0 = \{m_0, m_1\} \\
+& \RETURN \MSPACE_0
+\end{game}
+& \begin{game}{\AD(c)}
+& g \gets B(c) \\
+& \hat{c}_1 \gets \ENC_\PK(m_g) \\
+& \RETURN \hat{c}_1 
+\end{game}
+\end{align*}
+where $\MSPACE_0$ denotes the uniform distribution over $m_0$ and $m_1$. 
+
+As the predicate $\pi$ is fixed, we can omit the predicate selection stage and replace the definition of the predicate into the games $\GAME_0$ and $\GAME_1$. As a result, we get the following simplification of the games:
+\begin{align*}
+  \begin{game}{\GAME_2^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\PK(m)\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(c)\\
+    &\IF c\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN [m \neq \dec{\hat{c}_1}]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_3^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0,\overline{m}\gets{\MSPACE_0}\\
+    &\overline{c}\gets\ENC_\PK(\overline{m})\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(\overline{c})\\
+    &\IF \overline{c}\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN [m\neq \dec{\hat{c}_1}]
+  \end{game}
+\end{align*}
+
+As the second stage of $\AD$ returns $\MSPACE_0$ that is a uniform distribution over $\set{m_0, m_1}$, we can replace sample generation by uniform choice of index bits $i,j\gets\set{0,1}$. We can also replace the query $\AD(c)$ by the explicit description of the third stage of the adversary. This leads us to the following games:
+\begin{align*}
+  \begin{game}{\GAME_4^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets\ADB(\PK)\\
+    & i \gets \{0, 1\} \\
+    &c\gets\ENC_\PK(m_i)\\
+    & g \gets B(c) \\
+    & \hat{c} \gets \ENC_\PK(m_g) \\
+    &\IF c = \hat{c}\ \THEN \RETURN 0\\
+    &\RETURN [m_i \neq \dec{\hat{c}}]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_5^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    & i \gets \{0, 1\}, j \gets\{0,1\} \\
+    &\overline{c}\gets\ENC_\PK(m_j)\\
+    & g \gets B(c) \\
+    & \hat{c} \gets \ENC_\PK(m_g) \\
+    &\IF \overline{c} = \hat{c}\ \THEN \RETURN 0\\
+    &\RETURN [m_i\neq\dec{\hat{c}}]
+  \end{game}
+\end{align*}
+We can further simplify the games, as $\DEC_\SK(\hat{c})=m_g$ by the perfect functionality of the cryptosystem:
+\begin{align*}
+  \begin{game}{\GAME_6^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets\ADB(\PK)\\
+    & i \gets \{0, 1\} \\
+    &c\gets\ENC_\PK(m_i)\\
+    & g \gets B(c) \\
+    &\IF c = \ENC_\PK(m_g)\ \THEN \RETURN 0\\
+    &\RETURN [m_i\neq m_g]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_7^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    & i \gets \{0, 1\}, j \gets\{0,1\} \\
+    &\overline{c}\gets\ENC_\PK(m_j)\\
+    & g \gets B(\overline{c}) \\
+    &\IF \overline{c} = \ENC_\PK(m_g)\ \THEN \RETURN 0\\
+    &\RETURN [m_i\neq m_g]
+  \end{game}
+\end{align*}
+As the if branch makes the analysis of the games more difficult, we first analyse the without these branches. This a good approximation. A cryptosystem can be IND-CPA secure only if such ciphertext collisions occur with a negligible probability. We will later analyse this issue in further.
+
+\begin{align*}
+  \begin{game}{\GAME_8^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets\ADB(\PK)\\
+    & i \gets \{0, 1\} \\
+    &c\gets\ENC_\PK(m_i)\\
+    & g \gets B(c) \\
+    &\RETURN [m_i\neq m_g]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_9^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    & i \gets \{0, 1\}, j \gets\{0,1\} \\
+    &\overline{c}\gets\ENC_\PK(m_j)\\
+    & g \gets B(\overline{c}) \\
+    &\RETURN [m_i\neq m_g]
+  \end{game}
+\end{align*}
+Since $i$ is not used before the last line in the game $\GAME_9$, we can rewrite the game as follows:
+\begin{align*}
+  \begin{game}{\GAME_9^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    &  j \gets\{0,1\} \\
+    &\overline{c}\gets\ENC_\PK(m_j)\\
+    & g \gets B(\overline{c}) \\
+    &i \gets \{0, 1\}\\
+    &\RETURN [m_i\neq m_g]
+  \end{game}
+\end{align*}
+From this game construction it is very tempting to say that $\pr{\GAME_9^\ADB=1}=\frac{1}{2}$. However, this is not true! For example consider an adversary $\AD$ that always outputs $m_0=m_1$. Then clearly $\pr{\GAME_9^\ADB=1}=1$.
+
+Intuitively, an adversary $\ADB$ that return $m_0=m_1$ with high probability is not useful, as this event diminishes their success against the IND-CPA games. However, we must prove this formally. Let us consider the advantage of $\ADB$ against IND-CPA games:
+\begin{align*}
+\begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    &c\gets\ENC_\PK(m_0)\\
+    &\RETURN \ADB(c)
+\end{game}
+\qquad\qquad
+\begin{game}{\BGAME_0^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets \ADB(\PK) \\
+    &c\gets\ENC_\PK(m_1)\\
+    &\RETURN \ADB(c)
+\end{game}
+\end{align*}
+Now we can express the success of $\ADB$ against IND-CPA games by exhaustive decomposition:
+\begin{align*}
+\pr{\BGAME_0^\ADB=1}&=\pr{\BGAME_0^\ADB=1\wedge m_0=m_1}+ \pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1}\\
+\pr{\BGAME_1^\ADB=1}&=\pr{\BGAME_1^\ADB=1\wedge m_0=m_1}+ \pr{\BGAME_1^\ADB=1\wedge m_0\neq 
+m_1}
+\end{align*}   
+If $m_0=m_1$ then the ciphertext in both games has identical distribution and thus we can prove
+\begin{align*}
+\pr{\BGAME_0^\ADB=1\wedge m_0=m_1}=\pr{\BGAME_1^\ADB=1\wedge m_0=m_1}\enspace.
+\end{align*}  
+As a consequence, 
+\begin{align*}
+\ADVINDCPA{\CS}{\ADB}=\abs{\pr{\BGAME_0^\ADB=1\wedge m_0\neq m_1}-\pr{\BGAME_1^\ADB=1\wedge m_0\neq m_1}}\enspace.
+\end{align*}
+
+There are now two ways how to proceed with the proof. First, we could do the same decomposition for the games $\GAME_8$ and $\GAME_9$. However, this would lead us to the lengthy probability calculations. Instead, we use a shortcut. Note that given $\ADB$ which can occasionally output $m_0=m_1$, we can define $\ADB^\circ$ that runs $\ADB$ and filters out these unfortunate events:
+\begin{align*}
+\begin{fblock}{\ADB^\circ(\PK)}
+&(m_0,m_1)\gets\ADB(\PK)\\
+&\IF (m_0=m_1)\ \THEN \RETURN (m_0^*,m_1^*)\\
+&\ELSE \RETURN (m_0,m_1)  
+\end{fblock}
+\qquad\qquad
+\begin{aligned}
+\begin{fblock}{\ADB^\circ(c)}
+&\IF (m_0=m_1)\ \THEN \RETURN 0\\
+&\ELSE \RETURN \ADB(c)\enspace.  
+\end{fblock}\\
+\ \\
+\end{aligned}
+\end{align*} 
+Then clearly $\ADVINDCPA{\CS}{\ADB^\circ}=\ADVINDCPA{\CS}{\ADB\circ}$ and the running times differ by a constant.
+
+Hence, we can assume that $\ADB$ never returns $m_0=m_1$ and proceed further with the analysis. Under the assumption $m_0 \neq m_1$, the condition $m_i\neq m_g$ is equivalent to the condition $i\neq g$ and we can indeed conclude that $\pr{\GAME_9^\ADB=1}=\frac{1}{2}$. The game $\GAME_8$ simplifies to
+\begin{align*}
+  \begin{game}{\GAME_8^\ADB}
+    &(\SK,\PK)\gets\GEN\\
+    &(m_0, m_1) \gets\ADB(\PK)\\
+    & i \gets \{0, 1\} \\
+    &c\gets\ENC_\PK(m_i)\\
+    & g \gets B(c) \\
+    &\RETURN [i\neq g]\enspace,
+  \end{game}
+\end{align*} 
+for which we know from previous exercises that $\pr{\GAME_8^\ADB=1}=\frac{1}{2}\pm\frac{1}{2}\cdot\ADVINDCPA{\CS}{\ADB}$. Thus, we have proved 
+\begin{align*}
+\abs{\pr{\GAME_8^\ADB=1}-\pr{\GAME_9^\ADB=1}}=\frac{1}{2}\cdot\ADVINDCPA{\CS}{\ADB}\enspace.
+\end{align*} 
+  
+To complete the proof, we must relate this difference to the difference between the games $\GAME_6$ and $\GAME_7$. First note that if $c=\ENC_\PK(m_g)$ then $m_i=m_g$ and the adversary cannot win the game $\GAME_8$. Thus, we have proved
+\begin{align*}
+\pr{\GAME_6^\ADB=1}=\pr{\GAME_8^\ADB=1}\enspace.
+\end{align*}
+For the game $\GAME_7$, we can conclude only that
+\begin{align*}
+\pr{\GAME_7^\ADB=1}\leq\pr{\GAME_9^\ADB}\leq \frac{1}{2}\enspace.
+\end{align*}
+Without loss of generality we can assume that the $\ADB$ is such that
+\begin{align*}
+\pr{\GAME_8^\ADB=1}\geq \frac{1}{2}\enspace.
+\end{align*}
+If the inequality does not hold we can invert the the outcome of $\ADB$ to make it hold. The running time will increase only by constant. Now combining all inequalities we obtain 
+\begin{align*}
+\pr{\GAME_6^\ADB=1}-\pr{\GAME_7^\ADB=1}\geq \pr{\GAME_8^\ADB=1}-\frac{1}{2}= \abs{\pr{\GAME_8^\ADB=1}-\pr{\GAME_9^\ADB=1}}=\frac{1}{2}\cdot\ADVINDCPA{\CS}{\ADB}\enspace.
+\end{align*} 
+Hence, we have proved that 
+\begin{align*}
+\ADVNMCPA{\CS}{\AD}\geq\frac{1}{2}\cdot\ADVINDCPA{\CS}{\ADB}
+\end{align*}
+for the adversary $\AD$ for which the running time is only constant times larger than the running time of $\ADB$. Thus, $(t,t_\pi,t_m,\varepsilon)$-non-malleablity against statically chosen relations implies $(t,2\varepsilon)$-IND-CPA security.
+
+\end{solution}
+\end{document}
+
+

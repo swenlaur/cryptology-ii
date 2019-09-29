@@ -1,0 +1,100 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Initial solution]{Filipp Ivanov}
+\contributor[Optimality section]{Sven Laur}
+\contributor[Optimality section]{Kristiina Rahkema}
+\editor{Sven Laur}
+\tags{Combiner construction, discrete logarithm, Jensen inequality}
+\begin{document}
+\begin{exercise}{Analysis of combiner constructions}
+Let $\GG$ be a finite $q$-element group such that all elements $y\in\GG$ can be expressed as powers of $g\in\GG$.  Let $\ADB$ be
+a discrete logarithm finder that uses algorithm $\AD$ five times to get inputs for aggregating algorithm $\ADC$
+\begin{align*}
+    \begin{fblock}{\ADB(y)}
+    & x_1\gets\AD(y), \ldots, x_5\gets\AD(y)\\
+    & \RETURN \ADC(x_1,\ldots,x_5)
+    \end{fblock}     
+\end{align*}
+The construction guarantees that $\ADC$ succeeds in finding the discrete logarithm of $y$ if all $x_i$ are correct. 
+Find the lower bound of $\ADVDL{\GG}{\ADB}$ if $\pr{y\gets \GG: \text{the output of $\AD(y)$ is correct\,} } = \varepsilon$. 
+\end{exercise}
+  
+\begin{solution} 
+Let $X$ the random variable that indicates the success of $\AD$, i.e., 
+\begin{align*}
+X(y;\omega)=
+\begin{cases}
+1, &\text {if } \AD(y;\omega) \text{ returns correct answer}\enspace,\\
+0, &\text {if } \AD(y;\omega) \text{ returns in correct answer}\enspace,
+\end{cases}
+\end{align*}
+where $\omega\gets\Omega$ is the randomness used by the adversary $\AD$ during the computations. By the assumptions,    
+\begin{align*}
+\EXP_{y\in\GG\atop \omega\in\Omega} [X(y;\omega)]=\pr{y\gets \GG, \omega\gets\Omega: \text{ the output of $\AD(y;\omega)$ is correct}}=\varepsilon\enspace.
+\end{align*}
+As $\ADB$ succeeds only if all five instances must return correct, the exhaustive decomposition of events leads to the following equation:
+\begin{align*}
+\ADVDL{\GG}{\ADB}=\sum_{y_0\in\GG}\pr{y\gets\GG:y=y_0}\cdot \pr{\omega\gets\Omega: \text{ the output of $\AD(y_0;\omega)$ is correct}}^5\enspace.
+\end{align*}
+Let $\varepsilon(y)=\pr{\omega\gets\Omega: \text{ the output of $\AD(y;\omega)$ is correct}}$. By definition of mathematical expectation
+\begin{align*}
+\ADVDL{\GG}{\ADB}=\EXP_{y\in\GG} \bigl[\varepsilon(y)^5\bigr]\enspace.
+\end{align*}
+As $f(x)=x^5$ is convex-cup function, we can apply Jensen's inequality
+\begin{align*}
+\ADVDL{\GG}{\ADB}=\EXP_{y\in\GG} \bigl[\varepsilon(y)^5\bigr]\geq \left( \EXP_{y\in\GG} \bigl[\varepsilon(y)\bigr]\right)^5\enspace.
+\end{align*}
+Now note that 
+\begin{align*}
+\EXP_{y\in\GG\atop \omega\in\Omega} [X(y;\omega)]=\EXP_{y\in\GG} \bigl[\varepsilon(y)\bigr]=\varepsilon\enspace
+\end{align*}
+and thus
+\begin{align*}
+\ADVDL{\GG}{\ADB}\geq \left( \EXP_{y\in\GG} \bigl[\varepsilon(y)\bigr]\right)^5\geq \varepsilon^5\enspace.
+\end{align*}
+
+\noindent\textsc{On the tightness.}
+It is easy to see that Jensens inequality is not particularly tight estimate for most cases. The latter can be established through the following argument. 
+
+Fix two group elements $y_0$ and $y_1$ and let $\varepsilon_0$ and $\varepsilon_1$ denote the success probability of $\AD(y_0)$ and $\AD(y_1)$. Then we can study the probability that $\ADB$ succeeds on these particular points:
+\begin{align*}
+F(\varepsilon_0,\varepsilon_1)=\pr{y\gets\GG: \ADB(y)=1\wedge y\in\set{y_0,y_1}}=\frac{\varepsilon_0^5+ \varepsilon_1^5}{q}
+\end{align*} 
+under the restriction that the success probability of $\AD$ does not change on two points:
+\begin{align*}
+\pr{y\gets\GG: \AD(y)=1\wedge y\in\set{y_0,y_1}}=\frac{\varepsilon_0+ \varepsilon_1}{q}=const\enspace.
+\end{align*}
+ 
+By substituting the second equality into the first expression, we quickly obtain that $F(\varepsilon_1)$ is a convex-cup function which is minimised in the point $\varepsilon_0=\varepsilon_1$ and maximised if $\varepsilon_0=0$ or $\varepsilon_0=1$.
+
+Hence, the success probability is minimal if for any two points $y_0$ or $y_1$ the corresponding success probabilities are equal. Otherwise, we can decrease the success probability of $\ADB$ by setting $\varepsilon_0=\varepsilon_1$ without altering the sum $\varepsilon_0+\varepsilon_1$. In this case, the Jensens inequality is precise and thus $\ADVDL{\GG}{\ADB}=\varepsilon^5$.
+
+
+The similar probability shifting argument allows us to conclude that the success probability of $\ADB$ is maximised if for any two points $y_0$ and $y_1$, the corresponding probabilities are either:
+\begin{align*}
+&\begin{cases}
+\varepsilon_0=0\\
+\varepsilon_1=0
+\end{cases}
+&&\begin{cases}
+\varepsilon_0=1\\
+\varepsilon_1=0
+\end{cases}
+&&\begin{cases}
+\varepsilon_0=0\\
+\varepsilon_1=1
+\end{cases}
+&&\begin{cases}
+\varepsilon_0=1\\
+\varepsilon_1=1
+\end{cases}
+\end{align*}
+\end{solution}
+except for a single pair of points $y_0$ and $y_1$ for which there is not enough probability mass to get assignment $\varepsilon_0=\varepsilon_1=1$ and thus $\varepsilon_0\in(0,1)$ while $\varepsilon_1\in\set{0,1}$.
+
+As a result, we have shown that a deterministic algorithm $\AD$ that either fails or succeeds on a particular input maximises the success probability of $\ADB$. Under this restriction, running the algorithm $A$ five times could be replaced by running the algorithm $\AD$ once and setting all $x_i$ to $\AD(y)$. Since the success probability of $A$ is $\varepsilon$, then the success probability of $\ADB$ will be as well $\varepsilon$ for such an algorithm $\AD$. 
+
+To conclude, note that for any $\varepsilon \ll 1$ the difference between $\varepsilon^5$ and $\varepsilon$ is huge and thus the potentially huge mismatch between the lower bound on the success and the actual success probability is unavoidable. 
+
+
+\end{document}

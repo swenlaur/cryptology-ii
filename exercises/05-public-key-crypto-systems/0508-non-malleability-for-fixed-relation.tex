@@ -1,0 +1,44 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor[Initial solution]{}
+\editor{Sven Laur}
+\tags{non-malleability, IND-CPA security, target relation}
+
+\newcommand{\ADVFNMCPA}[2]{\ADV^{\mathsf{f\text{-}nm\text{-}cpa}}_{#1}{(#2)}}
+\newcommand{\CS}{\mathfrak{C}}
+\begin{document}
+
+
+\begin{exercise}{FNM-CPA implies IND-CPA} Let $\CS=(\GEN,\ENC,\DEC)$ be a public key cryptosystem and let $\pi:\MSPACE\times\MSPACE^{n}\to\set{0,1}$ be $t_\pi$-time predicate. We say that the crypto-system is $(t,t_m,\varepsilon)$-non-malleable with respect to the relation $\pi$ (FNM-CPA) if for all $t$-time adversaries $\AD$ the advantage
+\begin{align*}
+\ADVFNMCPA{\CS,\pi}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq \varepsilon
+\end{align*}
+where the security games are defined as follows 
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\PK(m)\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(c)\\
+    &\IF c\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &(\SK,\PK)\gets\GEN\\
+    &\MSPACE_0\gets\AD(\PK)\\
+    &m\gets\MSPACE_0,\overline{m}\gets{\MSPACE_0}\\
+    &\overline{c}\gets\ENC_\PK(\overline{m})\\
+    &\hat{c}_1,\ldots\hat{c}_n\gets\AD(\overline{c})\\
+    &\IF c\in\set{\hat{c}_1,\ldots\hat{c}_n}\THEN \RETURN 0\\
+    &\RETURN \pi(m,\dec{\hat{c}_1},\ldots)
+  \end{game}
+\end{align*}
+and the sampling algorithm $\MSPACE_0$ is guaranteed to be a $t_m$-time algorithm. Analyse which properties the target relation $\pi$ must satisfy in order to be able to prove that FNM-CPA security implies IND-CPA. Derive a quantitative measure, which shows how effective is the relation $\pi$ in this reduction. Interpret the results. 
+\end{exercise}
+  
+\begin{solution} 
+
+\end{solution}
+\end{document}

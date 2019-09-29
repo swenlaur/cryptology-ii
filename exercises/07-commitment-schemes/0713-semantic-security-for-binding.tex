@@ -1,0 +1,318 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Partial solution]{Sander Siim}
+\contributor[Complete solution]{Sven Laur}
+\editor{Sven Laur}
+
+\tags{binding commitment,semantical security}
+
+\newcommand{\CS}{\mathfrak{C}}
+
+\newcommand{\advSEMBINDXX}[2]{\ADV_{#1}^{\mathsf{sem\text{-}bind}}(#2)}
+\newcommand{\advTRIVBINDXX}[2]{\ADV_{#1}^{\mathsf{non\text{-}cont}}(#2)}
+
+\newcommand{\VALID}{\mathsf{Valid}}
+
+\newcommand{\Vone}{\mathsf{Valid_1}}
+\newcommand{\Vtwo}{\mathsf{Valid_2}}
+
+
+\begin{document}
+
+
+\begin{exercise}{Semantic security for binding} 
+A commitment scheme $\CS$ is $(t,\varepsilon)$-semantically secure with respect to the binding property if the advantage of any $t$-time adversary $\AD$ against the following games
+\begin{align*}
+&\begin{game}{\GAME_0}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\GAME_1}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\  
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(\overline{m})\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+\end{align*}
+is bounded
+\begin{align*}
+\advSEMBINDXX{\CS}{\AD}=\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\leq \varepsilon\enspace.
+\end{align*}
+Show that ordinary binding implies semantic binding and find the exact relation between advantages.
+\end{exercise}
+
+
+\begin{solution}
+Before going any further let analyse when $\AD$ can succeed in the game $\GAME_0$. First, $\AD$ can define a relation $\pi$ and messages $\overline{m}_1,\ldots, \overline{m}_n$ such that $\pi(m,\overline{m}_1,\ldots, \overline{m}_n)$ holds with high probability for $m\gets\MSPACE_0$. Then it is straightforward to commit and later open $\overline{m}_1,\ldots, \overline{m}_n$ to win the game. Unfortunately, with this simplistic strategy the adversary wins the game $\GAME_1$ equally probably and the advantage cancels out. Intuitively, the advantage $\advSEMBINDXX{\CS}{\AD}$ can be high only if the relation is rarely satisfied when $\overline{m}_1,\ldots, \overline{m}_n$ is fixed and $m$ is chosen from $\MSPACE_0$. On the same time, it should be possible for any message $m$ choose $\overline{m}_1,\ldots,\overline{m}_n$ such that the relation $\pi(m,\overline{m}_1,\ldots, \overline{m}_n)$ holds. Consequently, a commitment scheme is not semantically binding if the adversary can adaptively modify the decommitment values.   
+
+\vspace*{3ex}
+\noindent
+\textsc{Fixed target relation.} To illustrate this insight a little further let us first consider the sematic binding against fixed relation $\pi$. The corresponding security games are without adaptive choice of $\pi$:
+\begin{align*}
+&\begin{game}{\GAME_2}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0\\
+& \hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\GAME_3}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\ 
+& \hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(\overline{m})\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN 0\\ 
+&\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)\enspace.
+\end{game}
+\end{align*}
+Formally, we say that a commitment scheme is semantically $(t,\varepsilon)$-binding with respect to the relation $\pi$ if for any $t$-time adversary $\AD$ the following advantage is bounded:    
+\begin{align*}
+\advSEMBINDXX{\CS,\pi}{\AD}=\pr{\GAME_2^\AD=1}-\pr{\GAME_3^\AD=1}\leq \varepsilon\enspace.
+\end{align*}
+A commitment scheme might be semantically binding for the relation cause the relation is unsuitable for the attack. Let us define trivial attack setting through the following games:
+\begin{align*}
+&\begin{game}{\BGAME_2}
+& \MSPACE_0\gets\ADB\\
+& m\gets\MSPACE_0\\
+& \hat{m}_1,\ldots,\hat{m}_n\gets\ADB(m)\\ 
+& \RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+\end{game}
+&
+&\begin{game}{\BGAME_3}
+& \MSPACE_0\gets\ADB\\
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\ 
+& \hat{m}_1,\ldots,\hat{m}_n\gets\ADB(m)\\ 
+& \RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)\enspace.
+\end{game}
+\end{align*}
+we say that the relation $\pi$ is $(t,\varepsilon)$-non-controllable if for any $t$-time adversary $\ADB$ we can bound the advantage
+\begin{align*}
+\advTRIVBINDXX{\pi}{\ADB}=\pr{\BGAME_2^\ADB=1}-\pr{\BGAME_3^\ADB=1}\leq \varepsilon\enspace.
+\end{align*}
+As we can inline the entire commitment generation procedure inside the adversary
+\begin{align*}
+&\begin{aligned}
+&\begin{fblock}{\ADB}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& \RETURN \MSPACE_0 
+\end{fblock}\\
+& \\
+&\\
+&\\
+&\\
+\end{aligned}
+&&
+\begin{fblock}{\ADB(m)}
+& \hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)
+\end{forblock}\\
+&\IF \exists \hat{m}_i =\bot\ \RETURN \bot\\
+&\RETURN (\hat{m}_1,\ldots,\hat{m}_n) 
+\end{fblock}
+\end{align*}
+we can easily establish that 
+\begin{align*}
+\advSEMBINDXX{\CS,\pi}{\AD}\leq \advTRIVBINDXX{\pi}{\ADB} 
+\end{align*} 
+and thus non-controllable relations are indeed also semantically binding. 
+
+Let us now study how close to the upper bound we can get if the commitment is binding. Recall that the binding property is defined through the following game
+\begin{align*}
+&\begin{game}{\BGAME}
+&\PK\gets\GEN\\
+& (c,d_0,d_1)\gets\ADB(\PK)\\  
+& m_0\gets\OPEN_\PK(c,d_0)\\
+& m_1\gets\OPEN_\PK(c,d_1)\\
+&\IF \bot\in \set{m_0,m_0}\ \RETURN 0\\ 
+&\RETURN [m_0 \neq m_1]
+&\end{game}
+\end{align*}
+More precisely, a commitment scheme $\CS$ is $(t,\varepsilon)$-binding if the advantage of any $t$-time adversary $\ADB$ against game $\BGAME$ is bounded
+\begin{align*}
+\advBindXX{\CS}{\ADB}=\pr{\BGAME^\ADB=1}\leq \varepsilon\enspace.
+\end{align*}
+As our intuition suggest that $\AD$ chooses decommitment values adaptively based on the value of $m$, it makes sense to run it twice for with different messages $m$ and $\overline{m}$. This should provoke the adversary to release decommitments for different values of $\hat{m}_1,\ldots,\hat{m}_n$ which itself would reveal double opening. The corresponding adversarial construction is following
+\begin{align*}
+&\begin{game}{\ADB(\PK)}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& \hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& m\gets\MSPACE_0, m_*\gets\MSPACE_0\\  
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \hat{d}^*_1,\ldots,\hat{d}^*_n\gets\AD(\overline{m})\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\\
+& \hat{m}^*_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}^*_i)\\
+&\begin{ifblock}{\bot\notin\set{\hat{m}_i,\hat{m}^*_i} \wedge \hat{m}_i \neq \hat{m}^*_i\ }
+  &\RETURN (\hat{c}_i,\hat{d}_i,\hat{d}^*_i)\\ 
+  \end{ifblock}
+\end{forblock}\\
+&\RETURN \bot\enspace
+&\end{game}
+\end{align*}
+where $\ADB$ always rewinds $\AD$ back to the previous state before calling $\AD(\overline{m})$. Let $\VALID$ denote the event that messages $\hat{m}_1,\ldots,\hat{m}_n$ are valid and $\VALID_*$ denote the event that messages $\hat{m}^*_1,\ldots,\hat{m}^*_n$ are valid:
+\begin{align*}
+\VALID\;\, \quad&\Leftrightarrow\quad \bot\notin\set{\hat{m}_1,\ldots,\hat{m}_n}\enspace,\\
+\VALID_* \quad&\Leftrightarrow\quad \bot\notin\set{\hat{m}^*_1,\ldots,\hat{m}^*_n}\enspace.
+\end{align*}
+Then by the construction
+\begin{align*}
+\pr{\GAME_2^\AD=1}&=\pr{\PK\gets\GEN, \ADB(\PK): \VALID\wedge \pi(m,\hat{m}_1,\ldots,\hat{m}_n)=1}\\
+\pr{\GAME_3^\AD=1}&=\pr{\PK\gets\GEN, \ADB(\PK): \VALID_*\wedge \pi(m,\hat{m}^*_1,\ldots,\hat{m}^*_n)=1}
+\end{align*}
+whereas the binging advantage can be lower bounded
+\begin{align*}
+\advBindXX{\CS}{\ADB}\geq\pr{\PK\gets\GEN, \ADB(\PK): \VALID\wedge\VALID_*\wedge \pi(m,\hat{m}_1,\ldots,\hat{m}_n)=1\wedge \pi(m,\hat{m}^*_1,\ldots,\hat{m}^*_n)=0}
+\end{align*} 
+since the output of the relation can be different only of some argument is different. Each such difference gives us a double opening as both versions of decommitments are valid. As a result, we have structural mismatch between the probability that we want to estimate and the probabilities that determine the success of $\AD$.
+
+As the next step, we need to decompose the lower bound probability into simpler terms. First note that for fixed public key $\PK$ and randomness $\omega$ of $\AD$, the events
+\begin{align*}
+ \VALID\wedge \pi(m,\hat{m}_1,\ldots,\hat{m}_n)=1\qquad\text{and}\qquad
+ \VALID_*\wedge \pi(m,\hat{m}^*_1,\ldots,\hat{m}^*_n)=0
+\end{align*}
+are independent by the construction. Thus, we can expand the bound further
+\begin{align*}
+\advBindXX{\CS}{\ADB}\geq\sum_{\PK,\omega}\pr{\omega,\PK}\cdot\pr{\VALID\wedge \pi(m,\hat{m}_1,\ldots,\hat{m}_n)=1|\omega,\PK}\cdot\pr{\VALID_*\wedge \pi(m,\hat{m}^*_1,\ldots,\hat{m}^*_n)=0|\omega,\PK}
+\end{align*}
+However, this is not enough and we have split this probability into more elementary terms. For that we introduce the following notions:
+\begin{align*}
+\delta(\PK,\omega)&=\pr{\VALID|\PK,\omega}=\pr{\VALID_*|\PK,\omega}\\
+\alpha(\PK,\omega)&=\pr{\pi(m,\hat{m}_1,\ldots,\hat{m}_n)=1|\PK,\omega,\VALID}\\
+\beta(\PK,\omega)&=\pr{\pi(m,\hat{m}^*_1,\ldots,\hat{m}^*_n)=1|\PK,\omega,\VALID_*}
+\end{align*}   
+where the first equality in the definition follows form the symmetry of $\VALID$ and $\VALID_*$ events. Armed with this definition we can express  the advantage against semantic binding as
+\begin{align*}
+\advSEMBINDXX{\CS,\pi}{\AD}&=\sum_{\PK,\omega}\pr{\PK,\omega}\delta(\PK,\omega)\alpha(\PK,\omega)- \sum_{\PK,\omega}\pr{\PK,\omega}\delta(\PK,\omega)\beta(\PK,\omega)\\
+&=\sum_{\PK,\omega}\pr{\PK,\omega}\delta(\PK,\omega)(\alpha(\PK,\omega)-\beta(\PK,\omega))
+\end{align*}
+and the advantage against biding as
+\begin{align*}
+\advBindXX{\CS}{\ADB}\geq\sum_{\PK,\omega}\pr{\PK,\omega}\delta(\PK,\omega)^2(\alpha(\PK,\omega)-\beta(\PK,\omega))
+\end{align*}
+\textsc{Probably wrong here}
+We must consider dependence on $m$ here instead!
+The dependence on $\PK$ and $\omega$ might be constant an we still have problems
+
+
+
+
+
+ 
+
+ 
+
+
+
+ 
+
+\textsc{Siim}
+
+
+We will now make a reduction to the ordinary binding game by considering an optimal adversary $\AD$ against the semantic binding games and constructing an adversary $\ADB$ against game $\BGAME$. We construct the adversary $\ADB$ in the following way:
+
+\begin{align*}
+&\begin{game}{\ADB(\PK)}
+&\PK\gets\GEN\\
+& \MSPACE_0\gets\AD(\PK)\\
+& \pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\varnothing)\\ 
+& m\gets\MSPACE_0,\overline{m}\gets\MSPACE_0\\  %Slight mistake, here was \overline{m}_i
+& \hat{d}_1,\ldots,\hat{d}_n\gets\AD(m)\\
+& \overline{d}_1,\ldots,\overline{d}_n\gets\AD(\overline{m})\\
+& \begin{forblock}{i\in\set{1,\ldots,n}}
+& \hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\\
+& \overline{m}_i\gets\OPEN_\PK(\hat{c}_i,\overline{d}_i)\\
+&\IF \hat{m}_i \neq\bot\ \wedge\ \overline{m}_i \neq\bot\ \wedge\ \hat{m}_i \neq \overline{m}_i\ \RETURN (\hat{c}_i,\hat{d}_i,\overline{d}_i)\\ 
+\end{forblock}\\
+&\RETURN \bot
+&\end{game}
+\end{align*}
+
+Without loss of generality, we can assume an optimal adversary in the semantic binding games, given inputs $m \neq \overline{m}$ for some fixed $\MSPACE_0$, always produces the sets of decommitments $\hat{d}_1,\ldots,\hat{d}_n$ and $\overline{d}_1,\ldots,\overline{d}_n$ such, that at least one pair $\hat{d}_i, \overline{d}_i$ opens to a different message (or one or both fail to open). Otherwise, the adversary increases the probability that both games $\GAME_0$ and $\GAME_1$ return the same result, possibly reducing the overall advantage.
+
+We can also assume that the call $\AD(m)$ does not affect the behavior of the adversary in the next call $\AD(\overline{m})$, as $\ADB$ can always rewind the adversary to the previous state. Also, since the predicate $\pi(\cdot)$ is fixed by the adversary before these calls, both calls will surely produce an equal amount of decommitment values, otherwise the opened messages would not be a valid input to the predicate in games $\GAME_0, \GAME_1$, since the domain of $\pi(\cdot)$ is fixed. Altogether the construction of $\ADB$ is valid, since all operations can be executed and $\AD$ receives valid inputs.
+
+Clearly, game $\BGAME^{\ADB}$ ends with 1 iff $\ADB$ returns the triplet $(\hat{c}_i,\hat{d}_i,\overline{d}_i)$, since then $\hat{d}_i$ and $\overline{d}_i$ decommit to different messages. Thus, the advantage of the adversary against ordinary binding game is
+
+\[\advBindXX{\CS}{\ADB}=\pr{\BGAME^\ADB=1} .\]
+
+We will now analyze the probability $\pr{\BGAME^\ADB=1}$. Let us first define two events $\Vone$ and $\Vtwo$:
+
+\begin{align*}
+\Vone := \forall i \in \set{1,\ldots,n} \hat{m}_i \neq \bot\\
+\Vtwo := \forall i \in \set{1,\ldots,n} \overline{m}_i \neq \bot\\
+\end{align*}
+
+If events $\Vone$ and $\Vtwo$ occur together and there exists some $i$ for which $\hat{m}_i \neq \overline{m}_i$, then $\ADB$ successfully finds a triplet to return. Therefore, we have
+
+\[\pr{\BGAME^{\ADB} = 1} \geq \pr{\Vone \wedge \Vtwo \wedge \exists \hat{m}_i\neq \overline{m}_i} =  \pr{\Vone \wedge \Vtwo}\cdot \pr{\exists \hat{m}_i\neq \overline{m}_i \ | \ \Vone \wedge \Vtwo} .\]
+
+Since we assumed that for two different messages $m \neq \overline{m}$, a pair of different openings always exists, then
+
+\[\pr{\BGAME^{\ADB} = 1} \geq \pr{\Vone \wedge \Vtwo}\cdot \pr{m \neq \overline{m} \ | \ \Vone \wedge \Vtwo} .\]
+
+By manipulating the conditional probabilities we can arrive at 
+
+\[\pr{m \neq \overline{m} \ | \ \Vone \wedge \Vtwo} = 1 - \frac{\pr{m = \overline{m}}\cdot\pr{\Vone \wedge\Vtwo\ |\ m = \overline{m}}}{\pr{\Vone\wedge\Vtwo}}\]
+
+Notice that if $m = \overline{m}$, then the events $\Vone$ and $\Vtwo$ coincide, which means
+
+\[\pr{\Vone \wedge\Vtwo\ |\ m = \overline{m}} = \pr{\Vone}\]
+
+and we have thus arrived at
+
+\[\pr{\BGAME^{\ADB} = 1} \geq \pr{\Vone \wedge \Vtwo} - \pr{m = \overline{m}}\cdot\pr{\Vone} .\]
+
+
+Notice that $\Vone$ and $\Vtwo$ are independent events, since they depend only on the values of $m$ and $\overline{m}$, since all other parameters are fixed up to that point. Also, since we can assume $\AD(m)$ and $\AD(\overline{m})$ are independent calls and use the same randomness, then actually 
+
+\[\pr{\Vone} = \pr{\Vtwo}\]
+
+and thus we have
+
+\[\pr{\Vone \wedge \Vtwo} = \pr{\Vone} \cdot \pr{\Vtwo} = \pr{\Vone}^2 .\]
+
+From the definition of $\Vone$ and our $\ADB$ construction, it is easy to see that
+
+\[\pr{\Vone} \geq \pr{\GAME_0^\AD=1} + \pr{\GAME_0^\AD=0 \wedge \Vone} \geq  \pr{\GAME_0^\AD=1} - \pr{\GAME_1^\AD=1} = \varepsilon_1\]
+
+We finally need to analyze the probability $\pr{m = \overline{m}}$.
+
+And now I got stuck... I have 
+
+\[\pr{\BGAME^{\ADB} = 1} \geq \varepsilon_1^2 - \pr{m = \overline{m}}\cdot\pr{\Vone} \]
+
+but I can't seem to get this into something like $\varepsilon_1^2 - \varrho\cdot\varepsilon_1$, which would give me $\varepsilon_1 \leq \varrho + \varepsilon$.
+
+
+\end{solution}
+\end{document}

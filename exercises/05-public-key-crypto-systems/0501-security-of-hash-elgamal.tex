@@ -1,0 +1,311 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\contributor[Initial solution]{Pille Pullonen}
+\editor{Sven Laur}
+\tags{hash functions, ElGamal cryptosystem, IND-CPA security, Decisional Diffie-Hellman assumption}
+
+\newcommand{\ADVINDCPA}[2]{\ADV^{\mathsf{ind\text{-}cpa}}_{#1}(#2)}
+\renewcommand{\ADVIND}[2]{\ADV^{\mathsf{ind}}_{#1}(#2)}
+
+\begin{document}
+\begin{exercise}{Security of hash ElGamal cryptosystem}
+The message space of the ElGamal cryptosystem is a DDH group $\GG$. The latter is rather limiting, since normally one needs to encrypt $n$-bit messages and not the group elements. The hash ElGamal cryptosystem for $q$-element group $\GG=\langle g\rangle$ is defined as follows:
+\begin{align*}
+\begin{aligned}
+\begin{fblock}{\GEN}
+& x\getsu\ZZ_q\\
+& y\gets g^x\\
+& \RETURN (x,y)
+\end{fblock}\\
+\ 
+\end{aligned}
+\qquad\qquad
+\begin{fblock}{\ENC_\PK(m)}
+& k\getsu\ZZ_q\\
+& c_1\gets g^r\\
+& c_2\gets m\oplus h(y^r)\\
+& \RETURN (c_1,c_2)
+\end{fblock}
+\qquad\qquad
+\begin{aligned}
+\begin{fblock}{\DEC_\SK(c_1,c_2)}
+& m\gets c_2\oplus h(c_1^x)\\
+& \RETURN m\enspace.
+\end{fblock}\\
+\ \\
+\
+\end{aligned}
+\end{align*}
+where the secret key is $x$ and the public key is $y$, and $h:\GG\to\set{0,1}^n$ is a almost regular hash function. That is, the distribution $h(y)$ for $y\getsu\GG$ is statistically $\varepsilon_2$-close to the uniform distribution over $\set{0,1}^n$. Prove that the simplified ElGamal cryptosystem is also IND-CPA secure and give the corresponding security bounds.
+\end{exercise}
+
+
+
+\paragraph{Solution.}
+Let us consider the IND-CPA games for the simplified ElGamal
+cryptosystem. For brevity, let $q$ denote the size of the group $\GG$.
+\begin{align*}
+  &\begin{game}{\GAME_0^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &c \gets (g^k, h(g^{xk}) \oplus m_0)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+  &&\begin{game}{\GAME_1^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &c \gets (g^k, h(g^{xk}) \oplus m_1)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+\end{align*}
+Using the fact that $\GG$ is $(t,\varepsilon_1)$-secure DDH group, we
+get another pair of games such that the distance between $\GAME_0$ and
+$\GAME_2$ and $\GAME_1$ and $\GAME_3$ is $\varepsilon_1$.
+\begin{align*}
+  &\begin{game}{\GAME_2^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &\ell \gets \ZZ_{q}\\
+    &c \gets (g^k, h(g^{\ell}) \oplus m_0)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+  &&
+  \begin{game}{\GAME_3^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &\ell \gets \ZZ_{q}\\
+    &c \gets (g^k, h(g^{\ell}) \oplus m_1)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+\end{align*}
+Indeed, note that the corresponding game pairs differ in a single
+line---we have replaced group element $g^{xk}$ by a random group
+element $g^\ell$. As a result, if there is a significant change in the
+success of adversary $\AD$, we can easily construct an adversary
+$\ADB$ against DDH problem defined by the following game pair:
+\begin{align*}
+  &\begin{game}{\BGAME_0^\ADB}
+    &x \gets \ZZ_{q}\\
+    &y \gets \ZZ_{q}\\
+    &z \gets x y \\
+    &\RETURN \ADB(g,g^x,g^y,g^{z})\\
+  \end{game}
+  &&
+  \begin{game}{\BGAME_1^\ADB}
+    &x \gets \ZZ_{q}\\
+    &y \gets \ZZ_{q}\\
+    &z \gets \ZZ_{q}\\
+    &\RETURN \ADB(g,g^x,g^y,g^{z})\enspace.\\
+  \end{game}
+\end{align*}
+We know that for any $t$-time adversary $\ADB$ the advantage $\ADVDDH{\GG}{\ADB}
+\leq \varepsilon_1$. However if we consider the following  adversaries.
+\begin{align*}
+  &\begin{adversary}{\ADB_1(g,g^x,g^y,g^{z})}
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &c \gets (g^y, h(g^{z}) \oplus m_0)\\
+    &\RETURN \AD(c)\\
+  \end{adversary}
+  &&\begin{adversary}{\ADB_2(g,g^x,g^y,g^{z})}
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &c \gets (g^y, h(g^{z}) \oplus m_1)\\
+    &\RETURN \AD(c)\\
+  \end{adversary}
+\end{align*}
+By inserting $\ADB_1$ to DDH game $\BGAME_0$ we get a game that  is identical to $\GAME_0^\AD$ and by inserting $\ADB_1$ to $\BGAME_1$ we get a game that is identical
+to  $\GAME_2^\AD$.  Similarly, $\BGAME_0^{\ADB_2}\equiv
+\GAME_1^\AD$ and $\BGAME_1^{\ADB_2}\equiv \GAME_3^\AD$. Consequently,
+we can conclude that
+\begin{align*}
+\ADVDDH{\GG}{\ADB_1}&=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_2^\AD=1}}  \\
+\ADVDDH{\GG}{\ADB_2}&=\abs{\pr{\GAME_1^\AD=1}-\pr{\GAME_3^\AD=1}} \enspace.   
+\end{align*}
+Since the running times of $\ADB_1$ and $\ADB_2$ are comparable to the
+running time of $\AD$, we we have proved that
+for any $t$-time $\AD$:
+\begin{align*}
+\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_2^\AD=1}}&\leq\varepsilon_1  \\
+\abs{\pr{\GAME_1^\AD=1}-\pr{\GAME_3^\AD=1}}&\leq\varepsilon_1 \enspace. 
+\end{align*}
+
+
+As $g^\ell$ is a uniform element of $\GG$, we can use almost regularity of  $h$. More precisely, we can define a pair of games $\GAME_4$
+and $\GAME_5$ such that the corresponding statistical distance from $\GAME_2$ and $\GAME_3$ is below $\varepsilon_2$:
+\begin{align*}
+  &\begin{game}{\GAME_4^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &r \gets \set{0,1}^n\\
+    &c \gets (g^k, r \oplus m_0)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+  &&\begin{game}{\GAME_6^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &r \gets \set{0,1}^n\\
+    &c \gets (g^k, r)\\
+    &\RETURN \AD(c)\\
+  \end{game}
+  &&\begin{game}{\GAME_5^\AD}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &r \gets \set{0,1}^n\\
+    &c \gets (g^k, r \oplus m_1)\\
+    &\RETURN \AD(c)\enspace.\\
+  \end{game}
+\end{align*}
+For the formal reasoning,  note that by the properties of $h$ we know that
+$\ADVIND{\XXX_0,\XXX_1}{\ADB}\leq\varepsilon_2$ for any imaginable
+adversary $\ADB$, where the samples of $\XXX_0$ are generated $h(g)$
+for $g\gets\GG$ and $\XXX_1$ is uniform distribution over
+$\set{0,1}^n$. Hence, we have to construct an adversary $\ADB$ for the
+distinguishing games
+\begin{align*}
+  &
+  \begin{aligned}
+  \begin{game}{\BGAME_0^\ADB}
+    &x \gets \set{0,1}^n\\
+    &\RETURN \ADB(x)
+  \end{game}\\
+  \ 
+  \end{aligned}
+  &&\begin{game}{\BGAME_1^\ADB}
+   &y \gets \ZZ_{q}\\
+   &x \gets h(g^y)\\
+   &\RETURN \ADB(x)
+  \end{game}
+\end{align*}
+in order to formally prove distance bounds for the game pairs $(\GAME_2,\GAME_4)$ and $(\GAME_3,\GAME_5)$. Now note that the adversary
+constructions
+\begin{align*}
+  &\begin{adversary}{\ADB_1(r)}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &c \gets (g^k, r \oplus m_0)\\
+    &\RETURN \AD(c)\\
+  \end{adversary}
+  &&\begin{adversary}{\ADB_2(r)}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &k \gets \ZZ_{q}\\
+    &c \gets (g^k, r \oplus m_1)\\
+    &\RETURN \AD(c)\\
+  \end{adversary}
+\end{align*}
+assure that 
+\begin{align*}
+  \begin{aligned}
+    \BGAME_0^{\ADB_1}&\equiv\GAME_4^\AD\\
+    \BGAME_1^{\ADB_1}&\equiv\GAME_2^\AD
+  \end{aligned}
+  \qquad\qquad
+  \begin{aligned}
+    \BGAME_0^{\ADB_2}&\equiv\GAME_5^\AD\\
+    \BGAME_1^{\ADB_2}&\equiv\GAME_3^\AD
+  \end{aligned}
+\end{align*}
+and thus
+\begin{align*}
+\abs{\pr{\GAME_2^\AD=1}-\pr{\GAME_4^\AD=1}}&\leq\varepsilon_2  \\
+\abs{\pr{\GAME_3^\AD=1}-\pr{\GAME_5^\AD=1}}&\leq\varepsilon_2 \enspace. 
+\end{align*}
+
+To complete the proof, note that two games $\GAME_4$ and $\GAME_5$ are equivalent to game $\GAME_6$ because in both cases $\AD$ gets a random element $g^k,r$.Combining the results with the help of triangle inequality, we get that distance of $\GAME_0$ and $\GAME_1$ is at most $2\varepsilon_1 + 2\varepsilon_2$. As the allowed running-time for $\AD$ is bounded by the $(t,\varepsilon_1)$-secure Decisional Diffie-Hellman group property used in the reduction, so the previously
+defined advantage holds for any $t$-time adversary $\AD$. Hence, the
+simplified ElGamal is $(t, 2\varepsilon_1 + 2\varepsilon_2)$ IND-CPA
+secure.
+
+\vspace*{2ex}
+\noindent
+\textsc{Computational uniformity.}
+The function $h$ does not have to be almost uniform. The reduction constructions $\ADB_1$ and $\ADB_2$ for the game pairs  $(\GAME_2,\GAME_4)$ and $(\GAME_3,\GAME_5)$ are very efficient -- the running times of $\ADB_1$ and $\ADB_2$ are comparable to the running time of $\AD$. Hence, cryptographic assumptions on $h$ can be relaxed. It is sufficient that
+$\ADVIND{\XXX_0,\XXX_1}{\ADB}\leq \varepsilon_2$ for all $t$-time adversaries $\ADB$. 
+
+
+\paragraph{Direct constructive proof.}
+The other way to think about the problem is that if $\AD$ is very good
+against IND-CPA games, $\AD$ must be also good for the game
+\begin{align*}
+  \begin{game}{\GAME^{\AD}}
+    &x \gets \ZZ_{q}\\
+    &\PK \gets g^x\\
+    &m_0, m_1 \gets \AD(\PK)\\
+    &i \gets \set{0,1}\\
+    &k \gets \ZZ_{q}\\
+    &c \gets (g^k, h(g^{xk}) \oplus m_i)\\
+    &guess \gets \AD(c)\\
+    &\RETURN [guess\iseq i]\enspace.\\
+  \end{game}
+\end{align*}
+As a result, we can use $\AD$ directly for distinguishing DDH games by defining the following adversary
+\begin{align*}
+  \begin{fblock}{\ADB(g,g^x,g^k,y)}
+   &m_0,m_1 \gets \AD(g^x)\\
+   &i \gets \set{0,1}\\
+   & c \gets (g^k,h(y)\oplus m_i)\\
+   & guess \gets \AD(c)\\
+   & \RETURN [guess\iseq i]
+  \end{fblock}
+\end{align*}
+If $\ADB$ plays against DDH game $\BGAME_0^{\ADB}$ then $y=g^{kx}$ and
+therefore $\AD$ will play the game $\GAME$. By using the well-known
+equivalence between the IND-CPA games and the guessing game $\GAME$,
+we get
+\begin{align*}
+  \pr{\BGAME_0^{\ADB} = 1}%
+  % &= \pr{\GAME^\AD = 1}
+  & = \frac{1}{2}\cdot \pr{c=(g^k,h(g^{xk})\oplus m_0): \AD(c)=0}\\
+  &\quad + \frac{1}{2}\cdot\pr{c=(g^k,h(g^{xk})\oplus m_1): \AD(c)=1}\\
+ & = \frac{1}{2} \pm
+  \frac{1}{2}\cdot\advINDCPAXX{}{\AD}\enspace.
+\end{align*}
+In the game $\BGAME_1$, however, $y = g^\ell$ is a random group
+element and we obtain
+\begin{align*}
+  \pr{\BGAME_1^{\ADB} = 1}%
+  & = \frac{1}{2}\cdot \pr{c=(g^k,h(y)\oplus m_0): \AD(c)=0}\\
+  &\quad + \frac{1}{2}\cdot\pr{c=(g^k,h(y)\oplus m_1): \AD(c)=1}\\
+  & = \frac{1}{2} \pm
+  \frac{1}{2}\cdot\advINDXX{\YYY_0,\YYY_1}{\AD}\enspace
+\end{align*}
+where $\YYY_0$ and $\YYY_1$ are distributions of $h(y)\oplus m_0$ and
+$h(y)\oplus m_1$, respectively. 
+
+Since $y$ is a uniformly chosen group element then the distributions
+$h(y)\oplus m_0$ and $h(y)\oplus m_1$ are at most $\varepsilon_2$
+apart from uniform distribution over $\set{0,1}^n$. By the triangle
+inequality we can conclude
+\begin{align*}
+  \ADVIND{\YYY_0,\YYY_1}{\AD}\leq \varepsilon_2\enspace.
+\end{align*}
+By combining both estimates, we get
+\begin{align*}
+  \ADVDDH{\GG}{\ADB}\geq
+  \frac{1}{2}\cdot\advINDCPAXX{}{\AD}-\advINDXX{\YYY_0,\YYY_1}{\AD}
+  \geq \frac{1}{2}\cdot\advINDCPAXX{}{\AD}-\varepsilon_2\enspace.
+\end{align*}
+Hence, if $\ADVINDCPA{}{\AD} >2\varepsilon_1+2\varepsilon_2$ then
+the advantage $\ADVDDH{\GG}{\ADB}>\varepsilon_1$, which contradicts
+the DDH assumption, as running times of $\AD$ and $\ADB$ are
+comparable.
+
+\end{document}

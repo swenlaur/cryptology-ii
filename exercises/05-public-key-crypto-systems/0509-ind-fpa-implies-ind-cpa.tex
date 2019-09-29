@@ -1,0 +1,158 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor[Solution for binary case]{Karl Tarbe}
+\contributor[Solution for arbitrary case]{Sven Laur}
+\editor{Sven Laur}
+\tags{ind-cpa, ind-fpa}
+
+\begin{document}
+\begin{exercise}{IND-FPA $\Rightarrow$ IND-CPA}
+In a fixed plaintext attack (FPA), an adversary has to fix the queried messages ahead of other interactions. Consequently, it might be possible to achieve a security goal against fixed plaintext attacks (CPA) that is infeasible against chosen ciphertext attacks. This separation manifests already if we consider indistinguishability as a security goal. Recall that a cryptosystem is $(t,\varepsilon)$-IND-FPA if for all $t$-time adversaries $\ADB$ the advantage is bounded: 
+\begin{align*}
+  \advINDFPAXX{}{\ADB}=\abs{\pr{\smash{\BGAME_0^\ADB=1}}-\pr{\smash{\BGAME_1^\ADB=1}}}\leq\varepsilon
+\end{align*}
+where
+\begin{align*}
+&\begin{game}{\BGAME_0}
+      &(m_0,m_1)\gets\ADB\\
+      &(\SK,\PK)\gets\GEN\\
+      &\RETURN \ADB(\PK, \ENC_\PK(m_0))
+\end{game}
+&&\begin{game}{\BGAME_1}
+      &(m_0,m_1)\gets\ADB\\
+      &(\SK,\PK)\gets\GEN\\
+      &\RETURN \ADB(\PK,\ENC_\PK(m_1))\enspace.
+\end{game}
+\end{align*}
+Prove that if the message space $\MSPACE$ consist of two elements then IND-FPA security implies IND-CPA security. Generalise the proof for the general case when the message space consists on $n$ elements. How does the security bound depend on the size of the message space?
+\end{exercise}
+\begin{solution}
+\textsc{Message space with two elements.}
+For the proof we must bound the advantage of a $t$-time IND-CPA adversary $\AD$ that plays against the following IND-CPA games:
+\begin{align*}
+&\begin{game}{\GAME_0}
+      &(\SK,\PK)\gets\GEN\\
+      &(m_0,m_1)\gets\AD(\PK)\\
+      &\RETURN \AD(\ENC_\PK(m_0))
+\end{game}
+&&
+\begin{game}{\GAME_1}
+      &(\SK,\PK)\gets\GEN\\
+      &(m_0,m_1)\gets\AD(\PK)\\
+      &\RETURN \AD(\ENC_\PK(m_1)) \enspace.
+\end{game}
+\end{align*}
+Under our assumption the message space $\MSPACE$ consists of two messages $m_0$ and $m_1$. Consequently, the adversary $\AD$ can output only these two messages. The IND-FPA adversary $\ADB$ can also output messages $m_0$ and $m_1$, but differently from $\AD$ it cannot change the order of messages based on the public key $\PK$ and this poses a problem in the reduction. The most naive reduction 
+\begin{align*}
+&
+\begin{aligned}
+\begin{fblock}{\ADB}
+ &\RETURN (m_0,m_1)
+\end{fblock}\\
+\
+\end{aligned}
+&&
+\begin{game}{\ADB(\PK, c)}
+ &(\overline{m}_0, \overline{m}_1) \gets \AD(\PK)\\
+ &\RETURN \AD(c)
+\end{game}
+\end{align*}
+is not very good. The inlining of $\ADB$ into the games $\BGAME_0$ and $\BGAME_1$ gives
+\begin{align*}
+&
+\begin{game}{\BGAME_0}
+ &(m_0,m_1)\gets\ADB\\
+ &(\SK,\PK)\gets\GEN\\
+ &(\overline{m}_0, \overline{m}_1) \gets \AD(\PK)\\
+ &\RETURN \AD(\ENC_\PK(m_0))
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+ &(m_0,m_1)\gets\ADB\\
+ &(\SK,\PK)\gets\GEN\\
+ &(\overline{m}_0, \overline{m}_1) \gets \AD(\PK)\\
+ &\RETURN \AD(\ENC_\PK(m_1))
+\end{game}
+\end{align*}
+and thus $\AD$ gives answer for switched games if $(\overline{m}_0,\overline{m}_1)$ is in the the opposite order as $(m_0, m_1)$. The latter might completely destroy the advantage $\advINDFPAXX{}{\ADB}$. This problem can be solved by checking the order of messages and inverting the outcomes when messages are switched:
+\begin{align*}
+&\begin{aligned}
+\begin{fblock}{\ADB}
+ &\RETURN (m_0,m_1)
+\end{fblock}\\
+\ \\
+\
+\end{aligned}
+&& 
+\begin{fblock}{\ADB(\PK,c)}
+ &(\overline{m}_0, \overline{m}_1) \gets \AD(\PK)\\
+ &\IF \smash{(\overline{m}_0 \iseq m_0)}\  \THEN \RETURN \AD(c)\\
+ &\ELSE \RETURN \neg\AD(c)\enspace.
+\end{fblock}
+\end{align*}
+Under the assumption that $\AD$ outputs always different messages $\overline{m}_0\neq \overline{m}_1$, we get 
+\begin{align*}
+\pr{\BGAME_i^\ADB=1} %
+&= \pr{\BGAME_i^\ADB=1\wedge m_0=\overline{m}_0}
++\pr{\BGAME_i^\ADB=1\wedge m_0\neq\overline{m}_0}\\
+&= \pr{\GAME_i^\AD=1\wedge m_0=\overline{m}_0}
++\pr{\GAME_{1-i}^\AD=0\wedge m_0\neq\overline{m}_0}\\
+&= \pr{\GAME_i^\AD=1\wedge m_0=\overline{m}_0}
++ 1-\pr{\GAME_{1-i}^\AD=1\wedge m_0\neq\overline{m}_0}
+\end{align*}
+and thus the advantages are identical: 
+\begin{align*}
+\advINDFPAXX{}{\ADB}
+&=\bigl|\pr{\GAME_0^\AD=1\wedge m_0=\overline{m}_0}
++ 1-\pr{\GAME_{1}^\AD=1\wedge m_0\neq\overline{m}_0} \\
+&\qquad-\pr{\GAME_1^\AD=1\wedge m_0=\overline{m}_0}
+- 1+\pr{\GAME_{0}^\AD=1\wedge m_0\neq\overline{m}_0}\bigr|\\
+&=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}=\advINDCPAXX{}{\AD}\enspace.
+\end{align*}
+To complete the proof we must extend the argument to the adversaries $\AD$ that sometimes output identical messages $\overline{m}_0=\overline{m}_1$. It is straightforward to see that 
+\begin{align*}
+\advINDCPAXX{}{\AD}=\abs{\pr{\GAME_0^\AD=1\wedge \overline{m}_0\neq\overline{m}_1}-\pr{\GAME_1^\AD=1\wedge \overline{m}_0\neq\overline{m}_1}}\enspace,
+\end{align*} 
+since the execution steps in the games $\GAME_0$ and $\GAME_1$ are identical if $\overline{m}_0=\overline{m}_1$. As a result, it is straightforward to convert an adversary $\AD$ into an adversary $\AD_*$ that is guaranteed to output different messages:
+\begin{align*}
+&
+\begin{fblock}{\AD_*(\PK)}
+ &(\overline{m}_0, \overline{m}_)\gets\AD(\PK)\\ 
+ &\IF \smash{(\overline{m}_0\iseq \overline{m}_1)}\ \THEN \RETURN (m_0,m_1)\\ 
+ &\ELSE \RETURN (m_0,m_1)
+\end{fblock}
+&&
+\begin{aligned}
+\begin{game}{\AD_*(c)}
+ &\IF \smash{(\overline{m}_0\iseq \overline{m}_1)}\ \THEN \RETURN 0\\  
+ &\ELSE \RETURN \AD(c)
+\end{game}\\
+\
+\end{aligned}
+\end{align*}
+and to have the same advantage. As a result, we have specified the reduction in two steps. First, we convert $\AD$ to $\AD_*$ and then use the construction of $\ADB$ with the adversary $\AD_*$. The resulting adversary is clearly valid, since both conversion steps do not contain any undefined  operations. Similarly, the overhead in the running time is constant as both transformations add constant overhead.    
+
+\vskip 3ex 
+\noindent
+\textsc{Generalisation to arbitrary message space.} 
+First note that we can always decompose the advantage of IND-CPA adversary as sum of pairwise advantages:
+\begin{align*}
+\advINDCPAXX{}{\AD}\leq \sum_{m_0^*,m_1^*\in\MSPACE}\abs{\pr{\GAME_0^\AD=1\wedge m_0=m_0^*\wedge m_1=m_1^*}-\pr{\GAME_1^\AD=1\wedge m_0=m_0^*\wedge m_1=m_1^*}}
+\end{align*}
+and thus we can concentrate our efforts on bounding 
+\begin{align*}
+\advINDCPAXX{m_0^*,m_1^*}{\AD}=\abs{\pr{\GAME_0^\AD=1\wedge m_0=m_0^*\wedge m_1=m_1^*}-\pr{\GAME_1^\AD=1\wedge m_0=m_0^*\wedge m_1=m_1^*}}\enspace.
+\end{align*}
+This advantage is an IND-CPA advantage of the cryptosystem with the messages space $\MSPACE_*=\set{m_0^*,m_1^*}$. Obviously, the cryptosystem remains IND-FPA with the same parameters when we restrict the message space to $\MSPACE_*$ and thus the first part of the exercise allows us to deduce that 
+\begin{align*}
+\advINDCPAXX{}{\AD}\leq \sum_{m_0^*,m_1^*\in\MSPACE}\advINDCPAXX{m_0^*,m_1^*}{\AD}
+\leq \frac{\abs{\MSPACE}\cdot(\abs{\MSPACE}-1)}{2}\cdot \varepsilon\enspace.
+\end{align*}
+Consequently, the effectiveness of IND-CPA $\Rightarrow$ IND-FPA reduction decreases quadratically  with respect to the message space, which is too weak for (exponentially) large messages spaces.
+   
+Note that the reduction is tight. It is possible that the adversary chooses messages $(m_0,m_1)$ deterministically based on the public key so that each message pair has the same probability. Now if the advantage for each message pair is same, then the upper bound is tight.       
+\end{solution}
+\end{document}
+
