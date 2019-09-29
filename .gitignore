@@ -1,0 +1,14 @@
+# LaTeX trash
+
+**/*.log
+**/*.aux
+**/*.toc
+**/*.dvi
+**/*.synctex.gz
+
+
+# Mac OS trash
+**/.DS_Store
+
+# Omnigraffle trash
+lectures/**/illustration-sources
