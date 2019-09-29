@@ -1,0 +1,511 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Semantic Security and Cryptosystems}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{25 September, 2017}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+
+\newcommand{\TRUE}{\mathsf{true}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+\newcommand{\CS}{\mathscr{C}}
+\newcommand{\GUESS}{\mathsf{guess}}
+\newcommand{\CTR}{\mathsf{ctr}}
+
+
+\begin{document}
+\titlefoil
+
+
+\foilhead[-1cm]{Semantic security}
+\illustration[scale=1, trim=0cm 0cm 0cm -1cm]{semantic-security-games.eps}
+
+
+
+\foilhead[-1cm]{Indistinguishability implies semantic security}
+
+\textbf{IND-SEM theorem.}  If for all $s_i,s_j\in\supp(\SSS)$
+distributions $f(s_i)$ and $f(s_j)$ are
+$(2t,\varepsilon)$-indistinguishable, then for all $t$-time
+adversaries $\AD$:
+\begin{align*}
+ \advSemXX{f,g}{\AD}\leq\varepsilon\enspace.  
+\end{align*}
+
+\textbf{Further comments} 
+\begin{triangles}
+  \item Note that function $g$ might be randomised.
+  \item Note that function $g:\SSS\to\set{0,1}^*$ may extremely difficult to compute.
+  \item It might be even infeasible to get samples from the distribution $\SSS$.    
+  \item The theorem does not hold if $\SSS$ is specified by the
+    adversary.
+  \item  As the proof is non-constructive, there are no \emph{explicit} reductions.
+  \lastline
+\end{triangles}
+
+
+\middlefoil{Proof Sketch}
+
+\foilhead[-1cm]{A slightly modified formal definition}
+
+By definition $\advSEMXX{f,g}{\AD} =
+\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}$ where
+\begin{gather*}
+  \begin{game}{\GAME_0^\AD}
+    &s\gets\SSS\\
+    &g_*\gets\AD(f(s))\\
+    &\RETURN [g_*\iseq g(s)]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &s\gets\SSS\\
+    &g_*\gets\argmax\nolimits_{g_*}\pr{g(s)=g_*}\\
+    &\RETURN [g_*\iseq g(s)]
+  \end{game}
+\end{gather*}
+As a minimising value $g_*$ is \emph{uniquely determined} by $g(\cdot)$, we can
+express
+\begin{align*}
+     \advSemXX{f, g}{\AD} &=\pr{s\gets\SSS_0:\AD(f(s))=g(s)}%
+  -\pr{g(s)=g_*}\enspace
+\end{align*}
+
+\lastline
+
+
+\foilhead[-0cm]{Incorrect coin fixing argument}
+
+Let $g:\SSS\times\Omega\to\YYY$ is a randomised function. Then by definition
+\begin{align*}
+  \advSemXX{f,g}{\AD}=\sum_{\omega\in\Omega}\pr{\omega}\cdot \advSemXX{f,g_\omega}{\AD}
+\end{align*}
+where $g_\omega(s)\doteq g(s;\omega)$ is a deterministic function. 
+\Bigskip
+
+Hence, the advantage is maximised by a deterministic function, since 
+\begin{align*}
+  \sum_{\omega\in\Omega}\pr{\omega}\cdot \advSemXX{f,g_\omega}{\AD}%
+  \leq%
+  \max_{\omega\in\Omega}\set{\smash{\advSemXX{f,g_\omega}{\AD}}}\enspace.
+\end{align*}
+
+
+\foilhead[-0cm]{Formal extension of secret distribution}
+
+For a randomised function $g:\SSS\times\Omega\to\YYY$ we can extend secret space
+\begin{align*}
+f_*: \SSS\times \Omega\to \XXX\qquad
+g_*: \SSS\times \Omega\to \YYY  
+\end{align*}
+so that observable values $f_*(s,\omega)=f(s)$ do not change and $g_*(s,\omega)$ is deterministic.
+Now it is easy to see
+\begin{align*}
+  \advSemXX{f,g}{\AD}=\advSemXX{f_*,g_*}{\AD}\enspace.
+\end{align*}
+Since the distribution of observable values is same for $f(s)$ and $f_*(s,\omega)$ then the assumptions of the theorem carry over to the extended didtribution.
+
+
+
+
+\foilhead[-1cm]{Sampling idiom}
+
+\illustration[scale=1, trim=0cm -1.0cm 0cm -1cm]{sampling-idiom.eps}
+
+Let $\SSS_{y_i}$ be the conditional distribution over the set
+$\set{s\in\SSS:g(s)=y_i}$ and $\YYY$ distribution of final outcomes
+$g(s)$. Then we get the distribution $\SSS$ if we first draw $y$ from
+$\YYY$ and then choose $s$ according to $\SSS_{y}$.\lastline
+
+\foilhead[-1cm]{Resulting guessing game}
+
+By using the sampling idiom, we can transform the game into a new form  
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &y\gets\YYY\\
+    &s\gets\SSS_y \\ 
+    &\RETURN [\smash{g(s)\iseq \AD(f(s))}]
+  \end{game}
+\end{align*}%
+\end{small}%
+where the adversary $\AD$ must choose between hypotheses
+$\HYP_{y_0}=[y\iseq y_0]$ for all possible outcomes $y\in\YYY$. The
+success bound for guessing games  yields 
+\begin{align*}
+  \pr{\GAME_0^{\AD}=1}%
+  \leq \max_{y_0,y_1\in \YYY} \CD_{f(s)}^{2t}(\HYP_{y_0},\HYP_{y_1})
+  +\max_{y_*\in\supp(\YYY)}\pr{y\gets\YYY:y=y_*}\enspace.
+\end{align*}
+
+
+\foilhead[-1cm]{Indistinguishability of conditional distributions}
+
+Fix $y_0,y_1\in\YYY$ and let $\SSS_{y_0}$ and $\SSS_{y_1}$ be the
+corresponding distributions. Then for any $2t$-time $\ADB$ the
+acceptance probabilities are
+\begin{align*}
+  p_i%
+  &=\sum_{s_0,s_1}\pr{s\gets\SSS_{y_0}:s=s_0}
+  \pr{s\gets\SSS_{y_1}:s=s_1}\pr{\ADB(f(s_i))=1}\enspace.
+\end{align*}
+Now the difference of acceptance probabilities can be bounded
+\begin{align*}
+  \abs{p_0-p_1}
+  &\leq\sum_{s_0, s_1}\pr{s_0}\pr{s_1}\abs{\pr{\ADB(f(s_0))=1}-\pr{\ADB(f(s_1))=1}}\\
+  &\leq\max_{s_0, s_1}\abs{\pr{\ADB(f(s_0))=1}-\pr{\ADB(f(s_1))=1}}\leq\varepsilon\enspace
+\end{align*}
+since all states in $\SSS$ are
+$(2t,\varepsilon)$-indistinguishable.\lastline
+
+
+\foilhead[-1cm]{Semantic security of a single encryption}
+
+Let $f:\MSPACE\times\KSPACE\to\CSPACE$ is a
+$(2t,\varepsilon)$-pseudorandom function family. Then it is difficult
+to approximate a function $g(m)$ given only a value $f(m;k)$. In
+particular, for all $t$-time adversaries $\AD$ and message
+distributions $\MSPACE_0$:
+\begin{align*}
+  \pr{\AD(f(m,k))=g(m)}
+  \leq \max_{m_*\in\supp(\MSPACE_0)}\pr{g(m_*)} + \varepsilon\enspace.
+\end{align*}
+\bigskip
+\bigskip
+
+\textbf{Remarks}
+\begin{triangles}
+\item We have to consider $f$ as randomised function $f(m)=f(m;k)$. 
+\item The theorem does not hold if $\MSPACE_0$ is specified by the
+  adversary.
+\item The result cannot be generalised for longer multi-block messages.
+\lastline
+\end{triangles}
+
+\middlefoil{Symmetric Key\vspace*{1ex}\\ Encryption}
+
+
+\foilhead[-1.5cm]{Symmetric key cryptosystem}
+
+\illustration[scale=0.8, angle=-90, clip, trim=1.5cm 1.5cm 11.6cm 1.5cm]{passive-attack-i.eps} 
+\vspace*{1ex}
+\begin{triangles}
+\item A randomised \emph{key generation algorithm} outputs a
+  \emph{secret key} $\SK$ that must be transferred privately to the
+  sender and to the receiver.
+\item A randomised \emph{encryption algorithm}
+  $\ENC_\SK:\MSPACE\to\CSPACE$ takes in a \emph{plaintext} and
+  outputs a corresponding \emph{ciphertext}.
+\item A \emph{decryption algorithm}
+  $\DEC_\SK:\CSPACE\to\MSPACE\cup\set{\bot}$ recovers the plaintext or
+  a special abort symbol $\bot$ to indicate invalid ciphertexts.
+\end{triangles}
+
+\foilhead[-1cm]{Fixed message attack}
+
+\illustration[scale=1.0, trim=0cm 0cm 0cm -1cm]{ind-fpa-problem.eps}
+
+A cryptosystem $\CS$ is \emph{$(t,\varepsilon)$-IND-FPA secure} if for all
+$t$-time adversaries $\AD$:
+\begin{align*}
+  \advINDFPAXX{\CS}{\AD}
+   &=\bigl|\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\bigr|\leq \varepsilon\enspace
+\end{align*}
+and thus for any function $g:\MSPACE\to\set{0,1}^*$ and for any $\frac{t}{2}$-time adversary $\ADB$
+\begin{align*}
+\advSEMXX{\ENC_\SK(\cdot),g}{\ADB}\leq \varepsilon.  
+\end{align*}
+
+\foilhead[-1cm]{Weaknesses of IND-FPA security}
+
+\textbf{Fact I.} One-time pad is perfectly IND-FPA secure.
+
+\textbf{Fact II.} If $f:\MSPACE\times\KSPACE\to\CSPACE$ is
+$(t,\varepsilon)$-pseudorandom function, the Electronic Codebook
+algorithm defined below is $(t,2\varepsilon)$-IND-FPA secure.
+\begin{triangles}
+  \item \textbf{Key generation} $\GEN$: Return $k\getsu\KSPACE$.
+  \item \textbf{Encryption} $\ENC_\SK(\cdot)$: Given $m\in\MSPACE$, return $f(m,k)$
+  \item \textbf{Decryption} $\DEC_\SK(\cdot)$: Given $c\in\CSPACE$, return $m$ such that $f(m,k)=c$.
+\end{triangles}
+\bigskip
+
+\textbf{Observation.} If we apply these encryption algorithms for
+messages $m_1,m_2$, the resulting ciphertexts $c_1,c_2$ leak
+information whether $m_1=m_2$ or not.
+\bigskip
+
+\textbf{Analysis}
+\begin{triangles}
+  \item Separately taken $c_1$ and $c_2$ leak no information about $m_1$ nor $m_2$.
+  \item As $c_1$ is known by the adversary dependence  $m_1$ between $m_2$ may leak. 
+\end{triangles}
+
+\foilhead[-1cm]{Chosen message attack}
+
+\illustration[scale=1.0, trim=0cm 0cm 0cm -1cm]{ind-cpa-problem.eps}
+
+A cryptosystem $\CS$ is \emph{$(t,\varepsilon)$-IND-CPA1 secure} if for all
+$t$-time adversaries $\AD$:
+\begin{align*}
+  \advINDCPAXX{\CS}{\AD}
+   &=\bigl|\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\bigr|\leq \varepsilon\enspace.
+\end{align*}
+
+\middlefoil{Semantic Security}
+
+\foilhead[-1cm]{Semantic security against adaptive influence}
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 4.0cm 2.5cm]{adaptive-semantic-security.eps}
+
+\foilhead[-1cm]{Formal definition}\enlargethispage{2cm}
+
+Consider following games:\vspace*{-3ex}
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &\SK\gets\GEN\\
+    &\MSPACE_0\gets\AD^{\ENC_\SK(\cdot)}\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\SK(m)\\
+    &\RETURN [g(m)\iseq \AD(c)]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &\SK\gets\GEN\\
+    &\MSPACE_0\gets\AD^{\ENC_\SK(\cdot)}\\
+    &m\gets\MSPACE_0,\orangecommand{\smash{\overline{m}\gets\MSPACE_0}}\\
+    &\orangecommand{\smash{\overline{c}\gets\ENC_\SK(\overline{m})}}\\
+    &\RETURN [g(m)\iseq \orangecommand{\smash{\AD(\overline{c})}}]
+  \end{game}
+\end{align*}\vspace{-3ex}\\
+The true guessing advantage is
+\begin{align*}
+ \advSemXX{g}{\AD}=\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}\enspace.
+\end{align*}
+
+
+
+
+
+\foilhead[-1cm]{IND-CPA $\Rightarrow$ SEM-CPA}
+
+\textbf{Theorem}. Assume that $g$ is a $t_g$-time function and it is
+always possible to obtain a sample from $\MSPACE_0$ in time
+$t_m$. Now if the cryptosystem is $(t,\varepsilon)$-IND-CPA1 secure,
+then for all $(t-t_g-2t_m)$-time adversaries $\AD$:
+\begin{align*}
+  \advSemXX{g}{\AD}\leq\varepsilon\enspace.
+\end{align*}
+\vskip 1.5cm
+Note that
+\begin{triangles}
+\item The function $g$ might be randomised.
+\item The function $g$ must be efficiently computable.
+\item The distribution $\MSPACE_0$ must be efficiently samplable.
+\end{triangles}
+
+\foilhead[-1cm]{The corresponding proof}
+ 
+Let $\AD$ be an adversary that can predict the value of $g$ well in
+SEM-CPA1 game. Now consider a new IND-CPA adversary $\ADB$:
+\begin{align*}
+  \begin{fblock}{\ADB^{\ENC_\SK(\cdot)}}
+   &\MSPACE_0\gets \AD^{\ENC_\SK(\cdot)}\\
+   &m_0\gets\MSPACE_0,m_1\gets\MSPACE\\
+   &\RETURN (m_0,m_1) 
+  \end{fblock}
+  \qquad\qquad
+  \begin{aligned}
+  \begin{fblock}{\ADB(c)}
+    &\GUESS\gets \AD(c)\\
+    &\RETURN [\GUESS\iseq g(m_0)]
+  \end{fblock}\\ \
+  \end{aligned}
+\end{align*}
+\bigskip
+
+\textbf{Running time analysis}\vspace*{1ex} \\
+The running time of $\AD$ is $t_b+t_g+2t_m$ where $t_b$ is the running
+time of $\ADB$.\lastline
+
+
+\foilhead[-1cm]{Further analysis by code rewriting}
+
+For clarity, let $\BGAME_0$ and $\BGAME_1$ denote the IND-CPA1 security
+games and $\GAME_0$ and $\GAME_1$ IND-SEM security games. Then note
+\begin{align*}
+  \BGAME_0^\ADB\equiv\GAME_0^\AD 
+  \qquad\text{and}\qquad
+  \BGAME_1^\ADB\equiv\GAME_1^\AD 
+\end{align*}
+where
+
+\begin{align*}
+  \begin{game}{\BGAME_0^\ADB}
+    &\SK\gets\GEN\\
+    &(m_0,m_1)\gets\ADB^{\ENC_\SK(\cdot)}\\
+    &\RETURN \ADB(\ENC_\SK(m_0))    
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\BGAME_1^\ADB}
+    &\SK\gets\GEN\\
+    &(m_0,m_1)\gets\ADB^{\ENC_\SK(\cdot)}\\
+    &\RETURN \ADB(\ENC_\SK(m_1))        
+  \end{game}
+\end{align*}
+
+\foilhead[-1cm]{CTR cipher mode is IND-CPA secure}
+
+\illustration[scale=1.0, trim=0cm 0cm 0cm -1cm]{ctr-mode.eps}
+
+\begin{triangles}
+  \item \textbf{Key generation}: Set $\CTR\gets 0$ and choose $k\getsu\KSPACE$.
+  \item \textbf{Encryption}: Given $m\in\MSPACE$, increment $\CTR$ by $1$ and return $m\oplus f(\CTR,k)$
+  \item \textbf{Decryption} Given $c\in\MSPACE$, increment $\CTR$ by $1$ and return $c\oplus f(\CTR,k)$.
+\end{triangles}
+\bigskip
+
+\textbf{Theorem.} If $f:\MSPACE\times\KSPACE\to\CSPACE$ is
+$(t,\varepsilon)$-pseudorandom function, then CTR cipher mode is
+$(t,2\varepsilon)$-IND-CPA secure.\lastline
+
+
+\middlefoil{Switching Lemma}
+
+\foilhead[-1cm]{Motivation}
+
+Block ciphers are designed to be pseudorandom permutations. However,
+it is much more easier to work with pseudorandom
+functions. Therefore, all classical security proofs have the following
+structure:
+\begin{enumerate}
+\item Replace pseudorandom permutation family $\FFF$ with the family
+  $\FFFPERM$.
+\item Use the PRP/PRF switching lemma to substitute $\FFFPERM$ with $\FFFALL$.
+\item Solve the resulting combinatorial problem to bound the  advantage:\vspace*{1ex}
+  \begin{triangles}
+    \item All output values $f(x)$ have uniform distribution. 
+    \item Each output  $f(x)$ is independent of other outputs.
+  \end{triangles}
+\end{enumerate}\vspace*{2ex}
+
+More formally, let $\GAME_0$ the original security game and $\GAME_1$
+and $\GAME_2$ be the games obtained after replacement steps. Then
+\begin{align*}
+  \advWinXX{\GAME_0}{\AD}%
+  =\pr{\smash{\GAME_0^\AD=1}}\leq\CD_\star^t(\GAME_0,\GAME_1)+\SD_\star(\GAME_1,\GAME_2)
+  +\pr{\smash{\GAME_2^\AD=1}}\enspace.
+\end{align*}
+
+\foilhead[-1cm]{PRP/PRF switching lemma}
+
+\textbf{Theorem.}  Let $\MSPACE$ be the input and output domain for
+$\FFFALL$. Then the permutation family $\FFFPERM$ is
+$(q,\varepsilon)$-pseudorandom function family where
+\begin{align*}
+  \varepsilon\leq\frac{q(q-1)}{2\abs{\MSPACE}}\enspace.
+\end{align*}
+
+\textbf{Theorem.}  Let $\MSPACE$ be the input and output domain for
+$\FFFALL$. Then for any $q\leq \sqrt{\abs{\MSPACE}}$ there exists a
+$\Oh(q\log q)$ distinguisher $\AD$ that achieves
+\begin{align*}
+  \advIndXX{\FFFALL,\FFFPERM}{\AD}\geq 0.316\cdot
+  \frac{q(q-1)}{\abs{\MSPACE}}\enspace.
+\end{align*}
+
+\foilhead[-1cm]{Birthday paradox}
+
+Obviously $f\notin \FFFPERM$ if we find a collision $f(x_i)=f(x_j)$
+for $i\neq j$. 
+
+For the proof note that:
+\begin{triangles}
+\item If $x_1,\ldots, x_q$ are different then the outputs
+  $f(x_1),\ldots, f(x_q)$ have uniform distribution over
+  $\MSPACE\times\ldots\times\MSPACE$ when $f\getsu\FFFALL$.
+\item Hence, the corresponding adversary $\AD$ that outputs $0$ only
+  in case of collision obtains
+  \begin{align*}
+    \advIndXX{\FFFALL,\FFFPERM}{\AD}%
+    &=\pr{\mathsf{Collision}|\FFFALL}-\pr{\mathsf{Collision}|\FFFPERM}\\
+    &=\pr{\mathsf{Collision}|\FFFALL}\geq 0.316\cdot
+    \frac{q(q-1)}{\abs{\MSPACE}}\enspace.
+  \end{align*}
+\end{triangles}
+
+\foilhead[-1cm]{Distinguishing strategy as decision tree}
+
+Let $\AD$ be a deterministic distinguisher that makes \emph{up to}
+$q$ oracle calls.
+\illustration[angle=-90, scale=0.70, trim=0.0cm 2.5cm 13.0cm 0.5cm]{switching-lemma.eps}
+
+Then $\pr{\text{Vertex } u|\FFFPERM}$ and $\pr{\text{Vertex }
+  u|\FFFALL\wedge \neg\mathsf{Collision}}$ might differ.  However, if
+$\AD$ makes \emph{exactly} $q$ queries then all vertices on decision
+border are sampled with uniform probability and thus
+\begin{align*}
+  \pr{\AD=1|\FFFPERM}=\pr{\AD=1|\FFFALL\wedge  \neg\mathsf{Collision}}\enspace.
+\end{align*}
+
+\foilhead[-1cm]{The corresponding proof}\enlargethispage{2cm}
+
+Obviously, the best distinguisher $\AD$ is deterministic and makes
+exactly $q$ oracle calls. Consequently,\vspace*{-1.5ex}
+\begin{align*}
+  \pr{\AD=1|\FFFALL}%
+  &=\pr{\mathsf{Collision}|\FFFALL}\cdot\pr{\AD=1|\FFFALL\wedge\mathsf{Collision}}\\
+  &\quad+\pr{\neg\mathsf{Collision}|\FFFALL}\cdot\pr{\AD=1|\FFFALL\wedge\neg\mathsf{Collision}}\\
+  &\leq \pr{\mathsf{Collision}|\FFFALL} +\pr{\AD=1|\FFFPERM}\enspace
+\end{align*}
+\vspace*{-4.5ex}\\
+and thus also\vspace*{-1.5ex}
+\begin{align*}
+    \advIndXX{\FFFALL,\FFFPERM}{\AD}\leq\pr{\mathsf{Collision}|\FFFALL}\enspace.
+\end{align*}
+\vspace*{-4.5ex}\\
+Now observe
+  \begin{align*}
+    \pr{\Vee\limits_{i\neq j} f(x_i)=f(x_j)}%
+    &\leq \sum_{i\neq j}
+    \pr{f(x_i)=f(x_j)}=\frac{q(q-1)}{2}\cdot \frac{1}{\abs{\MSPACE}}\enspace.
+  \end{align*}
+
+\foilhead[-1cm]{Historical references}
+
+Nonconstructive IND-SEM theorem was first mentioned in 1982 
+\begin{triangles}
+  \item \textbf{Shaft Goldwasser and Silvio Micali}. Probabilistic Encryption \&
+  How To Play Mental Poker Keeping Secret All Partial Information.
+\end{triangles}
+\bigskip
+
+Hybrid argument was also first mentioned in 1982
+\begin{triangles}
+  \item \textbf{Andrew Yao}. Theory and Applications of Trapdoor Functions. 
+\end{triangles}
+\bigskip
+
+Constructive and modern IND-SEM proof in was given in late 90-ties.
+\begin{triangles}
+\item \textbf{Mihir Bellare, Anand Desai, E. Jokipii and Phillip Rogaway}.\\ A
+    Concrete Security Treatment of Symmetric Encryption (1997).
+\item \textbf{Mihir Bellare, Anand Desai, David Pointcheval and Phillip
+  Rogaway}. Relations among Notions of Security for Public-Key
+    Encryption Schemes (1998).\lastline
+\end{triangles}
+
+
+\end{document}

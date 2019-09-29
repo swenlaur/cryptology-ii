@@ -1,0 +1,508 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Computational Indistinguishability}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{\today}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+
+\newcommand{\TRUE}{\mathsf{true}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+
+\begin{document}
+\titlefoil
+
+\middlefoil{How to Quantify\vspace*{1ex}\\ Secrecy?}
+
+\foilhead[-1cm]{Hypothesis testing scenario}
+
+\illustration[angle=-90, trim=3.5cm 2.5cm 11cm 2.5cm]{hypothesis-testing.eps}
+\bigskip
+
+There are several types of hypotheses one can try to resolve:
+\begin{triangles}
+\item \emph{simple hypotheses} $\smash{\HYP=[s\iseq s_0]}$
+\item \emph{complex hypotheses} $\smash{\HYP=[s\iseq s_0 \vee s\iseq s_1\vee \ldots\vee s\iseq s_k]}$ 
+\item \emph{trivial hypotheses} that always hold or never hold.\lastline
+\end{triangles}
+
+
+
+\foilhead[-1cm]{Simple hypothesis testing}
+
+\illustration[scale=1.1, trim=0cm 0.5cm 0cm -1cm]{simple-hypothesis-testing}
+
+Simple hypothesis $\HYP_0$ and $\HYP_1$ always determine the
+distribution of the observable variable $x\gets f(s)$. Consequently,
+an adversary $\AD$ that can choose between two hypothesis $\HYP_0$ and
+$\HYP_1$ can do two types of errors:
+\begin{triangles}
+  \item probability of \emph{false positives} $\alpha(\AD)\doteq \pr{\AD(x)=1|\HYP_0}$
+  \item probability of \emph{false negatives}\;  $\beta(\AD)\doteq \pr{\AD(x)=0|\HYP_1}$
+\end{triangles}
+The corresponding aggregate error is $\gamma(\AD)=\alpha(\AD)+\beta(\AD)$.\lastline
+
+\foilhead[-1cm]{Various trade-offs}
+
+\illustration[scale=1.1, trim=0cm 0cm 0cm -1cm]{various-trade-offs-for-hypothesis-testing.eps}
+\bigskip
+
+A potential adversary choose between different strategies:
+\begin{triangles}
+\item Minimise the probability of false negatives $\beta(\AD)$ so that
+  the probability of false positives $\alpha(\AD)$ is bounded.
+\item Minimise the probability of false positives $\alpha(\AD)$ so that
+  the probability of false negatives $\beta(\AD)$ is bounded.
+\item Minimise the probability of the aggregate error
+  $\gamma(\AD)=\alpha(\AD)+\beta(\AD)$.\lastline
+\end{triangles}
+
+
+\foilhead[-1cm]{Neyman-Pearson theorem}
+
+The \emph{likelihood ratio test} described below achieves optimal
+$\beta(\AD)$ for any bound $\alpha(\AD)\leq\alpha_0$. The aggregate
+error $\gamma(\AD)$ is minimised by choosing $\eta=1$ and using a fair
+coin to break ties.
+\begin{align*}
+  \AD(x)=
+  \begin{cases}
+    1,\text{if }\pr{x|\HYP_0}<\eta\cdot\pr{x|\HYP_1}\\
+    0,\text{if }\pr{x|\HYP_0}>\eta\cdot \pr{x|\HYP_1}\\
+    \text{throw a $\rho$-biased coin, otherwise} \\
+  \end{cases}
+\end{align*}
+
+\foilhead[-1cm]{The corresponding proof idea}
+
+\illustration[scale=1, trim=0cm -0.2cm 0cm -1cm]{neyman-pearson-theorem.eps}
+
+If $\pr{x|\HYP_0}\geq \pr{x|\HYP_1}$ on for an input $x$, then by setting $\AD(x)=0$  
+\begin{triangles}
+ \item we decrease the probability of false positives $\alpha(\AD)$ by $\Delta \alpha(\AD)$
+ \item we increase the probability of false negatives $\beta(\AD)$ by $\Delta \beta(\AD)$
+\end{triangles}
+By the assumption $\Delta\alpha(\AD)\leq \Delta \beta(\AD)$ and thus the change $\Delta\gamma(\AD)\leq 0$.
+\lastline
+
+
+\foilhead[-1cm]{Statistical  distance}
+
+\illustration[scale=1, trim=0cm -1.0cm 0cm -1cm]{statistical-distance.eps}
+
+Formally, statistical distance is defined as re-scaled $\ell_1$-distance
+\begin{align*}
+  \SD_x(\HYP_0,\HYP_1)=\frac{1}{2}\cdot \sum_{x}\abs{\pr{x|\HYP_0}-\pr{x|\HYP_1}}
+\end{align*}
+but there are several other ways how to compute it.\lastline
+
+
+\foilhead[-1.0cm]{Statistical distance as a limit}
+
+For any adversary $\AD$ we can define advantage for distinguishing hypotheses:
+\begin{gather*}
+  \advINDXX{\HYP_0,\HYP_1}{\AD}= 1-\gamma(\AD)\\
+    \Updownarrow\\
+   \advINDXX{\HYP_0,\HYP_1}{\AD}=\abs{ \pr{\AD(x)=1|\HYP_0}-\pr{\AD(x)=1|\HYP_1}}
+\end{gather*}
+
+The maximal distinguishing advantage coincides with the statistical distance:
+\begin{gather*}
+  \SD_x(\HYP_0,\HYP_1)= \max_{\AD}\set{\smash{\advINDXX{\HYP_0,\HYP_1}{\AD}}}\\
+  \Updownarrow\\
+  \SD_x(\HYP_0,\HYP_1)=\max_\AD \set{\pr{\AD(x)=1|\HYP_0}-\pr{\AD(x)=1|\HYP_1}}
+\end{gather*}
+
+
+\foilhead[-1.0cm]{The corresponding proof idea}
+
+\illustration[scale=1, trim=0cm -0.5cm 0cm -1cm]{statistical-distance-i.eps}
+
+\begin{triangles}
+\item By Neyman-Pearson theorem  the optimal adversary behaves as follows
+    \begin{align*}
+      \AD(x) = 
+      \begin{cases}
+        0, &\text{if } \pr{x|\HYP_0}>\pr{x|\HYP_1},\\
+        1, &\text{if } \pr{x|\HYP_0}<\pr{x|\HYP_1}.
+      \end{cases}
+    \end{align*}
+\item From geometrical considerations $2\cdot\advINDXX{\HYP_0,\HYP_1}{\AD}=2\cdot\SD_x(\HYP_0,\HYP_1)$.
+\end{triangles}
+
+
+\middlefoil{What If the Adversary\vspace*{1ex}\\ Is Computationally Bounded?} 
+
+
+\foilhead[-1.0cm]{Infeasibility of statistical distance}
+
+\illustration[scale=1, trim=0cm 0.0cm 0cm -1cm]{computational-problem.eps}
+
+The best likelihood ratio test is often infeasible in practice.
+\begin{triangles}
+  \item It is often infeasible to compute $\pr{x|\HYP_0}$ and $\pr{x|\HYP_1}$.
+  \item The description of the optimal decision border is too complex
+    to directly hardwire into the description of the distinguishing algorithm.
+\end{triangles}
+
+Instead, we must resort to sub-optimal $t$-time \emph{distinguishing algorithms}.
+\lastline
+
+
+\foilhead[-1cm]{Computational distance}
+
+Computational distance is defined analogously to the statistical distance:
+\begin{align*}
+  \CD_x^t(\HYP_0,\HYP_1)=\max_{\AD \text{ is $t$-time}} \set{\smash{\advINDXX{\HYP_0,\HYP_1}{\AD}}}
+  \enspace.
+\end{align*}
+
+As hypotheses uniquely determine observable distributions $\XXX_0$ and
+$\XXX_1$ we can talk about indistinguishability of distributions.
+Distributions $\XXX_0$ and $\XXX_1$ are
+$(t,\varepsilon)$\emph{-indistinguishable} if for all $t$-time
+algorithms $\AD$:
+\begin{align*}
+  \advINDXX{\XXX_0,\XXX_1}{\AD}=
+  \abs{\pr{x\gets \XXX_0: \AD(x)=1}-\pr{x\gets \XXX_1: \AD(x)=1}}\leq\varepsilon
+\end{align*}
+
+In other terms, the distributions $\XXX_0$ and $\XXX_1$ are
+$(t,\varepsilon)$-indistinguishable if 
+\begin{align*}
+\CD_x^t(\HYP_0,\HYP_1)\leq \varepsilon\enspace.  
+\end{align*}
+
+\foilhead[-1cm]{Basic properties of computational distance}
+
+\textbf{Triangle inequality.}  For any triple of simple hypotheses
+$\HYP_0$, $\HYP_1$, $\HYP_2$:
+\begin{align*}
+    \CD_x^t(\HYP_0,\HYP_2)\leq \CD_x^t(\HYP_0,\HYP_1) +
+    \CD_x^t(\HYP_1,\HYP_2) \enspace.
+\end{align*}
+\bigskip
+
+\textbf{Symmetry.} For any two simple hypothesis $\HYP_0$ and $\HYP_1$:
+  \begin{align*}
+      \CD_x^t(\HYP_0,\HYP_1)=\CD_x^t(\HYP_1,\HYP_0)\enspace.
+  \end{align*}
+\bigskip
+
+\textbf{Positively definiteness.} For any reasonably large time bound $t$:
+  \begin{align*}
+       \CD_x^t(\HYP_0,\HYP_1)=0\quad\Leftrightarrow\quad \SD_x(\HYP_0,\HYP_1)=0
+       \quad\Leftrightarrow\quad \HYP_0\equiv\HYP_1\enspace.
+  \end{align*}
+
+
+
+\foilhead[-1cm]{Interactive hypothesis testing}\enlargethispage{2cm}
+
+\illustration[angle=-90, scale=0.9, trim=3.5cm 2.5cm 11cm 2.5cm]{interactive-hypothesis-testing.eps} 
+%
+We use analogous notation for computational and statistical distance:\vspace*{-1.5ex}
+\begin{align*}
+  \CD_\star^t(\HYP_0,\HYP_1)%
+  &=\max_{\AD \text{ is
+      $t$-time}}\abs{\pr{\AD(\star)=1|\HYP_0}-\pr{\AD(\star)=1|\HYP_1}}\enspace,\\
+  \SD_\star(\HYP_0,\HYP_1)%
+  &=\max_{\AD}\abs{\pr{\AD(\star)=1|\HYP_0}-\pr{\AD(\star)=1|\HYP_1}}\enspace.
+\end{align*}\vspace*{-3.5ex}\\
+These measures also satisfy triangle inequality and other distance axioms.
+
+
+\middlefoil{Security Definitions Based\vspace*{1ex}\\ on Indistinguishability}
+
+\foilhead[-1cm]{Pseudorandom generators}
+
+\textbf{Model.}
+Let $f$ be a function that stretches $m$-bit seed $s$ to $n$-bit
+string. Then we can consider the following classical hypothesis testing
+scenario. A $t$-time adversary $\AD$ gets $x$ and must distinguish two
+hypotheses (\emph{games}):
+\begin{triangles}
+\item $\HYP_0:$ The string $x$ is uniformly chosen over $\set{0,1}^n$.
+\item $\HYP_1:$ The string $x\gets f(s)$ for uniformly chosen $s\getsu\set{0,1}^m$. 
+\end{triangles}
+\Bigskip
+
+\textbf{Definition.}
+A function $f$ is $(t,\varepsilon)$-\emph{pseudorandom generator} if
+$\advPRGXX{f}{\AD}\leq\varepsilon$ for any $t$-time adversary $\AD$
+where the  advantage is defined as follows
+\begin{align*}
+  \advPRGXX{f}{\AD}%
+  =\abs{\pr{\smash{x\getsu\set{0,1}^n\!:\!\AD(x)=1}}
+  -\pr{\smash{s\getsu\set{0,1}^m\!:\!\AD(f(s))=1}}}\!\enspace.
+\end{align*}
+
+
+\foilhead[-1cm]{Pseudorandom functions}
+
+\textbf{Model.}
+Let $\FFFALL$ denote the set of all functions $f:\MSPACE\to\CSPACE$
+and let $\FFF\subseteq \FFFALL$ be a function family. Then we can
+consider the following interactive hypothesis testing scenario. A
+$t$-time adversary $\AD$ that makes at most $q$ calls to the oracle
+$\ORA(\cdot)$ in order to distinguish two hypotheses:
+\begin{triangles}
+\item $\HYP_0:$ Oracle chooses $f\getsu\FFFALL$ and for every query
+  $x_i$ replies $y_i\gets f(x_i)$.
+\item $\HYP_1:$ Oracle chooses $f\getsu \FFF$ and for every query
+  $x_i$ replies $y_i\gets f(x_i)$.
+\end{triangles}
+\Bigskip
+
+\textbf{Definition.}  A function family $\FFF$ is
+$(t,q,\varepsilon)$-\emph{pseudorandom} if for any $t$-time adversary
+$\AD$ that makes at most $q$ queries the corresponding advantage
+\begin{align*}
+  \advPRFXX{\FFF}{\AD}%
+  =\abs{\pr{\smash{f\getsu\FFFALL:\AD^{\ORA(\cdot)}=1}}-\pr{\smash{f\getsu\FFF:\AD^{\ORA(\cdot)}=1}}}
+  \leq\varepsilon\enspace.
+\end{align*}
+
+
+\foilhead[-1cm]{Pseudorandom permutations}
+
+\textbf{Model.}
+Let $\FFFPERM$ denote the set of all permutations $f:\MSPACE\to\MSPACE$
+and let $\FFF\subseteq \FFFPERM$ be a permutation family. Then we can
+consider the following interactive hypothesis testing scenario. A
+$t$-time adversary $\AD$ that makes at most $q$ calls to the oracle
+$\ORA(\cdot)$ in order to distinguish two hypotheses:
+\begin{triangles}
+\item $\HYP_0:$ Oracle chooses $f\getsu\FFFPERM$ and for every query
+  $x_i$ replies $y_i\gets f(x_i)$.
+\item $\HYP_1:$ Oracle chooses $f\getsu \FFF$ and for every query
+  $x_i$ replies $y_i\gets f(x_i)$.
+\end{triangles}
+\Bigskip
+
+\textbf{Definition.}  A function family $\FFF$ is
+$(t,q,\varepsilon)$-\emph{pseudorandom permutation} if for any $t$-time adversary
+$\AD$ that makes at most $q$ queries the  advantage
+\begin{align*}
+  \advPRPXX{\FFF}{\AD}%
+  =\abs{\pr{\smash{f\getsu\FFFPERM:\AD^{\ORA(\cdot)}=1}}-\pr{\smash{f\getsu\FFF:\AD^{\ORA(\cdot)}=1}}}
+  \leq\varepsilon\enspace.
+\end{align*}
+
+
+
+\foilhead[-1.0cm]{Practical implementations}
+
+\begin{triangles}
+\item \textbf{Pseudorandom functions.}  Constructing good pseudorandom
+  functions has never been a an explicit design goal.  Cryptographic
+  hash functions \mbox{$h:\MSPACE\times\KSPACE\to\TSPACE$} with
+  implicit or explicit keys are often treated as pseudorandom
+  functions. However, they are also known to contain much more
+  weaknesses than good block ciphers.\vspace*{1ex}
+
+\item \textbf{Pseudorandom permutations}. Block ciphers are
+  specifically designed to be pseudorandom permutations. This is the
+  most thoroughly studied branch of practical primitive design and we
+  have many good candidates.\vspace*{1ex}
+
+\item \textbf{Pseudorandom generators.} Stream ciphers are designed to
+  be fast pseudorandom generators. However, we know much more about
+  block ciphers than about stream ciphers. In fact, there is no widely
+  adopted stream cipher standard. There are also more secure
+  constructions based on number theoretical constructions but they are
+  much slower.
+\end{triangles}
+
+
+\middlefoil{Indistinguishability and\vspace*{1ex}\\ Guessing Games}
+
+\foilhead[-1.0cm]{Informal definition of semantic security}
+
+\illustration[scale=1.1, trim=0cm -0.5cm 0cm -1cm]{semantic-security-game-i.eps}
+
+
+\begin{triangles}
+  \item A value $f(s)$ sent to the adversary leaks information. 
+  \item Adversary can try to guess the output of a function $g(s)$.
+  \item Semantic security is inability to correctly guess the output of $g(\cdot)$.
+  \item The success of an adversary depends on the functions $f(\cdot)$ and $g(\cdot)$.
+  \item The success of an adversary depends on the distribution $\SSS$ of secrets. 
+  \item A certain amount of success can be achieved without observing $f(s)$.
+  \lastline
+\end{triangles}
+
+
+\foilhead[-1.0cm]{The simplest guessing game}
+
+\textbf{Model.} Consider the simplest attack scenario:
+\begin{enumerate}
+\item $\SSS$ is a uniform distribution over two
+  states $s_0$ and $s_1$.
+\item $\HYP_0$ and $\HYP_1$ denote simple hypotheses $[\smash{s\iseq s_0}]$ and
+  $[\smash{s\iseq s_1}]$.
+\item Given $x\gets f(s)$, Charlie must choose between hypotheses $\HYP_0$ and $\HYP_1$.
+\end{enumerate}
+\Bigskip
+
+
+\textbf{Success bound.} The probability of an incorrect guess
+\begin{align*}
+ \pr{\mathsf{Failure}}
+ &=\pr{\HYP_0}\cdot\pr{\AD(x)=1|\HYP_0}
+   +\pr{\HYP_1}\cdot\pr{\AD(x)=0|\HYP_1}\\
+ &=\frac{1}{2}\cdot\bigl(
+   \underbrace{\pr{\AD(x)=1|\HYP_0}}_{\text{False positives}}
+  +\underbrace{\pr{\AD(x)=0|\HYP_1}}_{\text{False negatives}}\bigr)\\
+ &=\frac{1}{2}+\frac{1}{2}\cdot\advINDXX{\HYP_0,\HYP_1}{\AD}
+  \leq\frac{1}{2}+\frac{1}{2}\cdot\CD_x^t(\HYP_0,\HYP_1)
+\end{align*}
+
+
+\foilhead[-1.0cm]{Guessing game with a biased coin}
+
+\textbf{Model.} Let $\SSS$ be a distribution over $\set{0,1}$ such that
+$\pr{s\gets\SSS:s=0}\leq\frac{1}{2}$ and consider a
+guessing game $\GAME$ between a challenger and an adversary $\AD$:
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &s\gets\SSS\\
+    &\RETURN [s = \AD(f(s))]
+  \end{game}
+\end{align*}
+
+
+\textbf{Success bound.} For this game, the adversary succeeds with probability 
+\begin{align*}
+  \pr{\mathsf{Success}}%
+  &=\pr{\HYP_0}\cdot \pr{\smash{\AD=0|\HYP_0}}%
+  + \pr{\HYP_1}\cdot \pr{\smash{\AD=1|\HYP_1}}\\
+  &\leq \pr{\HYP_1}\cdot%
+  (1+\pr{\smash{\AD=0|\HYP_0}}-\pr{\smash{\AD=0|\HYP_1}})\\
+  &\leq\pr{\HYP_1}+\pr{\HYP_1}\cdot \CD_x^t(\HYP_0,\HYP_1)\enspace.
+\end{align*}
+
+
+\foilhead[-1.0cm]{Choosing between many values}
+
+\textbf{Model.} Let $\SSS$ be an arbitrary distribution and consider a
+guessing game
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &s\gets\SSS\\
+    &\RETURN [s\iseq \AD(f(s))]
+  \end{game}
+\end{align*}
+
+\textbf{Success bound.}  If for all possible states
+$s_i,s_j\in\supp(\SSS)$ distributions $f(s_i)$ and $f(s_j)$ are
+$(2t,\varepsilon)$-indistinguishable, then for all $t$-time algorithms
+\begin{align*}
+ \min_{s\in\supp(S)}\pr{s}-\varepsilon \leq \pr{\mathsf{Success}}\leq\max_{s\in\supp(S)}\pr{s}+\varepsilon\enspace. 
+\end{align*}
+
+\foilhead[-1.0cm]{The corresponding proof}
+
+Let $s_*$ the element with the maximal probability over $\SSS$. Then
+\begin{align*}
+  \pr{\mathsf{Success}}
+  &=\sum_{s\neq s_*}\pr{s}\cdot \pr{\AD(f(s))=s}\\
+  &\quad +\pr{s_*}-\sum_{s\neq s_*} \pr{s_*}\cdot\pr{\AD(f(s_*)=s)}\\
+  &\leq \pr{s_*}+\sum_{s\neq s_*}\pr{s}%
+  \cdot \underbrace{\abs{\pr{\AD(f(s))=s}-\pr{\AD(f(s_*))=s}}}_{\leq\varepsilon}\\
+  &\leq \max_{s\in\supp(S)}\pr{s}+\varepsilon\enspace.
+\end{align*}
+The proof of the lower bound is analogous.
+
+
+\middlefoil{Indistinguishability Implies\vspace*{1ex}\\ Semantic Security}
+
+\foilhead[-1cm]{Semantic security}\enlargethispage{2cm}
+\illustration[scale=1, trim=0cm -0.5cm 0cm -1cm]{semantic-security-games.eps}
+
+
+
+\foilhead[-1cm]{Formal definition}
+
+We can define a true guessing advantage
+\begin{align*}
+  \advSemXX{f, g}{\AD}%
+  &=\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}
+\end{align*}
+where the games are defined as follows
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &s\gets\SSS\\
+    &g_*\gets\AD(f(s))\\
+    &\RETURN [g_*\iseq g(s)]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &s\gets\SSS\\
+    &g_*\gets\argmax\nolimits_{g_*}\pr{g(s)=g_*}\\
+    &\RETURN [g_*\iseq g(s)]
+  \end{game}
+\end{align*}
+\end{small}%
+Obviously, we can express the advantage in more explicit terms
+\begin{align*}
+     \advSemXX{f, g}{\AD} &=\pr{s\gets\SSS_0:\AD(f(s))=g(s)}%
+  -\max_{g_*}\pr{g(s)=g_*}\enspace.
+\end{align*}
+
+
+\foilhead[-1cm]{Indistinguishability implies semantic security}
+
+\textbf{IND-SEM theorem.}  If for all $s_i,s_j\in\supp(\SSS)$
+distributions $f(s_i)$ and $f(s_j)$ are
+$(2t,\varepsilon)$-indistinguishable, then for all $t$-time
+adversaries $\AD$:
+\begin{align*}
+ \advSemXX{f,g}{\AD}\leq\varepsilon\enspace.  
+\end{align*}
+
+\textbf{Further comments} 
+\begin{triangles}
+  \item Note that function $g$ might be randomised.
+  \item Note that function $g:\SSS\to\set{0,1}^*$ may extremely difficult to compute.
+  \item It might be even infeasible to get samples from the distribution $\SSS$.    
+  \item The theorem does not hold if $\SSS$ is specified by the
+    adversary.
+\end{triangles}
+\bigskip
+
+\textbf{Corollary.} Under these assumptions, it is \emph{difficult} to
+predict $f(s)$ form $f(s)$.\lastline
+
+\foilhead[-1cm]{Take-home message}
+
+As all the results established above are the following graphical form
+
+\illustration[scale=1, trim=0cm -0.5cm 0cm -1cm]{success-range.eps}
+
+we can say that 
+\begin{align*}
+\advINDXX{\GAME_0,\GAME_1}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}  
+\end{align*}
+bounds the additional gain caused by leakage through  published values.
+\lastline
+
+
+
+\end{document}
+

@@ -1,0 +1,368 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{How to Model Cryptographic\\  Primitives and Protocols}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{\today}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+\MyLogo{\lserie,\  How to Model Cryptographic  Primitives and Protocols, \ldate}
+
+
+\newcommand{\leqm}{\ \leq_m}
+
+
+\newcommand{\bigvskip}{\vskip 2em}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\begin{document}
+\titlefoil
+
+\foilhead[-1cm]{Abstraction is a key to successs}
+
+\begin{triangles}
+  \item \textbf{Cryptographic constructions are complex}\vspace*{1ex}
+    \begin{diamonds}
+      \item Irrelevant techincal details obscure security proofs.
+      \item A good abstraction clarifies what is meant by security. 
+      \item An abstraction highlights which properties are relevant for security.
+      \vspace*{3ex}
+    \end{diamonds}
+  \item \textbf{Cryptographic constructions are not provably secure}\vspace*{1ex}
+    \begin{diamonds}
+      \item Security of most cryptographic constructions is based on \emph{intractability}.
+      \item So far provable lower bounds are \emph{trivial} for all computational problems. 
+      \item It is also \emph{highly} unlikely that such proofs \emph{do} exist in a \emph{compact} form. 
+      \vspace*{3ex}
+    \end{diamonds}
+  \item\textbf{Abstraction allows to escape intractability issues}
+    \begin{diamonds}
+      \item We just assume that necessary cryptographic primitives exist.
+      \item The actual implementation of such primitives is out of our scope.  
+    \end{diamonds}
+\end{triangles}
+
+\middlefoil{Illustrative Example}
+
+\foilhead[-1cm]{2048-bit RSA}
+
+
+\textbf{Key generation} 
+\begin{enumerate}
+\item Choose two 1024-bit prime numbers $p$ and $q$.
+\item Compute Let $n=pq$, choose $e\getsu\ZZ_{\phi(n)}^*$ and set $d\gets e^{-1}\mod \phi(n)$.
+\item Public key is $(n,e)$ and secret key is $(n,e,d)$.   
+\end{enumerate}
+\bigskip
+
+\textbf{Encryption}
+\begin{enumerate}
+\item Let  $\mathsf{pad}:\set{0,1}^{128}\to\ZZ_n^*$ be a  predefined embedding.
+\item To encrypt $m\in\set{0,1}^{128}$, output $c\gets\mathsf{pad}(m)^e \mod n$. 
+\end{enumerate}
+\bigskip
+
+\textbf{Decryption}
+\begin{enumerate}
+\item To decrypt $c\in\ZZ_n$, compute $x\gets c^d\mod n$.
+\item Extract $m$ form $x$ and verify that $\mathsf{pad}(m)=x$.
+\item Output $\bot$ in case of failure and $m$ otherwise.
+\end{enumerate}
+
+\foilhead[-1cm]{The corresponding abstraction}
+
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm 0cm]{rsa-abstraction}
+
+\textbf{To get rid of unnecessary details}
+\begin{triangles}
+\item We split the system into algorithms and treat them as black
+  boxes.
+\item Functionality is guaranteed by specifying additional conditions.
+\item Security is defined through  specifications of tolerable attack scenarios.
+\end{triangles}
+
+\foilhead[-1cm]{Naive security requirement}
+
+\textbf{Goal:}
+It should be infeasible to derive a secret key from accessible data.
+\bigskip
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm 0cm]{key-recovery-game-i.eps}
+\bigskip
+
+The \emph{advantage} of a \emph{key only attack} is defined as an \emph{average} success:
+\begin{align*}
+  \ADV(\AD)=\pr{\GAME^\AD=1}\enspace.
+\end{align*}
+\textbf{Caveat:}The attack scenario does not capture the security goal in real life.
+
+
+\foilhead[-1cm]{Seemingly more advanced attack scenario}
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm -0.5cm]{key-recovery-game-ii.eps}
+
+
+\textbf{Caveat:}The attack scenario is not more powerful than the previous.
+\begin{triangles}
+  \item The adversary $\AD$ knows what is inside $(\GEN,\ENC,\DEC)$ blocks. 
+  \item As adversary knows $\PK$,  she can compute $\ENC_\PK(m)$ by herself.  
+  \item The oracle access to $\ENC_\PK(\cdot)$ function is redundant.
+\end{triangles}
+
+\foilhead[-1cm]{Classical chosen-ciphertext attack scenario}
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm -0.7cm]{key-recovery-game-iii.eps}
+
+\textbf{The difference:}
+The attacker has an implicit access to secret key. 
+\begin{triangles}
+  \item Decryption operation can leak information about secret key.
+  \item This can happen only for the messages not computed by $\ENC_\PK(\cdot)$.
+  \item Such attacks are sometimes plausible in real life.
+\end{triangles}
+
+
+\foilhead[-1cm]{Time-success profiles}
+
+Fix the security game and the advantage function $\ADV(\cdot)$.  Then any
+concrete instantiation of a primitive can be broken with enough
+resources.
+
+\illustration[scale=0.92, angle=0, trim=0cm 0cm 0cm -0.7cm]{time-success-profile.eps}
+
+As a result, there exist a time-success profile
+$\varepsilon=\varepsilon(t)$, which captures the main security
+properties. Unfortunately, this profile cannot be computed nor
+approximated with our current knowledge.\lastline
+
+\middlefoil{Examples of Low-level Primitives}
+
+
+\foilhead[-1cm]{Discrete logarithm}
+
+\begin{triangles}
+\item Let $p$ be a prime such that $p= 2q+1$ for another
+  $2048$-bit prime $q$.
+\item Fix a generator $g$ such that $g^2\neq 1$ and define
+  $\GG=\set{g^i: 0\leq i < q}$.
+\item Then discrete logarithm defined below  is considered intractable
+  \begin{align*}
+   \forall y\in\GG:\ \log(y)=x \Leftrightarrow g^x\equiv y\pmod p\enspace.
+  \end{align*}
+\end{triangles}
+\bigvskip
+
+\textbf{Exercise.} Abstract away all details under the assumptions:
+\begin{triangles}
+  \item all construction based on it use only multiplication modulo $p$,
+  \item strings are mapped to $\GG$ and elements of $\GG$ are mapped to strings.
+\end{triangles}
+\bigskip
+
+How to model the primitive  if  constructions also use addition modulo $p$?
+
+\foilhead[-1cm]{Discrete logarithm problem in an abstract group}
+
+\illustration[scale=0.92, angle=0, trim=0cm 0cm 0cm -0.7cm]{abstract-group.eps}
+
+\textbf{Definition.} Let $\GG=\langle g\rangle$ be a $q$-element
+multiplicative group generated by the element $g$. Then for any
+elements $y,z\in\GG$ the discrete logarithm $\log_z y$ is defined as
+the smallest integer $x$ such that $z^x=y$ and $\bot$ if
+$y\notin\langle z\rangle$.  \bigskip
+
+\textbf{Advantage.} Let $\advDLXX{\GG}{\AD}=\pr{\GAME^\AD=1}$ be defined through the game
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+   & x\getsu\ZZ_q\\
+   & \RETURN [x \iseq \AD(g,g^x)]
+  \end{game}
+\end{align*}%
+\end{small}
+
+\foilhead[-1cm]{Discrete logarithm problem in an abstract group}
+
+\textbf{Definition.} Let $\GG=\langle g\rangle$ be a $q$-element
+multiplicative group generated by the element $g$. Then for any
+elements $y,z\in\GG$ the discrete logarithm $\log_z y$ is defined as
+the smallest integer $x$ such that $z^x=y$ and $\bot$ if
+$y\notin\langle z\rangle$.  \bigskip
+
+\textbf{Advantage.} Let $\advDLXX{\GG}{\AD}=\pr{\GAME^\AD=1}$ be defined through the game
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+   & x\getsu\ZZ_q\\
+   & \RETURN [x \iseq \AD(g,g^x)]
+  \end{game}
+\end{align*}%
+\end{small}
+
+\textbf{Security.} A group $\GG$ is \emph{$(t,\varepsilon)$-secure}
+DL-group iff for any $t$-time adversary $\AD$ the corresponding
+advantage $\advDLXX{\GG}{\AD}\leq\varepsilon$.
+
+
+\foilhead[-1cm]{Diffie-Hellman protocol}
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm -0.7cm]{diffie-hellman-protocol.eps}
+
+\textbf{Exercise.} Formalise the security requirements for Diffie-Hellman protocol.
+
+\begin{enumerate}
+\item Eavesdropper cannot reconstruct the common secret $g^{xy}$.
+\item Eavesdropper learns nothing about the common secret $g^{xy}$.
+\end{enumerate}
+\bigskip
+
+How to convert the common secret $g^{xy}$ to a valid secret key  $\SK\in\set{0,1}^n$? 
+\lastline
+
+\foilhead[-1cm]{Computational Diffie-Hellman problem} 
+
+\textbf{Security.} A group $\GG$ is \emph{$(t,\varepsilon)$-secure}
+CDH-group iff for any $t$-time adversary $\AD$ the corresponding
+advantage $\advCDHXX{\GG}{\AD}\leq\varepsilon$ where the corresponding
+security game is defined as follows.
+
+
+\illustration[scale=1.1, angle=0, trim=0cm 0cm 0cm -1cm]{cdh-problem.eps}
+
+
+
+\foilhead[-1cm]{Decisional Diffie-Hellman}
+
+\textbf{Security.} A group $\GG$ is \emph{$(t,\varepsilon)$-secure}
+DDH-group iff for any $t$-time adversary $\AD$ the corresponding
+advantage $\advDDHXX{\GG}{\AD}\leq\varepsilon$ where the corresponding
+security games $\GAME_0$ and $\GAME_1$ and the advantage are defined as follows.
+
+\illustration[scale=1.1, angle=0, trim=0cm 1.5cm 0cm -1cm]{ddh-problem.eps}
+
+\begin{align*}
+  \advDDHXX{\GG}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}
+\end{align*}
+
+\foilhead[-1cm]{Factorisation}
+
+Factorisation of $n$-bit composite numbers is considered difficult
+\begin{triangles}
+  \item Naive factorisation takes $\Theta(2^{\frac{n}{2}})$ division operations.
+  \item Pollard $\rho$ algorithm takes $\Oh(2^{\frac{n}{4}})$ multiplication operations on average.
+  \item Quadratic sieve  takes $\Oh(2^{c\sqrt{n}})$ multiplication operations on average.
+  \item Number field sieve  takes $\Oh(2^{c\sqrt[3]{n}})$ multiplication operations on average.
+\end{triangles}
+\bigvskip
+
+\textbf{Current records}
+\begin{triangles}
+  \item Largest RSA challenge factored had $768$ bits (2009).
+  \item Largest number factored using quantum annealing is 4,088,459 (2018). 
+  \item Largest partially factored Mersenne number has $5,240,707$ bits (2016).
+  \item Approximate running-times are in thousands of computer years.
+\end{triangles}
+
+\foilhead[-1.5cm]{Abstract distribution of RSA moduli}
+
+\textbf{Definition}. A \emph{distribution of RSA moduli} $\mathfrak{N}$ is
+defined by an efficient algorithm $\GEN$ that outputs $n,p,q$ such
+that $n=pq$ and $p,q$ are primes.
+\bigskip
+
+\textbf{Security.} A distribution $\mathfrak{N}$ is
+\emph{$(t,\varepsilon)$-secure} RSA-distribution iff for any $t$-time
+adversary $\AD$ the corresponding advantage
+$\advRSAXX{\GG}{\AD}\leq\varepsilon$ where the security game is
+defined as follows
+ 
+\illustration[scale=0.9, angle=0, trim=0cm 0cm 0cm -1cm]{rsa-factorisation-problem.eps}
+
+\textbf{Example.}  Let $\mathfrak{P}$ be an efficiently samplable set
+of primes. Then the distribution of products $pq$ where
+$p\gets\mathfrak{P}$ and $q\gets\mathfrak{P}$ is RSA distribution. 
+\lastline
+
+
+\middlefoil{Relations Between\vspace*{1ex}\\ Problems}
+
+
+\foilhead[-1cm]{CDH group is also DH group}
+
+\textbf{Intuition:} If we can compute discrete logarithm then CDH is easy.
+
+
+\textbf{Reduction.} Let $\AD$ be a DL-finder algorithm. Then the adversary $\ADB$
+
+\illustration[scale=1.0, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{cdh-dl-reduction.eps}
+
+is as successful as the adversary $\AD$:
+\begin{align*}
+  \advCDHXX{\GG}{\ADB}=\advDLXX{\GG}{\AD}\enspace.
+\end{align*}
+Hence $(t,\varepsilon)$-secure CDH group must be also $(t,\varepsilon)$-secure DL group.
+\lastline
+
+\foilhead[-1cm]{Formal proof}
+
+The adversary $\AD$ sees the following chain of events 
+\illustration[scale=1.0, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{cdh-dl-reduction-i.eps}
+
+As $z=g^{xy} \Leftrightarrow xy = \overline{x}y \Leftrightarrow x=\overline{x}$ we can further simplify
+
+\illustration[scale=1.0, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{cdh-dl-reduction-ii.eps}
+
+\foilhead[-1cm]{Simple and difficult puzzles}
+
+\textbf{Intuition:} A good algorithm \emph{should} work uniformly well on each instance.
+
+\illustration[scale=0.8, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{instance-profile.eps}
+
+
+\foilhead[-1cm]{Random self-reducibility}
+
+Any instance of a discrete logarithm can be reduced to a random instance.  
+
+\illustration[scale=1.0, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{dl-dl-reduction.eps}
+
+The adversary $\AD$ sees the following chain of events 
+
+\illustration[scale=1.0, angle=0, trim=0cm 0.5cm 0cm -0.5cm]{dl-dl-reduction-i.eps}
+
+and thus the worst case advantage $\pr{x=\ADB(g^x)}=\advDLXX{\GG}{\AD}$.\lastline
+
+
+\foilhead[-1cm]{Consequences of random self-reducibility}
+
+\textbf{Consequence:} There are no hard instances but easy instances may exist.
+
+\illustration[scale=1.1, angle=0, trim=0cm -0.5cm 0cm -0.5cm]{self-reducibility-profiles.eps}
+
+\begin{triangles}
+  \item The average success is larger for hard instances.
+  \item Easy instances are handled worse than by the original algorithm. 
+  \item Specialised algorithms for specific instance classes might work better.
+\end{triangles}
+
+
+\foilhead[-1cm]{Consequences of random self-reducibility}
+
+\textbf{Consequence:} There are various trade-offs between time and success.
+\begin{triangles}
+  \item By repeating the DL-computations we can increase the success.
+  \item Any estimate on parameters $t,\varepsilon$ gives a lower bound to success.
+\end{triangles}
+
+\illustration[scale=1.1, angle=0, trim=0cm -0.5cm 0cm -1.0cm]{sr-time-success-tradeoffs.eps}
+
+\end{document}

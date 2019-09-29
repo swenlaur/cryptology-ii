@@ -1,0 +1,1544 @@
+%!PS-Adobe-2.0
+%%Creator: dvips(k) 5.96 Copyright 2005 Radical Eye Software
+%%Title: 02-swithching-lemma.dvi
+%%CreationDate: Sun Jan 27 18:09:33 2008
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Landscape
+%%BoundingBox: 0 0 612 792
+%%DocumentFonts: CMMI7 CMR7 CMSS10
+%%DocumentPaperSizes: Letter
+%%EndComments
+%DVIPSWebPage: (www.radicaleye.com)
+%DVIPSCommandLine: dvips 02-swithching-lemma.dvi
+%DVIPSParameters: dpi=600
+%DVIPSSource:  TeX output 2008.01.27:1805
+%%BeginProcSet: tex.pro 0 0
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/CharBuilder{save 3 1 roll S A/base get 2 index get S
+/BitMaps get S get/Cd X pop/ctr 0 N Cdx 0 Cx Cy Ch sub Cx Cw add Cy
+setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx sub Cy .1 sub]{Ci}imagemask
+restore}B/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: pstricks.pro 0 0
+%!
+% PostScript prologue for pstricks.tex.
+% Version 1.01, 2006/01/11
+% For distribution, see pstricks.tex.
+%
+/tx@Dict 200 dict def tx@Dict begin
+/ADict 25 dict def
+/CM { matrix currentmatrix } bind def
+/SLW /setlinewidth load def
+/CLW /currentlinewidth load def
+/CP /currentpoint load def
+/ED { exch def } bind def
+/L /lineto load def
+/T /translate load def
+/TMatrix { } def
+/RAngle { 0 } def
+/Sqrt { dup 0 lt { pop 0 } { sqrt } ifelse } def  % return 0 for negative arguments 
+/Atan { /atan load stopped { pop pop 0 } if } def % return 0 if atan not known
+/ATAN1 {neg -1 atan 180 sub } def		% atan(x) (only one parameter)
+/Div { dup 0 eq { pop } { div } ifelse } def  	% control the division
+/NET { neg exch neg exch T } def	      	% change coordinate system to the negative one		
+/Pyth { dup mul exch dup mul add sqrt } def   	% Pythagoras, epects 2 parameter
+/PtoC { 2 copy cos mul 3 1 roll sin mul } def 	% Polar to Cartesian
+%----------------- hv added 20050516 ---------------
+/Pi 3.14159265359 def 
+/TwoPi 6.28318530718 def
+/Euler 2.71828182846 def 
+/RadtoDeg { 180 mul Pi div } bind def % convert from radian to degrees
+/DegtoRad { Pi mul 180 div } bind def % viceversa
+%----------------- hv end---------------------------
+/PathLength@ { /z z y y1 sub x x1 sub Pyth add def /y1 y def /x1 x def } def
+/PathLength { flattenpath /z 0 def 
+  { /y1 ED /x1 ED /y2 y1 def /x2 x1 def
+  }{ /y ED /x ED PathLength@ } {} { /y y2 def /x x2 def PathLength@ }
+  /pathforall load stopped { pop pop pop pop } if z } def
+/STP { .996264 dup scale } def
+/STV { SDict begin normalscale end STP  } def
+%
+%%-------------- DG begin patch 15 ---------------%%
+%/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
+%PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
+%mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
+%/y ED x mul /x ED x 0 gt y 0 gt and { [ y x ] 1 a sub y mul } { [ 1 0 ]
+%0 } ifelse setdash stroke } def
+/DashLine {
+  dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def PathLength } ifelse
+  /b ED /x1 ED /y1 ED /x ED /y ED 
+  /z y x add y1 add x1 add def
+  /Coef b a .5 sub 2 mul y mul sub z Div round 
+    z mul a .5 sub 2 mul y mul add b exch Div def 
+  /y y Coef mul def 
+  /x x Coef mul def 
+  /y1 y1 Coef mul def 
+  /x1 x1 Coef mul def
+  x1 0 gt y1 0 gt or x 0 gt or y 0 gt and 
+    { [ y x y1 x1 ] 1 a sub y mul }
+    { [ 1 0 ] 0 } ifelse 
+  setdash stroke
+} def
+%%-------------- DG end patch 15 ---------------%%
+/DotLine { 
+  /b PathLength def 
+  /a ED /z ED /y CLW def 
+  /z y z add def 
+  a 0 gt { 
+    /b b a div def 
+  }{ 
+    a 0 eq { 
+      /b b y sub def 
+    }{ a -3 eq { 
+      /b b y add def } if 
+    } ifelse 
+  } ifelse 
+  [ 0 b b z Div round Div dup 0 le { pop 1 } if ] 
+  a 0 gt { 0 }{ y 2 div a -2 gt { neg }if } ifelse 
+  setdash 1 setlinecap stroke 
+} def
+%
+/LineFill { % hv ------------ patch 7 -------------
+  gsave 
+  abs /hatchWidthInc ED
+  abs /hatchSepInc ED
+  abs CLW add /a ED 
+  a 0 dtransform round exch round exch
+  2 copy idtransform 
+  exch Atan rotate 
+  idtransform pop /a ED 
+  .25 .25 itransform pathbbox 
+  /y2 ED 
+  a Div ceiling cvi /x2 ED /y1 ED 
+  a Div cvi /x1 ED /y2 y2 y1 sub def 
+  clip 
+  newpath 
+  2 setlinecap 
+  systemdict
+  /setstrokeadjust known { true setstrokeadjust } if 
+  x2 x1 sub 1 add { 
+    x1 a mul y1 moveto 0 y2 rlineto stroke 
+    /x1 x1 1 add 
+      hatchWidthInc 0 gt { CLW add } if 
+    def 
+    hatchSepInc 0 gt hatchWidthInc 0 gt or { 
+      /a a hatchSepInc add def
+      CLW hatchWidthInc add SLW 
+    } if
+  } repeat 
+  grestore 
+  pop pop } def
+%
+%gsave abs CLW add /a ED a 0 dtransform round exch round exch
+%2 copy idtransform exch Atan rotate idtransform pop /a ED .25 .25
+%% DG/SR modification begin - Dec. 12, 1997 - Patch 2
+%%itransform translate pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
+%itransform pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
+%% DG/SR modification end
+%Div cvi /x1 ED /y2 y2 y1 sub def clip newpath 2 setlinecap systemdict
+%/setstrokeadjust known { true setstrokeadjust } if x2 x1 sub 1 add { x1
+%% DG/SR modification begin - Jun.  1, 1998 - Patch 3 (from Michael Vulis)
+%% a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore }
+%% def
+%a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore
+%pop pop } def
+%% DG/SR modification end
+%
+/BeginArrow { ADict begin /@mtrx CM def gsave 2 copy T 2 index sub neg
+exch 3 index sub exch Atan rotate newpath } def
+/EndArrow { @mtrx setmatrix CP grestore end } def
+/Arrow { CLW mul add dup 2 div /w ED mul dup /h ED mul /a ED { 0 h T 1 -1
+scale } if w neg h moveto 0 0 L w h L w neg a neg rlineto gsave fill
+grestore } def
+/Tbar { CLW mul add /z ED z -2 div CLW 2 div moveto z 0 rlineto stroke 0
+CLW moveto } def
+/Bracket { CLW mul add dup CLW sub 2 div /x ED mul CLW add /y ED /z CLW 2
+div def x neg y moveto x neg CLW 2 div L x CLW 2 div L x y L stroke 0
+CLW moveto } def
+/RoundBracket { CLW mul add dup 2 div /x ED mul /y ED /mtrx CM def 0 CLW
+2 div T x y mul 0 ne { x y scale } if 1 1 moveto .85 .5 .35 0 0 0
+curveto -.35 0 -.85 .5 -1 1 curveto mtrx setmatrix stroke 0 CLW moveto }
+def
+/SD { 0 360 arc fill } def
+/EndDot { % DS is the dot size 
+  { /z DS def } { /z 0 def } ifelse 
+  /b ED 0 z DS SD b { 0 z DS CLW sub SD } if 
+  0 DS z add CLW 4 div sub moveto } def
+%
+/Shadow { [ { /moveto load } { /lineto load } { /curveto load } {
+  /closepath load } /pathforall load stopped { pop pop pop pop CP /moveto
+  load } if ] cvx newpath 3 1 roll T exec } def
+%
+/NArray { aload length 2 div dup dup cvi eq not { exch pop } if /n exch
+cvi def } def
+/NArray { % holds the coordinates and on top of stack the showpoints boolean
+  /f ED 
+  counttomark 2 div dup cvi /n ED 
+  n eq not { exch pop } if
+  f { ] aload /Points ED } { n 2 mul 1 add -1 roll pop } ifelse 
+} def
+/Line { 
+  NArray n 0 eq not 
+    { n 1 eq { 0 0 /n 2 def } if ArrowA /n n 2 sub def 
+      n { Lineto } repeat 
+      CP 4 2 roll ArrowB L pop pop 
+    } if 
+} def
+/Arcto { /a [ 6 -2 roll ] cvx def a r /arcto load stopped { 5 } { 4 }
+  ifelse { pop } repeat a } def
+/CheckClosed { dup n 2 mul 1 sub index eq 2 index n 2 mul 1 add index eq
+  and { pop pop /n n 1 sub def } if } def
+/Polygon { NArray n 2 eq { 0 0 /n 3 def } if n 3 lt { n { pop pop }
+  repeat } { n 3 gt { CheckClosed } if n 2 mul -2 roll /y0 ED /x0 ED /y1
+  ED /x1 ED x1 y1 /x1 x0 x1 add 2 div def /y1 y0 y1 add 2 div def x1 y1
+  moveto /n n 2 sub def n { Lineto } repeat x1 y1 x0 y0 6 4 roll Lineto
+  Lineto pop pop closepath } ifelse } def
+/Diamond { 
+  /mtrx CM def 
+  T rotate 
+  /h ED 
+  /w ED 
+  dup 0 eq { pop } { CLW mul neg 
+    /d ED 
+    /a w h Atan def 
+    /h d a sin Div h add def 
+    /w d a cos Div w add def } ifelse 
+  mark w 2 div h 2 div w 0 0 h neg w neg 0 0 h w 2 div h 2 div 
+  /ArrowA { moveto } def 
+  /ArrowB { } def 
+  false Line 
+  closepath mtrx setmatrix } def
+% DG modification begin - Jan. 15, 1997
+%/Triangle { /mtrx CM def translate rotate /h ED 2 div /w ED dup 0 eq {
+%pop } { CLW mul /d ED /h h d w h Atan sin Div sub def /w w d h w Atan 2
+%div dup cos exch sin Div mul sub def } ifelse mark 0 d w neg d 0 h w d 0
+%d /ArrowA { moveto } def /ArrowB { } def false Line closepath mtrx
+%setmatrix } def
+/Triangle { /mtrx CM def translate rotate /h ED 2 div /w ED dup
+CLW mul /d ED /h h d w h Atan sin Div sub def /w w d h w Atan 2
+div dup cos exch sin Div mul sub def mark 0 d w neg d 0 h w d 0
+d /ArrowA { moveto } def /ArrowB { } def false Line closepath mtrx
+% DG/SR modification begin - Jun.  1, 1998 - Patch 3 (from Michael Vulis)
+% setmatrix } def
+setmatrix pop } def
+% DG/SR modification end
+/CCA { /y ED /x ED 2 copy y sub /dy1 ED x sub /dx1 ED /l1 dx1 dy1 Pyth
+def } def
+/CCA { /y ED /x ED 2 copy y sub /dy1 ED x sub /dx1 ED /l1 dx1 dy1 Pyth
+def } def
+/CC { /l0 l1 def /x1 x dx sub def /y1 y dy sub def /dx0 dx1 def /dy0 dy1
+def CCA /dx dx0 l1 c exp mul dx1 l0 c exp mul add def /dy dy0 l1 c exp
+mul dy1 l0 c exp mul add def /m dx0 dy0 Atan dx1 dy1 Atan sub 2 div cos
+abs b exp a mul dx dy Pyth Div 2 div def /x2 x l0 dx mul m mul sub def
+/y2 y l0 dy mul m mul sub def /dx l1 dx mul m mul neg def /dy l1 dy mul
+m mul neg def } def
+/IC { /c c 1 add def c 0 lt { /c 0 def } { c 3 gt { /c 3 def } if }
+ifelse /a a 2 mul 3 div 45 cos b exp div def CCA /dx 0 def /dy 0 def }
+def
+/BOC { IC CC x2 y2 x1 y1 ArrowA CP 4 2 roll x y curveto } def
+/NC { CC x1 y1 x2 y2 x y curveto } def
+/EOC { x dx sub y dy sub 4 2 roll ArrowB 2 copy curveto } def
+/BAC { IC CC x y moveto CC x1 y1 CP ArrowA } def
+/NAC { x2 y2 x y curveto CC x1 y1 } def
+/EAC { x2 y2 x y ArrowB curveto pop pop } def
+/OpenCurve { 
+  NArray n 3 lt 
+    { n { pop pop } repeat } 
+    { BOC /n n 3 sub def n { NC } repeat EOC } ifelse 
+} def
+/AltCurve { { false NArray n 2 mul 2 roll [ n 2 mul 3 sub 1 roll ] aload
+/Points ED n 2 mul -2 roll } { false NArray } ifelse n 4 lt { n { pop
+pop } repeat } { BAC /n n 4 sub def n { NAC } repeat EAC } ifelse } def
+/ClosedCurve { NArray n 3 lt { n { pop pop } repeat } { n 3 gt {
+CheckClosed } if 6 copy n 2 mul 6 add 6 roll IC CC x y moveto n { NC }
+repeat closepath pop pop } ifelse } def
+/SQ { /r ED r r moveto r r neg L r neg r neg L r neg r L fill } def
+/ST { /y ED /x ED x y moveto x neg y L 0 x L fill } def
+/SP { /r ED gsave 0 r moveto 4 { 72 rotate 0 r L } repeat fill grestore }
+def
+/FontDot { DS 2 mul dup matrix scale matrix concatmatrix exch matrix
+rotate matrix concatmatrix exch findfont exch makefont setfont } def
+/Rect { x1 y1 y2 add 2 div moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto
+x1 y1 lineto closepath } def
+/OvalFrame { x1 x2 eq y1 y2 eq or { pop pop x1 y1 moveto x2 y2 L } { y1
+y2 sub abs x1 x2 sub abs 2 copy gt { exch pop } { pop } ifelse 2 div
+exch { dup 3 1 roll mul exch } if 2 copy lt { pop } { exch pop } ifelse
+/b ED x1 y1 y2 add 2 div moveto x1 y2 x2 y2 b arcto x2 y2 x2 y1 b arcto
+x2 y1 x1 y1 b arcto x1 y1 x1 y2 b arcto 16 { pop } repeat closepath }
+ifelse } def
+/Frame { CLW mul /a ED 3 -1 roll 2 copy gt { exch } if a sub /y2 ED a add
+/y1 ED 2 copy gt { exch } if a sub /x2 ED a add /x1 ED 1 index 0 eq {
+pop pop Rect } { OvalFrame } ifelse } def
+/BezierNArray { /f ED counttomark 2 div dup cvi /n ED n eq not { exch pop
+} if n 1 sub neg 3 mod 3 add 3 mod { 0 0 /n n 1 add def } repeat f { ]
+aload /Points ED } { n 2 mul 1 add -1 roll pop } ifelse } def
+/OpenBezier { BezierNArray n 1 eq { pop pop } { ArrowA n 4 sub 3 idiv { 6
+2 roll 4 2 roll curveto } repeat 6 2 roll 4 2 roll ArrowB curveto }
+ifelse } def
+/ClosedBezier { BezierNArray n 1 eq { pop pop } { moveto n 1 sub 3 idiv {
+6 2 roll 4 2 roll curveto } repeat closepath } ifelse } def
+/BezierShowPoints { gsave Points aload length 2 div cvi /n ED moveto n 1
+sub { lineto } repeat CLW 2 div SLW [ 4 4 ] 0 setdash stroke grestore }
+def
+/Parab { /y0 exch def /x0 exch def /y1 exch def /x1 exch def /dx x0 x1
+sub 3 div def /dy y0 y1 sub 3 div def x0 dx sub y0 dy add x1 y1 ArrowA
+x0 dx add y0 dy add x0 2 mul x1 sub y1 ArrowB curveto /Points [ x1 y1 x0
+y0 x0 2 mul x1 sub y1 ] def } def
+/Grid { newpath /a 4 string def /b ED /c ED /n ED cvi dup 1 lt { pop 1 }
+if /s ED s div dup 0 eq { pop 1 } if /dy ED s div dup 0 eq { pop 1 } if
+/dx ED dy div round dy mul /y0 ED dx div round dx mul /x0 ED dy div
+round cvi /y2 ED dx div round cvi /x2 ED dy div round cvi /y1 ED dx div
+round cvi /x1 ED /h y2 y1 sub 0 gt { 1 } { -1 } ifelse def /w x2 x1 sub
+0 gt { 1 } { -1 } ifelse def b 0 gt { /z1 b 4 div CLW 2 div add def
+/Helvetica findfont b scalefont setfont /b b .95 mul CLW 2 div add def }
+if systemdict /setstrokeadjust known { true setstrokeadjust /t { } def }
+{ /t { transform 0.25 sub round 0.25 add exch 0.25 sub round 0.25 add
+exch itransform } bind def } ifelse gsave n 0 gt { 1 setlinecap [ 0 dy n
+div ] dy n div 2 div setdash } { 2 setlinecap } ifelse /i x1 def /f y1
+dy mul n 0 gt { dy n div 2 div h mul sub } if def /g y2 dy mul n 0 gt {
+dy n div 2 div h mul add } if def x2 x1 sub w mul 1 add dup 1000 gt {
+pop 1000 } if { i dx mul dup y0 moveto b 0 gt { gsave c i a cvs dup
+stringwidth pop /z2 ED w 0 gt {z1} {z1 z2 add neg} ifelse h 0 gt {b neg}
+{z1} ifelse rmoveto show grestore } if dup t f moveto g t L stroke /i i
+w add def } repeat grestore gsave n 0 gt
+% DG/SR modification begin - Nov. 7, 1997 - Patch 1
+%{ 1 setlinecap [ 0 dx n div ] dy n div 2 div setdash }
+{ 1 setlinecap [ 0 dx n div ] dx n div 2 div setdash }
+% DG/SR modification end
+{ 2 setlinecap } ifelse /i y1 def /f x1 dx mul
+n 0 gt { dx n div 2 div w mul sub } if def /g x2 dx mul n 0 gt { dx n
+div 2 div w mul add } if def y2 y1 sub h mul 1 add dup 1000 gt { pop
+1000 } if { newpath i dy mul dup x0 exch moveto b 0 gt { gsave c i a cvs
+dup stringwidth pop /z2 ED w 0 gt {z1 z2 add neg} {z1} ifelse h 0 gt
+{z1} {b neg} ifelse rmoveto show grestore } if dup f exch t moveto g
+exch t L stroke /i i h add def } repeat grestore } def
+/ArcArrow { /d ED /b ED /a ED gsave newpath 0 -1000 moveto clip newpath 0
+1 0 0 b grestore c mul /e ED pop pop pop r a e d PtoC y add exch x add
+exch r a PtoC y add exch x add exch b pop pop pop pop a e d CLW 8 div c
+mul neg d } def
+/Ellipse { /mtrx CM def T scale 0 0 1 5 3 roll arc mtrx setmatrix } def
+%
+/ArcAdjust { %%%% Vincent Guirardel
+% given a target length (targetLength) and an initial angle (angle0) [in the stack],
+% let  M(angle0)=(rx*cos(angle0),ry*sin(angle0))=(x0,y0).
+% This computes an angle t such that (x0,y0) is at distance 
+% targetLength from the point M(t)=(rx*cos(t),ry*sin(t)).
+% NOTE: this an absolute angle, it does not have to be added or substracted to angle0
+% contrary to TvZ's code.
+% To achieve, this, one iterates the following process: start with some angle t,
+% compute the point M' at distance targetLength of (x0,y0) on the semi-line [(x0,y0) M(t)].
+% Now take t' (= new angle) so that (0,0) M(t') and M' are aligned.
+%
+% Another difference with TvZ's code is that we need d (=add/sub) to be defined.
+% the value of d = add/sub is used to know on which side we have to move.
+% It is only used in the initialisation of the angle before the iteration.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Input stack:  1: target length 2: initial angle
+% variables used : rx, ry, d (=add/sub)
+%
+  /targetLength ED /angle0 ED
+  /x0 rx angle0 cos mul def
+  /y0 ry angle0 sin mul def
+% we are looking for an angle t such that (x0,y0) is at distance targetLength 
+% from the point M(t)=(rx*cos(t),ry*sin(t)))
+%initialisation of angle (using 1st order approx = TvZ's code)
+  targetLength 57.2958 mul
+  angle0 sin rx mul dup mul
+  angle0 cos ry mul dup mul
+  add sqrt div 
+% if initialisation angle is two large (more than 90 degrees) set it to 90 degrees
+% (if the ellipse is very curved at the point where we draw the arrow, %
+% the value can be much more than 360 degrees !)
+% this should avoid going on the wrong side (more than 180 degrees) or go near
+% a bad attractive point (at 180 degrees)
+  dup 90 ge { pop 90 } if 
+  angle0 exch d % add or sub
+% maximum number of times to iterate the iterative procedure:
+% iterative procedure: takes an angle t on top of stack, computes a 
+% better angle (and put it on top of stack)
+  30 { dup
+% compute distance D between (x0,y0) and M(t)
+    dup cos rx mul x0 sub dup mul exch sin ry mul y0 sub dup mul add sqrt
+% if D almost equals targetLength, we stop
+    dup targetLength sub abs 1e-5 le { pop exit } if
+% stack now contains D t
+% compute the point M(t') at distance targetLength of (x0,y0) on the semi-line [(x0,y0) M(t)]:
+% M(t')= ( (x(t)-x0)*targetLength/d+x0 , (y(t)-y0)*targetLength/d+y0 )
+    exch dup cos rx mul x0 sub  exch sin ry mul y0 sub
+% stack contains:  y(t)-y0, x(t)-x0, d
+    2 index Div targetLength mul y0 add ry Div exch
+    2 index Div targetLength mul x0 add rx Div
+% stack contains x(t')/rx , y(t')/ry , d
+% now compute t', and remove D from stack
+    atan exch pop
+  } repeat
+% we don't look at what happened... in particular, if targetLength is greater 
+% than the diameter of the ellipse...
+% the final angle will be around /angle0 + 180. maybe we should treat this pathological case...
+% after iteration, stack contains an angle t such that M(t) is the tail of the arrow
+% to give back the result as a an angle relative to angle0 we could add the following line:
+% angle0 sub 0 exch d
+%
+% begin bug fix 2006-01-11
+% we want to adjust the new angle t' by a multiple of 360 so that  | t'-angle0 | <= 180
+%(we don't want to make the ellipse turn more or less than it should)...
+dup angle0 sub dup abs 180 gt { 180 add 360 div floor 360 mul sub } { pop } ifelse
+% end bug fix
+} def
+%
+/EllipticArcArrow {
+  /d ED      % add/sub
+  /b ED      % arrow procedure
+  /a1 ED     % angle
+  gsave
+  newpath
+  0 -1000 moveto
+  clip                  % Set clippath far from arrow.
+  newpath
+  0 1 0 0 b             % Draw arrow to determine length.
+  grestore
+% Length of arrow is on top of stack. Next 3 numbers are junk.
+%
+  a1 exch ArcAdjust   % Angular position of base of arrow.
+  /a2 ED
+  pop pop pop
+  a2 cos rx mul x add
+  a2 sin ry mul y add
+  a1 cos rx mul x add
+  a1 sin ry mul y add
+% Now arrow tip coor and base coor are on stack.
+  b pop pop pop pop       % Draw arrow, and discard coordinates.
+  a2 CLW 8 div
+% change value of d (test it by looking if  `` 1 1 d '' gives 2 or not )
+  1 1 d 2 eq { /d { sub } def } { /d { add } def } ifelse
+  ArcAdjust
+% resets original value of d
+  1 1 d 2 eq { /d { sub } def } { /d { add } def } ifelse  % Adjust angle to give overlap.
+} def
+%%------------------ tvz/DG/hv (2004-05-10) end -------------------%%
+%
+/Rot { CP CP translate 3 -1 roll neg rotate NET  } def
+/RotBegin { tx@Dict /TMatrix known not { /TMatrix { } def /RAngle { 0 }
+def } if /TMatrix [ TMatrix CM ] cvx def /a ED a Rot /RAngle [ RAngle
+dup a add ] cvx def } def
+/RotEnd { /TMatrix [ TMatrix setmatrix ] cvx def /RAngle [ RAngle pop ]
+cvx def } def
+/PutCoor { gsave CP T CM STV exch exec moveto setmatrix CP grestore } def
+/PutBegin { /TMatrix [ TMatrix CM ] cvx def CP 4 2 roll T moveto } def
+/PutEnd { CP /TMatrix [ TMatrix setmatrix ] cvx def moveto } def
+/Uput { /a ED add 2 div /h ED 2 div /w ED /s a sin def /c a cos def /b s
+abs c abs 2 copy gt dup /q ED { pop } { exch pop } ifelse def /w1 c b
+div w mul def /h1 s b div h mul def q { w1 abs w sub dup c mul abs } {
+h1 abs h sub dup s mul abs } ifelse } def
+/UUput { /z ED abs /y ED /x ED q { x s div c mul abs y gt } { x c div s
+mul abs y gt } ifelse { x x mul y y mul sub z z mul add sqrt z add } { q
+{ x s div } { x c div } ifelse abs } ifelse a PtoC h1 add exch w1 add
+exch } def
+/BeginOL { dup (all) eq exch TheOL eq or { IfVisible not { Visible
+/IfVisible true def } if } { IfVisible { Invisible /IfVisible false def
+} if } ifelse } def
+/InitOL { /OLUnit [ 3000 3000 matrix defaultmatrix dtransform ] cvx def
+/Visible { CP OLUnit idtransform T moveto } def /Invisible { CP OLUnit
+neg exch neg exch idtransform T moveto } def /BOL { BeginOL } def
+/IfVisible true def } def
+end
+% END pstricks.pro
+
+%%EndProcSet
+%%BeginProcSet: pst-dots.pro 0 0
+%!
+%% PostScript prologue for pstricks.tex.
+%% Version 2.00,                                    Suggestion of 2006/12/19
+%% For distribution, see pstricks.tex.
+%%
+%% Timothy Van Zandt <tvz@Princeton.EDU>
+%%
+%% Modified by Etienne Riga  - Dec. 16, 1999
+%% Modified by Herbert Voss (hv) - 2004/12/27 
+%% Modified by Etienne Riga  - 2005/01/01 (er)
+%% to add /Diamond, /SolidDiamond and /BoldDiamond
+%
+10 dict dup begin
+  /FontType 3 def
+  /FontMatrix [.001 0 0 .001 0 0] def
+  /FontBBox [-571.5 -742.5 571.5 742.5] def
+%  /FontBBox [-1000 -1000 1000 1000] def
+%                See end of file in /BuildGlyph
+  /Encoding 256 array def
+  0 1 255 {Encoding exch/.notdef put} for
+  Encoding
+    dup (b) 0 get /Bullet put
+    dup (c) 0 get /Circle put
+    dup (C) 0 get /BoldCircle put
+    dup (u) 0 get /SolidTriangle put
+    dup (t) 0 get /Triangle put
+    dup (T) 0 get /BoldTriangle put
+    dup (r) 0 get /SolidSquare put
+    dup (s) 0 get /Square put
+    dup (S) 0 get /BoldSquare put
+    dup (q) 0 get /SolidPentagon put
+    dup (p) 0 get /Pentagon put
+    dup (P) 0 get /BoldPentagon put
+%%%		  
+    dup (k) 0 get /Asterisk put
+    dup (K) 0 get /BoldAsterisk put
+    dup (J) 0 get /SolidAsterisk put
+    dup (h) 0 get /Hexagon put
+    dup (H) 0 get /BoldHexagon put
+    dup (G) 0 get /SolidHexagon put
+    dup (a) 0 get /Add put
+    dup (A) 0 get /BoldAdd put
+    dup (x) 0 get /Mul put
+    dup (X) 0 get /BoldMul put
+    dup (m) 0 get /Oplus put
+    dup (M) 0 get /BOplus put
+    dup (e) 0 get /SolidOplus put
+    dup (n) 0 get /Otimes put
+    dup (N) 0 get /BOtimes put
+    dup (E) 0 get /SolidOtimes put
+    dup (i) 0 get /Bar put
+    dup (I) 0 get /BoldBar put
+    dup (l) 0 get /SolidDiamond put
+    dup (d) 0 get /Diamond put
+        (D) 0 get /BoldDiamond put
+%%%  
+/CharProcs 47 dict def
+  CharProcs begin
+    /CirclePath {0 0 500 0 360 arc closepath} def
+      /Bullet {CirclePath fill} def
+	  /Circle {CirclePath .9 .9 scale CirclePath eofill} def
+	  /BoldCircle {CirclePath .8 .8 scale CirclePath eofill} def
+    /TrianglePath {0 660 moveto -571.5 -330 lineto 571.5 -330 lineto
+		closepath} def
+	  /SolidTriangle {TrianglePath fill} def
+      /Triangle {TrianglePath .85 .85 scale TrianglePath eofill} def
+      /BoldTriangle {TrianglePath .7 .7 scale TrianglePath eofill} def
+    /SquarePath {-450 450 moveto 450 450 lineto 450 -450 lineto -450 -450 lineto
+		closepath} def
+      /SolidSquare {SquarePath fill} def
+      /Square {SquarePath .89 .89 scale SquarePath eofill} def
+      /BoldSquare {SquarePath .78 .78 scale SquarePath eofill} def
+    /PentagonPath {-337.8 -465 moveto 337.8 -465 lineto 546.6 177.6 lineto
+		0 574.7 lineto -546.6 177.6 lineto closepath} def
+      /SolidPentagon {PentagonPath fill} def
+      /Pentagon {PentagonPath .89 .89 scale PentagonPath eofill} def
+      /BoldPentagon {PentagonPath .78 .78 scale PentagonPath eofill} def
+%-------------- hv begin 2004/07/25   from: er 2003/03/24
+    /HexagonPath {0 550 moveto -476 275 lineto -476 -275 lineto
+		0 -550 lineto 476 -275 lineto 476 275 lineto closepath} def
+      /SolidHexagon {HexagonPath fill} def
+      /Hexagon {HexagonPath .89 .89 scale HexagonPath eofill} def
+      /BoldHexagon {HexagonPath .79 .79 scale HexagonPath eofill} def
+	/AsteriskPath {20 0 moveto 10 250 180 500 0 500 curveto
+		-180 500 -10 250 -20 0 curveto closepath} def
+      /Asterisk {AsteriskPath 60 rotate AsteriskPath 60 rotate AsteriskPath
+	    60 rotate AsteriskPath 60 rotate AsteriskPath 60 rotate AsteriskPath 
+		fill} def
+	/Basterp {50 250 220 500 0 500 curveto
+        -220 500 -50 250 -50 30 cos 100 mul curveto} def
+	/BoldAsteriskPath {50 30 cos 100 mul moveto  Basterp
+                     60 rotate Basterp 60 rotate Basterp
+                     60 rotate Basterp 60 rotate Basterp
+                     60 rotate Basterp closepath} def
+      /BoldAsterisk {BoldAsteriskPath fill} def
+	  /SolidAsterisk {CirclePath .9 .9 scale BoldAsteriskPath eofill} def
+    /CrossPath {40 550 moveto -40 550 lineto -40 40 lineto -550 40 lineto
+        -550 -40 lineto -40 -40 lineto -40 -550 lineto 40 -550 lineto 
+		40 -40 lineto 550 -40 lineto 550 40 lineto 40 40 lineto closepath} def
+    /BoldCrossPath {80 550 moveto -80 550 lineto -80 80 lineto -550 80 lineto
+        -550 -80 lineto -80 -80 lineto -80 -550 lineto 80 -550 lineto 
+		80 -80 lineto 550 -80 lineto 550 80 lineto 80 80 lineto closepath} def
+      /Add {CrossPath fill} def
+      /Mul {45 rotate CrossPath fill} def
+      /BoldAdd {BoldCrossPath fill} def
+      /BoldMul {45 rotate BoldCrossPath fill} def
+	  /Oplus {CirclePath .9 .9 scale CirclePath eofill
+		.775 .775 scale CrossPath  fill} def 
+	  /SolidOplus {CirclePath .775 .775 scale BoldCrossPath eofill} def 
+	  /BOplus {CirclePath .8 .8 scale CirclePath eofill
+		.775 .775 scale BoldCrossPath fill} def 
+	  /Otimes {CirclePath .9 .9 scale CirclePath eofill
+		45 rotate .775 .775 scale CrossPath fill} def 
+	  /BOtimes {CirclePath .8 .8 scale CirclePath eofill
+		45 rotate .775 .775 scale BoldCrossPath  fill } def 
+	  /SolidOtimes {CirclePath 45 rotate .775 .775 scale BoldCrossPath eofill} def 
+    /BarPath {40 660 moveto -40 660 lineto -40 -660 lineto 40 -660 lineto
+		closepath} def
+      /Bar {BarPath fill} def
+    /BoldBarPath {80 660 moveto -80 660 lineto -80 -660 lineto 80 -660 lineto
+		closepath} def
+      /BoldBar {BoldBarPath fill} def
+    /DiamondPath {0 742.5 moveto -428.5 0 lineto 0 -742.5 lineto 
+		428.5 0 lineto closepath} def
+      /SolidDiamond {DiamondPath fill} def
+      /Diamond {DiamondPath .865 .865 scale DiamondPath eofill} def
+      /BoldDiamond {DiamondPath .73 .73 scale DiamondPath eofill} def
+%%%
+    /.notdef { } def
+  end
+  /BuildGlyph {
+    exch
+    begin
+%      Metrics 1 index get exec 0
+       0 0
+%      BBoxes 3 index get exec
+      -1000 -1000 1000 1000
+%     -571.5 -742.5 571.5 742.5
+      setcachedevice
+      CharProcs begin load exec end
+    end
+  } def
+  /BuildChar {
+    1 index /Encoding get exch get
+    1 index /BuildGlyph get exec
+  } bind def
+end
+/PSTricksDotFont exch definefont pop
+
+
+%%EndProcSet
+%%BeginProcSet: pst-node.pro 0 0
+%!
+% PostScript prologue for pst-node.tex.
+% Version 97 patch 1, 97/05/09.
+% For distribution, see pstricks.tex.
+%
+/tx@NodeDict 400 dict def tx@NodeDict begin
+tx@Dict begin /T /translate load def end
+/NewNode { gsave /next ED dict dup 3 1 roll def exch { dup 3 1 roll def }
+if begin tx@Dict begin STV CP T exec end /NodeMtrx CM def next end
+grestore } def
+/InitPnode { /Y ED /X ED /NodePos { NodeSep Cos mul NodeSep Sin mul } def
+} def
+/InitCnode { /r ED /Y ED /X ED /NodePos { NodeSep r add dup Cos mul exch
+Sin mul } def } def
+/GetRnodePos { Cos 0 gt { /dx r NodeSep add def } { /dx l NodeSep sub def
+} ifelse Sin 0 gt { /dy u NodeSep add def } { /dy d NodeSep sub def }
+ifelse dx Sin mul abs dy Cos mul abs gt { dy Cos mul Sin div dy } { dx
+dup Sin mul Cos Div } ifelse } def
+/InitRnode { /Y ED /X ED X sub /r ED /l X neg def Y add neg /d ED Y sub
+/u ED /NodePos { GetRnodePos } def } def
+/DiaNodePos { w h mul w Sin mul abs h Cos mul abs add Div NodeSep add dup
+Cos mul exch Sin mul } def
+/TriNodePos { Sin s lt { d NodeSep sub dup Cos mul Sin Div exch } { w h
+mul w Sin mul h Cos abs mul add Div NodeSep add dup Cos mul exch Sin mul
+} ifelse } def
+/InitTriNode { sub 2 div exch 2 div exch 2 copy T 2 copy 4 index index /d
+ED pop pop pop pop -90 mul rotate /NodeMtrx CM def /X 0 def /Y 0 def d
+sub abs neg /d ED d add /h ED 2 div h mul h d sub Div /w ED /s d w Atan
+sin def /NodePos { TriNodePos } def } def
+/OvalNodePos { /ww w NodeSep add def /hh h NodeSep add def Sin ww mul Cos
+hh mul Atan dup cos ww mul exch sin hh mul } def
+/GetCenter { begin X Y NodeMtrx transform CM itransform end } def
+/XYPos { dup sin exch cos Do /Cos ED /Sin ED /Dist ED Cos 0 gt { Dist
+Dist Sin mul Cos div } { Cos 0 lt { Dist neg Dist Sin mul Cos div neg }
+{ 0 Dist Sin mul } ifelse } ifelse Do } def
+/GetEdge { dup 0 eq { pop begin 1 0 NodeMtrx dtransform CM idtransform
+exch atan sub dup sin /Sin ED cos /Cos ED /NodeSep ED NodePos NodeMtrx
+dtransform CM idtransform end } { 1 eq {{exch}} {{}} ifelse /Do ED pop
+XYPos } ifelse } def
+/AddOffset { 1 index 0 eq { pop pop } { 2 copy 5 2 roll cos mul add 4 1
+roll sin mul sub exch } ifelse } def
+/GetEdgeA { NodeSepA AngleA NodeA NodeSepTypeA GetEdge OffsetA AngleA
+AddOffset yA add /yA1 ED xA add /xA1 ED } def
+/GetEdgeB { NodeSepB AngleB NodeB NodeSepTypeB GetEdge OffsetB AngleB
+AddOffset yB add /yB1 ED xB add /xB1 ED } def
+/GetArmA { ArmTypeA 0 eq { /xA2 ArmA AngleA cos mul xA1 add def /yA2 ArmA
+AngleA sin mul yA1 add def } { ArmTypeA 1 eq {{exch}} {{}} ifelse /Do ED
+ArmA AngleA XYPos OffsetA AngleA AddOffset yA add /yA2 ED xA add /xA2 ED
+} ifelse } def
+/GetArmB { ArmTypeB 0 eq { /xB2 ArmB AngleB cos mul xB1 add def /yB2 ArmB
+AngleB sin mul yB1 add def } { ArmTypeB 1 eq {{exch}} {{}} ifelse /Do ED
+ArmB AngleB XYPos OffsetB AngleB AddOffset yB add /yB2 ED xB add /xB2 ED
+} ifelse } def
+/InitNC { /b ED /a ED /NodeSepTypeB ED /NodeSepTypeA ED /NodeSepB ED
+/NodeSepA ED /OffsetB ED /OffsetA ED tx@NodeDict a known tx@NodeDict b
+known and dup { /NodeA a load def /NodeB b load def NodeA GetCenter /yA
+ED /xA ED NodeB GetCenter /yB ED /xB ED } if } def
+/LPutLine { 4 copy 3 -1 roll sub neg 3 1 roll sub Atan /NAngle ED 1 t sub
+mul 3 1 roll 1 t sub mul 4 1 roll t mul add /Y ED t mul add /X ED } def
+/LPutLines { mark LPutVar counttomark 2 div 1 sub /n ED t floor dup n gt
+{ pop n 1 sub /t 1 def } { dup t sub neg /t ED } ifelse cvi 2 mul { pop
+} repeat LPutLine cleartomark } def
+/BezierMidpoint { /y3 ED /x3 ED /y2 ED /x2 ED /y1 ED /x1 ED /y0 ED /x0 ED
+/t ED /cx x1 x0 sub 3 mul def /cy y1 y0 sub 3 mul def /bx x2 x1 sub 3
+mul cx sub def /by y2 y1 sub 3 mul cy sub def /ax x3 x0 sub cx sub bx
+sub def /ay y3 y0 sub cy sub by sub def ax t 3 exp mul bx t t mul mul
+add cx t mul add x0 add ay t 3 exp mul by t t mul mul add cy t mul add
+y0 add 3 ay t t mul mul mul 2 by t mul mul add cy add 3 ax t t mul mul
+mul 2 bx t mul mul add cx add atan /NAngle ED /Y ED /X ED } def
+/HPosBegin { yB yA ge { /t 1 t sub def } if /Y yB yA sub t mul yA add def
+} def
+/HPosEnd { /X Y yyA sub yyB yyA sub Div xxB xxA sub mul xxA add def
+/NAngle yyB yyA sub xxB xxA sub Atan def } def
+/HPutLine { HPosBegin /yyA ED /xxA ED /yyB ED /xxB ED HPosEnd  } def
+/HPutLines { HPosBegin yB yA ge { /check { le } def } { /check { ge } def
+} ifelse /xxA xA def /yyA yA def mark xB yB LPutVar { dup Y check { exit
+} { /yyA ED /xxA ED } ifelse } loop /yyB ED /xxB ED cleartomark HPosEnd 
+} def
+/VPosBegin { xB xA lt { /t 1 t sub def } if /X xB xA sub t mul xA add def
+} def
+/VPosEnd { /Y X xxA sub xxB xxA sub Div yyB yyA sub mul yyA add def
+/NAngle yyB yyA sub xxB xxA sub Atan def } def
+/VPutLine { VPosBegin /yyA ED /xxA ED /yyB ED /xxB ED VPosEnd  } def
+/VPutLines { VPosBegin xB xA ge { /check { le } def } { /check { ge } def
+} ifelse /xxA xA def /yyA yA def mark xB yB LPutVar { 1 index X check {
+exit } { /yyA ED /xxA ED } ifelse } loop /yyB ED /xxB ED cleartomark
+VPosEnd  } def
+/HPutCurve { gsave newpath /SaveLPutVar /LPutVar load def LPutVar 8 -2
+roll moveto curveto flattenpath /LPutVar [ {} {} {} {} pathforall ] cvx
+def grestore exec /LPutVar /SaveLPutVar load def } def
+/NCCoor { /AngleA yB yA sub xB xA sub Atan def /AngleB AngleA 180 add def
+GetEdgeA GetEdgeB /LPutVar [ xB1 yB1 xA1 yA1 ] cvx def /LPutPos {
+LPutVar LPutLine } def /HPutPos { LPutVar HPutLine } def /VPutPos {
+LPutVar VPutLine } def LPutVar } def
+/NCLine { NCCoor tx@Dict begin ArrowA CP 4 2 roll ArrowB lineto pop pop
+end } def
+/NCLines { false NArray n 0 eq { NCLine } { 2 copy yA sub exch xA sub
+Atan /AngleA ED n 2 mul dup index exch index yB sub exch xB sub Atan
+/AngleB ED GetEdgeA GetEdgeB /LPutVar [ xB1 yB1 n 2 mul 4 add 4 roll xA1
+yA1 ] cvx def mark LPutVar tx@Dict begin false Line end /LPutPos {
+LPutLines } def /HPutPos { HPutLines } def /VPutPos { VPutLines } def }
+ifelse } def
+/NCCurve { GetEdgeA GetEdgeB xA1 xB1 sub yA1 yB1 sub Pyth 2 div dup 3 -1
+roll mul /ArmA ED mul /ArmB ED /ArmTypeA 0 def /ArmTypeB 0 def GetArmA
+GetArmB xA2 yA2 xA1 yA1 tx@Dict begin ArrowA end xB2 yB2 xB1 yB1 tx@Dict
+begin ArrowB end curveto /LPutVar [ xA1 yA1 xA2 yA2 xB2 yB2 xB1 yB1 ]
+cvx def /LPutPos { t LPutVar BezierMidpoint } def /HPutPos { { HPutLines
+} HPutCurve } def /VPutPos { { VPutLines } HPutCurve } def } def
+%
+/NCAngles { GetEdgeA GetEdgeB GetArmA GetArmB /mtrx AngleA matrix rotate
+def xA2 yA2 mtrx transform pop xB2 yB2 mtrx transform exch pop mtrx
+itransform /y0 ED /x0 ED mark ArmB 0 ne { xB1 yB1 } if xB2 yB2 x0 y0 xA2
+yA2 ArmA 0 ne { xA1 yA1 } if tx@Dict begin false Line end /LPutVar [ xB1
+yB1 xB2 yB2 x0 y0 xA2 yA2 xA1 yA1 ] cvx def /LPutPos { LPutLines } def
+/HPutPos { HPutLines } def /VPutPos { VPutLines } def } def
+%
+/NCAngle { GetEdgeA GetEdgeB GetArmB /mtrx AngleA matrix rotate def xB2
+yB2 mtrx itransform pop xA1 yA1 mtrx itransform exch pop mtrx transform
+/y0 ED /x0 ED mark ArmB 0 ne { xB1 yB1 } if xB2 yB2 x0 y0 xA1 yA1
+tx@Dict begin false Line end /LPutVar [ xB1 yB1 xB2 yB2 x0 y0 xA1 yA1 ]
+cvx def /LPutPos { LPutLines } def /HPutPos { HPutLines } def /VPutPos {
+VPutLines } def } def
+/NCBar { GetEdgeA GetEdgeB GetArmA GetArmB /mtrx AngleA matrix rotate def
+xA2 yA2 mtrx itransform pop xB2 yB2 mtrx itransform pop sub dup 0 mtrx
+transform 3 -1 roll 0 gt { /yB2 exch yB2 add def /xB2 exch xB2 add def }
+{ /yA2 exch neg yA2 add def /xA2 exch neg xA2 add def } ifelse mark ArmB
+0 ne { xB1 yB1 } if xB2 yB2 xA2 yA2 ArmA 0 ne { xA1 yA1 } if tx@Dict
+begin false Line end /LPutVar [ xB1 yB1 xB2 yB2 xA2 yA2 xA1 yA1 ] cvx
+def /LPutPos { LPutLines } def /HPutPos { HPutLines } def /VPutPos {
+VPutLines } def } def
+/NCDiag { GetEdgeA GetEdgeB GetArmA GetArmB mark ArmB 0 ne { xB1 yB1 } if
+xB2 yB2 xA2 yA2 ArmA 0 ne { xA1 yA1 } if tx@Dict begin false Line end
+/LPutVar [ xB1 yB1 xB2 yB2 xA2 yA2 xA1 yA1 ] cvx def /LPutPos {
+LPutLines } def /HPutPos { HPutLines } def /VPutPos { VPutLines } def }
+def
+/NCDiagg { GetEdgeA GetArmA yB yA2 sub xB xA2 sub Atan 180 add /AngleB ED
+GetEdgeB mark xB1 yB1 xA2 yA2 ArmA 0 ne { xA1 yA1 } if tx@Dict begin
+false Line end /LPutVar [ xB1 yB1 xA2 yA2 xA1 yA1 ] cvx def /LPutPos {
+LPutLines } def /HPutPos { HPutLines } def /VPutPos { VPutLines } def }
+def
+/NCLoop { GetEdgeA GetEdgeB GetArmA GetArmB /mtrx AngleA matrix rotate
+def xA2 yA2 mtrx transform loopsize add /yA3 ED /xA3 ED /xB3 xB2 yB2
+mtrx transform pop def xB3 yA3 mtrx itransform /yB3 ED /xB3 ED xA3 yA3
+mtrx itransform /yA3 ED /xA3 ED mark ArmB 0 ne { xB1 yB1 } if xB2 yB2
+xB3 yB3 xA3 yA3 xA2 yA2 ArmA 0 ne { xA1 yA1 } if tx@Dict begin false
+Line end /LPutVar [ xB1 yB1 xB2 yB2 xB3 yB3 xA3 yA3 xA2 yA2 xA1 yA1 ]
+cvx def /LPutPos { LPutLines } def /HPutPos { HPutLines } def /VPutPos {
+VPutLines } def } def
+% DG/SR modification begin - May 9, 1997 - Patch 1
+%/NCCircle { 0 0 NodesepA nodeA \tx@GetEdge pop xA sub 2 div dup 2 exp r
+%r mul sub abs sqrt atan 2 mul /a ED r AngleA 90 add PtoC yA add exch xA add
+%exch 2 copy /LPutVar [ 4 2 roll r AngleA ] cvx def /LPutPos { LPutVar t 360
+%mul add dup 5 1 roll 90 sub \tx@PtoC 3 -1 roll add /Y ED add /X ED /NAngle ED
+/NCCircle { NodeSepA 0 NodeA 0 GetEdge pop 2 div dup 2 exp r
+r mul sub abs sqrt atan 2 mul /a ED r AngleA 90 add PtoC yA add exch xA add
+exch 2 copy /LPutVar [ 4 2 roll r AngleA ] cvx def /LPutPos { LPutVar t 360
+mul add dup 5 1 roll 90 sub PtoC 3 -1 roll add /Y ED add /X ED /NAngle ED
+% DG/SR modification end
+} def /HPutPos { LPutPos } def /VPutPos { LPutPos } def r AngleA 90 sub a add
+AngleA 270 add a sub tx@Dict begin /angleB ED /angleA ED /r ED /c 57.2957 r
+Div def /y ED /x ED } def
+/NCBox { /d ED /h ED /AngleB yB yA sub xB xA sub Atan def /AngleA AngleB
+180 add def GetEdgeA GetEdgeB /dx d AngleB sin mul def /dy d AngleB cos
+mul neg def /hx h AngleB sin mul neg def /hy h AngleB cos mul def
+/LPutVar [ xA1 hx add yA1 hy add xB1 hx add yB1 hy add xB1 dx add yB1 dy
+add xA1 dx add yA1 dy add ] cvx def /LPutPos { LPutLines } def /HPutPos
+{ xB yB xA yA LPutLine } def /VPutPos { HPutPos } def mark LPutVar
+tx@Dict begin false Polygon end } def
+/NCArcBox { /l ED neg /d ED /h ED /a ED /AngleA yB yA sub xB xA sub Atan
+def /AngleB AngleA 180 add def /tA AngleA a sub 90 add def /tB tA a 2
+mul add def /r xB xA sub tA cos tB cos sub Div dup 0 eq { pop 1 } if def
+/x0 xA r tA cos mul add def /y0 yA r tA sin mul add def /c 57.2958 r div
+def /AngleA AngleA a sub 180 add def /AngleB AngleB a add 180 add def
+GetEdgeA GetEdgeB /AngleA tA 180 add yA yA1 sub xA xA1 sub Pyth c mul
+sub def /AngleB tB 180 add yB yB1 sub xB xB1 sub Pyth c mul add def l 0
+eq { x0 y0 r h add AngleA AngleB arc x0 y0 r d add AngleB AngleA arcn }
+{ x0 y0 translate /tA AngleA l c mul add def /tB AngleB l c mul sub def
+0 0 r h add tA tB arc r h add AngleB PtoC r d add AngleB PtoC 2 copy 6 2
+roll l arcto 4 { pop } repeat r d add tB PtoC l arcto 4 { pop } repeat 0
+0 r d add tB tA arcn r d add AngleA PtoC r h add AngleA PtoC 2 copy 6 2
+roll l arcto 4 { pop } repeat r h add tA PtoC l arcto 4 { pop } repeat }
+ifelse closepath /LPutVar [ x0 y0 r AngleA AngleB h d ] cvx def /LPutPos
+{ LPutVar /d ED /h ED /AngleB ED /AngleA ED /r ED /y0 ED /x0 ED t 1 le {
+r h add AngleA 1 t sub mul AngleB t mul add dup 90 add /NAngle ED PtoC }
+{ t 2 lt { /NAngle AngleB 180 add def r 2 t sub h mul t 1 sub d mul add
+add AngleB PtoC } { t 3 lt { r d add AngleB 3 t sub mul AngleA 2 t sub
+mul add dup 90 sub /NAngle ED PtoC } { /NAngle AngleA 180 add def r 4 t
+sub d mul t 3 sub h mul add add AngleA PtoC } ifelse } ifelse } ifelse
+y0 add /Y ED x0 add /X ED } def /HPutPos { LPutPos } def /VPutPos {
+LPutPos } def } def
+/Tfan { /AngleA yB yA sub xB xA sub Atan def GetEdgeA w xA1 xB sub yA1 yB
+sub Pyth Pyth w Div CLW 2 div mul 2 div dup AngleA sin mul yA1 add /yA1
+ED AngleA cos mul xA1 add /xA1 ED /LPutVar [ xA1 yA1 m { xB w add yB xB
+w sub yB } { xB yB w sub xB yB w add } ifelse xA1 yA1 ] cvx def /LPutPos
+{ LPutLines } def /VPutPos@ { LPutVar flag { 8 4 roll pop pop pop pop }
+{ pop pop pop pop 4 2 roll } ifelse } def /VPutPos { VPutPos@ VPutLine }
+def /HPutPos { VPutPos@ HPutLine } def mark LPutVar tx@Dict begin
+/ArrowA { moveto } def /ArrowB { } def false Line closepath end } def
+/LPutCoor { NAngle tx@Dict begin /NAngle ED end gsave CM STV CP Y sub neg
+exch X sub neg exch moveto setmatrix CP grestore } def
+/LPut { tx@NodeDict /LPutPos known { LPutPos } { CP /Y ED /X ED /NAngle 0
+def } ifelse LPutCoor  } def
+/HPutAdjust { Sin Cos mul 0 eq { 0 } { d Cos mul Sin div flag not { neg }
+if h Cos mul Sin div flag { neg } if 2 copy gt { pop } { exch pop }
+ifelse } ifelse s add flag { r add neg } { l add } ifelse X add /X ED }
+def
+/VPutAdjust { Sin Cos mul 0 eq { 0 } { l Sin mul Cos div flag { neg } if
+r Sin mul Cos div flag not { neg } if 2 copy gt { pop } { exch pop }
+ifelse } ifelse s add flag { d add } { h add neg } ifelse Y add /Y ED }
+def
+end
+% END pst-node.pro
+
+%%EndProcSet
+%%BeginProcSet: texps.pro 0 0
+%!
+TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
+index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]FontType 0
+ne{/Metrics exch def dict begin Encoding{exch dup type/integertype ne{
+pop pop 1 sub dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get
+div def}ifelse}forall Metrics/Metrics currentdict end def}{{1 index type
+/nametype eq{exit}if exch pop}loop}ifelse[2 index currentdict end
+definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{dup
+sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1 roll
+mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def dup[
+exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}if}
+forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}def
+end
+
+%%EndProcSet
+%%BeginProcSet: special.pro 0 0
+%!
+TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
+/vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
+/rhiSeen false N/letter{}N/note{}N/a4{}N/legal{}N}B/@scaleunit 100 N
+/@hscale{@scaleunit div/hsc X}B/@vscale{@scaleunit div/vsc X}B/@hsize{
+/hs X/CLIP 1 N}B/@vsize{/vs X/CLIP 1 N}B/@clip{/CLIP 2 N}B/@hoffset{/ho
+X}B/@voffset{/vo X}B/@angle{/ang X}B/@rwi{10 div/rwi X/rwiSeen true N}B
+/@rhi{10 div/rhi X/rhiSeen true N}B/@llx{/llx X}B/@lly{/lly X}B/@urx{
+/urx X}B/@ury{/ury X}B/magscale true def end/@MacSetUp{userdict/md known
+{userdict/md get type/dicttype eq{userdict begin md length 10 add md
+maxlength ge{/md md dup length 20 add dict copy def}if end md begin
+/letter{}N/note{}N/legal{}N/od{txpose 1 0 mtx defaultmatrix dtransform S
+atan/pa X newpath clippath mark{transform{itransform moveto}}{transform{
+itransform lineto}}{6 -2 roll transform 6 -2 roll transform 6 -2 roll
+transform{itransform 6 2 roll itransform 6 2 roll itransform 6 2 roll
+curveto}}{{closepath}}pathforall newpath counttomark array astore/gc xdf
+pop ct 39 0 put 10 fz 0 fs 2 F/|______Courier fnt invertflag{PaintBlack}
+if}N/txpose{pxs pys scale ppr aload pop por{noflips{pop S neg S TR pop 1
+-1 scale}if xflip yflip and{pop S neg S TR 180 rotate 1 -1 scale ppr 3
+get ppr 1 get neg sub neg ppr 2 get ppr 0 get neg sub neg TR}if xflip
+yflip not and{pop S neg S TR pop 180 rotate ppr 3 get ppr 1 get neg sub
+neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get neg TR}if}{
+noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop pop
+90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr
+1 get neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr
+2 get ppr 0 get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4
+-1 roll add 2 div 3 1 roll add 2 div 2 copy TR .96 dup scale neg S neg S
+TR}if}N/cp{pop pop showpage pm restore}N end}if}if}N/normalscale{
+Resolution 72 div VResolution 72 div neg scale magscale{DVImag dup scale
+}if 0 setgray}N/psfts{S 65781.76 div N}N/startTexFig{/psf$SavedState
+save N userdict maxlength dict begin/magscale true def normalscale
+currentpoint TR/psf$ury psfts/psf$urx psfts/psf$lly psfts/psf$llx psfts
+/psf$y psfts/psf$x psfts currentpoint/psf$cy X/psf$cx X/psf$sx psf$x
+psf$urx psf$llx sub div N/psf$sy psf$y psf$ury psf$lly sub div N psf$sx
+psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy psf$sy div psf$ury sub
+TR/showpage{}N/erasepage{}N/setpagedevice{pop}N/copypage{}N/p 3 def
+@MacSetUp}N/doclip{psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll
+newpath 4 copy 4 2 roll moveto 6 -1 roll S lineto S lineto S lineto
+closepath clip newpath moveto}N/endTexFig{end psf$SavedState restore}N
+/@beginspecial{SDict begin/SpecialSave save N gsave normalscale
+currentpoint TR @SpecialDefaults count/ocount X/dcount countdictstack N}
+N/@setspecial{CLIP 1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs
+neg 0 rlineto closepath clip}if ho vo TR hsc vsc scale ang rotate
+rwiSeen{rwi urx llx sub div rhiSeen{rhi ury lly sub div}{dup}ifelse
+scale llx neg lly neg TR}{rhiSeen{rhi ury lly sub div dup scale llx neg
+lly neg TR}if}ifelse CLIP 2 eq{newpath llx lly moveto urx lly lineto urx
+ury lineto llx ury lineto closepath clip}if/showpage{}N/erasepage{}N
+/setpagedevice{pop}N/copypage{}N newpath}N/@endspecial{count ocount sub{
+pop}repeat countdictstack dcount sub{end}repeat grestore SpecialSave
+restore end}N/@defspecial{SDict begin}N/@fedspecial{end}B/li{lineto}B
+/rl{rlineto}B/rc{rcurveto}B/np{/SaveX currentpoint/SaveY X N 1
+setlinecap newpath}N/st{stroke SaveX SaveY moveto}N/fil{fill SaveX SaveY
+moveto}N/ellipse{/endangle X/startangle X/yrad X/xrad X/savematrix
+matrix currentmatrix N TR xrad yrad scale 0 0 1 startangle endangle arc
+savematrix setmatrix}N end
+
+%%EndProcSet
+%%BeginProcSet: color.pro 0 0
+%!
+TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
+setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
+}repeat setrgbcolor pop}ifelse}B}ifelse/TeXcolorcmyk{setcmykcolor}def
+/TeXcolorrgb{setrgbcolor}def/TeXcolorgrey{setgray}def/TeXcolorgray{
+setgray}def/TeXcolorhsb{sethsbcolor}def/currentcmykcolor where{pop}{
+/currentcmykcolor{currentrgbcolor 10}B}ifelse/DC{exch dup userdict exch
+known{pop pop}{X}ifelse}B/GreenYellow{0.15 0 0.69 0 setcmykcolor}DC
+/Yellow{0 0 1 0 setcmykcolor}DC/Goldenrod{0 0.10 0.84 0 setcmykcolor}DC
+/Dandelion{0 0.29 0.84 0 setcmykcolor}DC/Apricot{0 0.32 0.52 0
+setcmykcolor}DC/Peach{0 0.50 0.70 0 setcmykcolor}DC/Melon{0 0.46 0.50 0
+setcmykcolor}DC/YellowOrange{0 0.42 1 0 setcmykcolor}DC/Orange{0 0.61
+0.87 0 setcmykcolor}DC/BurntOrange{0 0.51 1 0 setcmykcolor}DC
+/Bittersweet{0 0.75 1 0.24 setcmykcolor}DC/RedOrange{0 0.77 0.87 0
+setcmykcolor}DC/Mahogany{0 0.85 0.87 0.35 setcmykcolor}DC/Maroon{0 0.87
+0.68 0.32 setcmykcolor}DC/BrickRed{0 0.89 0.94 0.28 setcmykcolor}DC/Red{
+0 1 1 0 setcmykcolor}DC/OrangeRed{0 1 0.50 0 setcmykcolor}DC/RubineRed{
+0 1 0.13 0 setcmykcolor}DC/WildStrawberry{0 0.96 0.39 0 setcmykcolor}DC
+/Salmon{0 0.53 0.38 0 setcmykcolor}DC/CarnationPink{0 0.63 0 0
+setcmykcolor}DC/Magenta{0 1 0 0 setcmykcolor}DC/VioletRed{0 0.81 0 0
+setcmykcolor}DC/Rhodamine{0 0.82 0 0 setcmykcolor}DC/Mulberry{0.34 0.90
+0 0.02 setcmykcolor}DC/RedViolet{0.07 0.90 0 0.34 setcmykcolor}DC
+/Fuchsia{0.47 0.91 0 0.08 setcmykcolor}DC/Lavender{0 0.48 0 0
+setcmykcolor}DC/Thistle{0.12 0.59 0 0 setcmykcolor}DC/Orchid{0.32 0.64 0
+0 setcmykcolor}DC/DarkOrchid{0.40 0.80 0.20 0 setcmykcolor}DC/Purple{
+0.45 0.86 0 0 setcmykcolor}DC/Plum{0.50 1 0 0 setcmykcolor}DC/Violet{
+0.79 0.88 0 0 setcmykcolor}DC/RoyalPurple{0.75 0.90 0 0 setcmykcolor}DC
+/BlueViolet{0.86 0.91 0 0.04 setcmykcolor}DC/Periwinkle{0.57 0.55 0 0
+setcmykcolor}DC/CadetBlue{0.62 0.57 0.23 0 setcmykcolor}DC
+/CornflowerBlue{0.65 0.13 0 0 setcmykcolor}DC/MidnightBlue{0.98 0.13 0
+0.43 setcmykcolor}DC/NavyBlue{0.94 0.54 0 0 setcmykcolor}DC/RoyalBlue{1
+0.50 0 0 setcmykcolor}DC/Blue{1 1 0 0 setcmykcolor}DC/Cerulean{0.94 0.11
+0 0 setcmykcolor}DC/Cyan{1 0 0 0 setcmykcolor}DC/ProcessBlue{0.96 0 0 0
+setcmykcolor}DC/SkyBlue{0.62 0 0.12 0 setcmykcolor}DC/Turquoise{0.85 0
+0.20 0 setcmykcolor}DC/TealBlue{0.86 0 0.34 0.02 setcmykcolor}DC
+/Aquamarine{0.82 0 0.30 0 setcmykcolor}DC/BlueGreen{0.85 0 0.33 0
+setcmykcolor}DC/Emerald{1 0 0.50 0 setcmykcolor}DC/JungleGreen{0.99 0
+0.52 0 setcmykcolor}DC/SeaGreen{0.69 0 0.50 0 setcmykcolor}DC/Green{1 0
+1 0 setcmykcolor}DC/ForestGreen{0.91 0 0.88 0.12 setcmykcolor}DC
+/PineGreen{0.92 0 0.59 0.25 setcmykcolor}DC/LimeGreen{0.50 0 1 0
+setcmykcolor}DC/YellowGreen{0.44 0 0.74 0 setcmykcolor}DC/SpringGreen{
+0.26 0 0.76 0 setcmykcolor}DC/OliveGreen{0.64 0 0.95 0.40 setcmykcolor}
+DC/RawSienna{0 0.72 1 0.45 setcmykcolor}DC/Sepia{0 0.83 1 0.70
+setcmykcolor}DC/Brown{0 0.81 1 0.60 setcmykcolor}DC/Tan{0.14 0.42 0.56 0
+setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
+setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
+
+%%EndProcSet
+TeXDict begin @defspecial
+
+ /landplus90 true store
+ 
+@fedspecial end
+%%BeginFont: CMSS10
+%!PS-AdobeFont-1.1: CMSS10 1.0
+%%CreationDate: 1991 Aug 20 17:33:34
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSS10) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle 0 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSS10 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 49 /one put
+dup 50 /two put
+dup 51 /three put
+readonly def
+/FontBBox{-61 -250 999 759}readonly def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052A014267B7904EB3C0D3BD0B83D891
+016CA6CA4B712ADEB258FAAB9A130EE605E61F77FC1B738ABC7C51CD46EF8171
+9098D5FEE67660E69A7AB91B58F29A4D79E57022F783EB0FBBB6D4F4EC35014F
+D2DECBA99459A4C59DF0C6EBA150284454E707DC2100C15B76B4C19B84363758
+469A6C558785B226332152109871A9883487DD7710949204DDCF837E6A8708B8
+2BDBF16FBC7512FAA308A093FE5CF7158F1163BDCEEA888D07B439DBD4E8B4C9
+D198C03874B5E6F8FBF4922065A92BC3E66D05DE53971CB1424510E892442858
+D69CE1F76E4DA76C87C763A4B2FE36321E54B1328C9155B8ED6361855A151723
+3386AEA3D042B8D89C8C0E9A33E5DF3B466F7BB8C2C8A4ED4CDAFF55FC6D3EE6
+0AF2CEBFC1AC3A6E6692F8BB81F82D86BAE85016AD62FCB05467082C2E5AD348
+44D1439C2B59F65590E57CA0DE481A7A34E79931B1513C4C30156170409A4BB8
+46D412D1DAF88AD30722F12DBCA1CCC6B4BCC28D06B0D29149DDEC520C8FBA13
+6B82E2E1790F00B216282FF122EF0D47B70A1B29514DDF7C0435ED238C14BDF5
+6DA243117FBEF7398F97EB95597707ED63C6797EBA1B46EA19ABB1DABDA171B3
+16CD500F5D64CBFBE4F9CBC3E66A34427D3C4D0C432710289381F9BFD91B4FF4
+1E3A896C3EEA2F3105C218877D6C0C6B763760FA364D00065E1CAE9DCB5676ED
+286A9ED0D1C946DCA6A2A670EE0936FB4706CC62E234CFEED34AA615C48D2872
+A087F30990C85E64BA68F3D5C117123467DB411C9F2D6F6858CC70C1E352C477
+713097321B4C4FD4C5CDE305415F998E7245908EEDE6E056A736EA77BD8C639C
+3A79FFD0B74B3D28F0494A115F2841CF8A8827AB5608F96FD8998A5F40FB3DFE
+3AA0C7696DE4E1D18DC0D6E84B943175FC38FFC42A9C0CBB13A908978C98BFE5
+034F88480F32B9DEB2FD228FF6CB0B89B045AB02020C82E3F5716DC640613185
+9F597CE262729BC52132F43922B9E28BB71A30AC8709634561B22D13C4FAFE0A
+12C4451969226B220038AD8DDA990A4E2CAD53DBEAB698898BBD3046234EB4EA
+901287E71CB41296C431383AB85F18882F65BE36923F6C0FD6FADD7071D88A74
+53D06964062D55381F710829715994BD05EE2DF8E452530D5981D99C372F3A23
+03733F838612BB18C6BE6B58EEC42C545CF23CB8A2F8E16159F8A8C07DE09FFC
+48301EA34B68691376F192098759DD6596B621F3F3115BF5132B5B5F71FFD014
+AA13A57EE877C03F881FEB697FB32B6B3CFD2FD7BC8728B3F2848250CAEA3801
+EF8BBFEC80DB3717A06C309CF89D3D21B834D9737F79B760123574D7A2FBE624
+F553F25A7EC1B2585E29611F4FF1AD07C058FC64701BDFE7C59D5C79C791FF95
+430A51138B0E39EFF21E505689D373EBFF4D90FB94F8B30D41B4F640AF95DF55
+C571D517F32CF2ABEFEE62DAAFBE37C1C5D30883FC78E709B22A689C69EFDE85
+1E2E65F1C1FCD0EFEBC5E7DD65A3139BEEE0554871D1FB786D424B961D3C5006
+57576A2CCB2B1D01FBB412D1C92BDD546951776FAB96A88F80D1CDA0EF8EB81C
+908FC30FFB5EEE4C7A728AB14E9392A9D22BA2F3DEF2448E56E167C9809821DC
+AE4FAA7955EB81423FA9C8C6B8AC472EC1AC73D989D91833E4295AF849D8B3A1
+B8587AEFF1EB6E96B1738A49ACE3DC5821C5BE8E98536D7A48EF6853AD20A674
+639226DE936B81162EFABF0C0B5D3A5FDFD15F877669CCD8D723204DDC0BE3E2
+A9F35CD178FE02BF077B7DD7EE1D4393ADF2E02BE4D90D8A01090EFEA881952E
+42E3116BA01DBC0003BD8ED86ECD
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMR7
+%!PS-AdobeFont-1.1: CMR7 1.0
+%%CreationDate: 1991 Aug 20 16:39:21
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMR7) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle 0 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMR7 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 40 /parenleft put
+dup 41 /parenright put
+dup 49 /one put
+dup 50 /two put
+dup 51 /three put
+dup 54 /six put
+dup 57 /nine put
+dup 63 /question put
+readonly def
+/FontBBox{-27 -250 1122 750}readonly def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052A014267B7904EB3C0D3BD0B83D891
+016CA6CA4B712ADEB258FAAB9A130EE605E61F77FC1B738ABC7C51CD46EF8171
+9098D5FEE67660E69A7AB91B58F29A4D79E57022F783EB0FBBB6D4F4EC35014F
+D2DECBA99459A4C59DF0C6EBA150284454E707DC2100C15B76B4C19B84363758
+469A6C558785B226332152109871A9883487DD7710949204DDCF837E6A8708B8
+2BDBF16FBC7512FAA308A093FE5CF5B8CABB9FFC6CC3F1E9AE32F234EB60FE7D
+E34995B1ACFF52428EA20C8ED4FD73E3935CEBD40E0EAD70C0887A451E1B1AC8
+47AEDE4191CCDB8B61345FD070FD30C4F375D8418DDD454729A251B3F61DAE7C
+8882384282FDD6102AE8EEFEDE6447576AFA181F27A48216A9CAD730561469E4
+78B286F22328F2AE84EF183DE4119C402771A249AAC1FA5435690A28D1B47486
+1060C8000D3FE1BF45133CF847A24B4F8464A63CEA01EC84AA22FD005E74847E
+01426B6890951A7DD1F50A5F3285E1F958F11FC7F00EE26FEE7C63998EA1328B
+C9841C57C80946D2C2FC81346249A664ECFB08A2CE075036CEA7359FCA1E90C0
+F686C3BB27EEFA45D548F7BD074CE60E626A4F83C69FE93A5324133A78362F30
+8E8DCC80DD0C49E137CDC9AC08BAE39282E26A7A4D8C159B95F227BDA2A281AF
+A9DAEBF31F504380B20812A211CF9FEB112EC29A3FB3BD3E81809FC6293487A7
+455EB3B879D2B4BD46942BB1243896264722CB59146C3F65BD59B96A74B12BB2
+9A1354AF174932210C6E19FE584B1B14C00E746089CBB17E68845D7B3EA05105
+EEE461E3697FCF835CBE6D46C75523478E766832751CF6D96EC338BDAD57D53B
+52F5340FAC9FE0456AD13101824234B262AC0CABA43B62EBDA39795BAE6CFE97
+563A50AAE1F195888739F2676086A9811E5C9A4A7E0BF34F3E25568930ADF80F
+0BDDAC3B634AD4BA6A59720EA4749236CF0F79ABA4716C340F98517F6F06D9AB
+7ED8F46FC1868B5F3D3678DF71AA772CF1F7DD222C6BF19D8EF0CFB7A76FC6D1
+0AD323C176134907AB375F20CFCD667AB094E2C7CB2179C4283329C9E435E7A4
+1E042AD0BAA059B3F862236180B34D3FCED833472577BACD472A463E26637C66
+FAD3F83D6DF42D2272506260CB761DD59CB9AD24DE4A642D19C3AF997AA659B6
+8099E7D59BB44B111E1A932A8B579FD310191A56A0DB2CD18017C1366442F8DC
+EBA43FC3BD0DB552CA5251FCFE024E9A70E10BAFEEBFE0D2CF386448A9A80B11
+3F764B6481F3B4E93CAB7CFF2777A02A6FDF8B6055AAFF40437539D3A39A6829
+6981AC9443BF2E0F6FAD7C752E2176E6FC45B0E8DC832592C1945DFB758499D6
+229DCB9ACB6E60335DA76D7E1282CCA3885C0594820652D79BA578CA33A1D828
+4DFAB3F56394921DFD477C10748BB9E4DCF3279CC13D6ABA567E56B2EA89D929
+CB1CA27183C3CD093CF0161375F11A9F70EA649406A7FFC9BFA35FB89C203DB3
+7F33721A746ECC65B443C53CC9FB215576950EFF839F9014081BEC96188829EB
+446A39BE7424E0264E5FC797CF192941A5021D6ECA0917295107A12FE7FCC6ED
+0A5C44B3686D04AC5A5EBDC80F2C908C0FCD8A1AA44283E45D46ACE3E7FB1723
+4571265D5D668E42DB8B709FC49C76F5BF80A54B4DCE65AFBE6549D9D550E413
+4E9319A60716027AF3B6A6E4A3DC3E9F00BE2F6CFE65E33DBE8A5A1CCE3077BF
+5C33B1FC222B655EF8A8768EB3C531AAB43F28CF5872DF70829EBCE9664E326B
+46869BDAA51EF115701F8E704C91F3B23F1CDA897BE268F86B562AF0A3F74800
+EFD87741A7E8A93513975FAC5AE048ED56233D5CF92F9C467D806F22256F3107
+2A69CC899BF3A0933E2A4F4C8A5E6738B9DB6F89A291B82A0A17B3592DBA82EC
+2746FDB4766507FAF58F5A4F57AD6CCA0F81EAC3FCE966A7B61D4DD9D33A54FF
+2045B86C33D8D4729C0821AEF7AF38C1B859A2B9F4BF096913C1B0999F6ADEA1
+6F329CC2B3357E4C4A8BC68EC139AD9A3496CA4ECE8BAD44F570E3C5F755D63D
+FC3A51B4504D806EA89EF5BD207F462EA521F3441576F73B4867974178D65191
+CCB1E5F7D46E31098888C4D9B5CE444BBF7EEF5F20157A2006297B493A3BD700
+D36EFEA45B0E568D4A1D71B5FBD0803EF8BEEF5031B9E7ECF38FEB31E96E6C99
+3A6D3DA6213D2CED148738BF710745FC1A97F9A5E0763AFA4B4B3E6BB21C3B16
+B91C7282A622049D4390DB7A10A003A03ECBD42CE7832B6A4F4D17C15F19C511
+A0B011A83BDA577EFD39D72F57222A54588588AB99679BEE28AAD60BC3F12E97
+8EFFEAF87083D39B030324FE2406A70C095E7F8A47EBB9D77970BE6791A1141B
+6F4FFA93F7AF4FA2E4DE446E5942614F4A85B1FB763141D2D859FA9C81787093
+47AC3052E6D01ABFBB932078726566F71F7E857D50AE7AD9F43A9A2401AE71A0
+DD20C877C93CDE31282C02C96FF62C6D42ED583B8702FC678C377911972C9995
+94581A1A6BB4C2653DDC7BD4AC76FB3F6FB197D4123F22F79BBD003EE1532D33
+C29B561388E65D5D49ACA0026BDD24745CC0A8FA2CCBD6AC43055A7CA46DF38A
+B84228E285BF8B2D791CD31227B2945182EEF88F6FC42B060B466C314C2627BD
+9F1F8064936126D3EF0811B29534DA66793DA7B6BCF86B028F6D68DBE0B92DAC
+FB38EEF87706E30BD7C6318C25A72BD474DCFF347AF3521BD02E655CE94E6828
+4AD62D140556B409B6F4F5844EAB3DAC1BE910D9ECCFFF51068A787B0B3525D9
+39776A6428C4541AC0CEA52B8381975BD170D68EE65FC0BB6A74E89EF070ED4C
+C5C7EEF5F0859030F7399F9FBC568E678921A82C7D2B4052B8D3D2F714C4C11E
+625EAE22EF69C0B9F5E320C4A22D008803158F6AAD4C585886C9413CD305BD34
+ECDAED74280E95AE6B24A5F0098B197B69702E410376E0C077C6478E3340B126
+226BACBF6D7E040CECE0D45E7FAD023A41AF992E103517E87473C0DB9C99422B
+95041EB7C29608D7ECA5E681400A6E18572126D97037850417DA649A9881569C
+B9DA4232EF05F81E86E214677E0D3DD46D49A53229E66A0520B5D3A88356326B
+0977263CAC2C8AF52FD1DDB4708E9C0EDCF61C83F7CAFAF5F6A13230D9FB59B7
+6B
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMMI7
+%!PS-AdobeFont-1.1: CMMI7 1.100
+%%CreationDate: 1996 Jul 23 07:53:53
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.100) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMMI7) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.04 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMMI7 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 11 /alpha put
+dup 12 /beta put
+dup 102 /f put
+dup 105 /i put
+readonly def
+/FontBBox{0 -250 1171 750}readonly def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA0529731C99A784CCBE85B4993B2EEBDE
+3B12D472B7CF54651EF21185116A69AB1096ED4BAD2F646635E019B6417CC77B
+532F85D811C70D1429A19A5307EF63EB5C5E02C89FC6C20F6D9D89E7D91FE470
+B72BEFDA23F5DF76BE05AF4CE93137A219ED8A04A9D7D6FDF37E6B7FCDE0D90B
+986423E5960A5D9FBB4C956556E8DF90CBFAEC476FA36FD9A5C8175C9AF513FE
+D919C2DDD26BDC0D99398B9F4D03D77639DF1232A4D6233A9CAF69B151DFD33F
+C0962EAC6E3EBFB8AD256A3C654EAAF9A50C51BC6FA90B61B60401C235AFAB7B
+B078D20B4B8A6D7F0300CF694E6956FF9C29C84FCC5C9E8890AA56B1BC60E868
+DA8488AC4435E6B5CE34EA88E904D5C978514D7E476BF8971D419363125D4811
+4D886EDDDCDDA8A6B0FDA5CF0603EA9FA5D4393BEBB26E1AB11C2D74FFA6FEE3
+FAFBC6F05B801C1C3276B11080F5023902B56593F3F6B1F37997038F36B9E3AB
+76C2E97E1F492D27A8E99F3E947A47166D0D0D063E4E6A9B535DC9F1BED129C5
+123775D5D68787A58C93009FD5DA55B19511B95168C83429BD2D878207C39770
+012318EA7AA39900C97B9D3859E3D0B04750B8390BF1F1BC29DC22BCAD50ECC6
+A3C633D0937A59E859E5185AF9F56704708D5F1C50F78F43DFAC43C4E7DC9413
+44CEFE43279AFD3C167C942889A352F2FF806C2FF8B3EB4908D50778AA58CFFC
+4D1B14597A06A994ED8414BBE8B26E74D49F6CF54176B7297CDA112A69518050
+01337CBA5478EB984CDD22020DAED9CA8311C33FBCC84177F5CE870E709FC608
+D28B3A7208EFF72988C136142CE79B4E9C7B3FE588E9824ABC6F04D141E589B3
+914A73A42801305439862414F893D5B6C327A7EE2730DEDE6A1597B09C258F05
+261BC634F64C9F8477CD51634BA648FC70F659C90DC042C0D6B68CD1DF36D615
+24F362B85A58D65A8E6DFD583EF9A79A428F2390A0B5398EEB78F4B5A89D9AD2
+A517E0361749554ABD6547072398FFDD863E40501C316F28FDDF8B550FF8D663
+9843D0BEA42289F85BD844891DB42EC7C51229D33EE7E83B1290404C799B8E8C
+889787CDC69C6F2AE63E19FB4633FEE6B85717F34860685BF3E8E5BD5479F7F4
+FF29D45A1D920D3D125DDCBC66F92B3142F6F3AE6353565F0D52A52D1A6D5190
+A2E9C9ADF1BB1A6CDF49D2BFAC0B3BA81C99CDADFA2AF15F2D317A656659B994
+ECDA13C49BD2F0CEDEDAB19ECD1CCB35EA578917752942EBBA1F55A954FC28A3
+B95989E725900491B8CA7DEF7ABFDBD288A0CCD0CD31BBC353F8DD1D92835EB6
+927F090DE1031B2916C7A949D8615B8754133B647F969948E02040C0B34FEAF2
+87A8D45743039DF3291C2DA54D3DB4D8728B4618CF6E56E92B234152EAC59083
+E6CA8BD4FD2A1B27D50B7F1138FEACB6363C230760DE62265456FFCFE4FD1ED8
+48CD3F8E545CFE6C6160E1839378EA1D6741EA3F43044B36018272221182630D
+92591DB0DAAB1989A6FC1AB9ECCE3FB00EC225BBA41E32957BF0D31BE7AEE459
+28FEF9A3561218AB96C9AEF9460DFC95D560AB577F3F56DAA9C012838A3627DC
+30E5FD710C2C38ECD5C09A55E9C0BD5BD20CDE9A525E6A0AFCE58ED59F68F4E1
+4A6DFB9615315DD0343C7E8B0FC4FE746B3DBC124853E9327D69EFDE3EFE7792
+C00A5F1AB79B318D8C424A1173265921A11BFCE54940CED911A4968D3C933313
+25DF7BE5570B86F3B2A051B9E97A03D0F40E46D51CEF9515368FEA404D1A719D
+5EC8EFE748828F9B97A54BDAB544747316AE818F63AD2172F55711D51BAFFD41
+06E3DD96C46278BD21BBF278F84601C9E5508C2DC1FE3C3CEFBFA2C56A8A33BD
+E793934B32CAD07385B58B4BA6E73840EF64EC34D1000988D7BF186C0D9F9F50
+ABD571B79E7CB83A3A75CB35A2DEC53B2A7636AA58711DD8B7A87B7485EF535E
+469AFEE9A66B402517A0D8B28BDD5A58EAB8ED9A52EF87677DF8358AB3B84CCB
+A18D9106C980F19D9437E308EEE0AE5AFE9A9F0A6E8AF022746779DC4E453398
+CD35204AB5662CAC6D65D1D56744E25094C5DC060E2738F3D954E32C09AEF856
+027EE074789A9BB0B16DF399B82FF387B9CA2ACD8C00DC059AF7E7C65D7080B0
+FBB02F8C83D3B52C7E60EB2666BC1598BB0A2AAF8760DA2AFC1B28A01905F60B
+EC9B7C26571544B9D33F8F7AE14D4D9100A8D00AD82B972D39CC87A40595D6CA
+684045762819EE9F2223CDDDE3C5D16B9C13A18117198E57F83E09CBA4668F0C
+F7A130367938D4F600526BFA403BB85B59292620CDAEECF9F05C87A229DC8987
+06F7EF25A13EB08E9BBD26F585D2A63682EC85830A71DC434A063F3BFC21D1A1
+C8A35282EB13D0F503062A8EAC3508FC67D7333C7CB6A5B9E1E7B1397EFDCE6A
+1341E4D53718597B6B858CB9533949CC40FA54722708D9003047278D188F208F
+846877842AEE7FE5BB19DE08020076CB062BC2F1D1BC1B7760BCCADAF3F85882
+6CC04054F94A370F7CFBC892121C8DE33C249252CD73EF96DB50D5E9
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+TeXDict begin 52099151 40258437 1000 600 600 (02-swithching-lemma.dvi)
+@start /Fa 204[72 72 72 49[{}3 143.462 /CMSS10 rf /Fb
+198[57 2[57 2[57 1[57 49[{}4 100.457 /CMR7 rf /Fc 192[78
+11[82 82 82 7[64 64 40[{}6 144.292 /CMR7 rf /Fd 150[41
+105[{}1 100.457 /CMMI7 rf /Fe 153[80 89[93 107 11[{}3
+144.292 /CMMI7 rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 600dpi
+TeXDict begin
+%%BeginPaperSize: Letter
+letter
+%%EndPaperSize
+ @landscape end
+%%EndSetup
+%%Page: 1 1
+TeXDict begin @landscape 1 0 bop 0 TeXcolorgray Black
+0 TeXcolorgray 114 -419 a Fe(\013)221 -398 y Fd(i)148
+-181 y Fc(1)161 390 y Fb(1)p 161 413 58 8 v 161 496 a(3)161
+1028 y(1)p 161 1051 V 161 1133 a(9)402 1474 y @beginspecial
+@setspecial
+ tx@Dict begin STP newpath 0.8 SLW 0  setgray  0. true -40.97218 25.60751 -10.24284 220.22482 .5 Frame  gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore end
+ @endspecial 5648 -404 a Fe(\014)5741 -383
+y Fd(i)5676 -181 y Fc(1)5689 390 y Fb(1)p 5689 413 V
+5689 496 a(3)5689 1028 y(1)p 5689 1051 V 5689 1133 a(6)402
+1474 y @beginspecial @setspecial
+ tx@Dict begin STP newpath 0.8 SLW 0  setgray  0. true 624.82335 25.60751 655.55269 220.22482 .5 Frame  gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore end
+ @endspecial @beginspecial
+@setspecial
+ tx@Dict begin STP newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { } def [ 542.87975 135.71954 542.87975 112.67293 409.72034 112.67293 409.72034 35.85037 2.5609 35.85037 2.5609 53.77594  /r 12.80376 def /Lineto { Arcto } def false Line  gsave 0.8 SLW 0  setgray 0  setlinecap 2.0 2.0 0.0 0.0 0 0 add DashLine  grestore end
+ @endspecial 2761 -191 a
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A11 16 {InitRnode } NewNode end end
+ 2761 -191 a Fe(f)16
+b Fc(\(1\)?)1060 447 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A21 16 {InitRnode } NewNode end end
+ 1060 447 a Fe(f)g Fc(\(3\)?)2761
+447 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A22 16 {InitRnode } NewNode end end
+ 2761 447 a Fe(f)g Fc(\(2\)?)4461 447 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A23 16 {InitRnode } NewNode end end
+ 4461 447
+a Fe(f)g Fc(\(2\)?)507 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A31 16 {InitRnode } NewNode end end
+ 507 1085 a Fe(f)g Fc(\(2\)?)1060
+1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A32 16 {InitRnode } NewNode end end
+ 1060 1085 a Fe(f)g Fc(\(2\)?)1613 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A33 16 {InitRnode } NewNode end end
+ 1613
+1085 a Fe(f)g Fc(\(2\)?)2208 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A34 16 {InitRnode } NewNode end end
+ 2208 1085 a Fe(f)g
+Fc(\(3\)?)2761 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A35 16 {InitRnode } NewNode end end
+ 2761 1085 a Fe(f)g Fc(\(3\)?)3313
+1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A36 16 {InitRnode } NewNode end end
+ 3313 1085 a Fe(f)g Fc(\(3\)?)3909 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A37 16 {InitRnode } NewNode end end
+ 3909
+1085 a Fe(f)g Fc(\(3\)?)4461 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A38 16 {InitRnode } NewNode end end
+ 4461 1085 a Fe(f)g
+Fc(\(3\)?)5014 1085 y
+ tx@Dict begin tx@NodeDict begin {13.035 4.345 46.40733 23.20366 4.345 } false /N@A39 16 {InitRnode } NewNode end end
+ 5014 1085 a Fe(f)g Fc(\(3\)?)119
+1545 y
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A11 /N@A21 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t .5 def LPut end PutBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin NAngle 180 add  RotBegin  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 180 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(1)119 1545
+y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119 1545
+a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A11 /N@A22 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.3 def LPut end PutBegin  end
+ 119 1545 a 119 1545
+a
+ tx@Dict begin NAngle 90 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 90 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(2)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A11 /N@A23 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t .5 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 add  NAngle  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(3)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 1 0 0  setrgbcolor  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A21 /N@A31 InitNC { NCLine  } if end gsave 0.8 SLW 1 0 0  setrgbcolor 0  setlinecap 5.0 3.0 0.0 0.0 -2 0 add DashLine  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 180 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 180 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(1)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A21 /N@A32 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.3 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 90 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 90 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(2)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A21 /N@A33 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 add  NAngle  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(3)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A22 /N@A34 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 180 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 180 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(1)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 1 0 0  setrgbcolor  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A22 /N@A35 InitNC { NCLine  } if end gsave 0.8 SLW 1 0 0  setrgbcolor 0  setlinecap 5.0 3.0 0.0 0.0 -2 0 add DashLine  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.3 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 90 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 90 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(2)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A22 /N@A36 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 add  NAngle  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(3)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A23 /N@A37 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 180 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 180 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(1)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 0  setgray  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A23 /N@A38 InitNC { NCLine  } if end gsave 0.8 SLW 0  setgray 0 setlinecap stroke  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.3 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle 90 add  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 sub  NAngle 90 add  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(2)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 119 1545 a
+ tx@Dict begin gsave STV newpath 0.8 SLW 1 0 0  setrgbcolor  /ArrowA { moveto } def /ArrowB { BeginArrow 1.  1.  scale false 0.4 1.4 5.0 2. Arrow  EndArrow  } def /NCLW CLW def tx@NodeDict begin 0.0 0.0 neg 5.0 5.0 0 0 /N@A23 /N@A39 InitNC { NCLine  } if end gsave 0.8 SLW 1 0 0  setrgbcolor 0  setlinecap 5.0 3.0 0.0 0.0 -2 0 add DashLine  grestore  grestore end
+ 119 1545 a 119 1545 a
+ tx@Dict begin tx@NodeDict begin /t 0.4 def LPut end PutBegin  end
+ 119 1545 a 119
+1545 a
+ tx@Dict begin NAngle  RotBegin  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin { 5.0 tx@Dict /NCLW known { NCLW add } if 8.64003 11.32799 0.0 NAngle 90 add  NAngle  sub Uput exch pop add a PtoC h1 add exch w1 add exch } PutCoor PutBegin  end
+ 119 1545 a 83 1592 a Fa(3)119
+1545 y
+ tx@Dict begin PutEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin RotEnd  end
+ 119 1545 a 119 1545 a
+ tx@Dict begin PutEnd  end
+ 119
+1545 a 0 TeXcolorgray 0 TeXcolorgray eop end
+%%Trailer
+
+userdict /end-hook known{end-hook}if
+%%EOF

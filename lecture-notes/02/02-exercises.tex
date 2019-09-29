@@ -1,0 +1,222 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+ 
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Fall 2014 / Exercise Session II 
+
+
+\begin{enumerate}
+
+\item Let $\GG$ be a finite group such that all elements $y\in\GG$ can
+  be expressed as powers of $g\in\GG$. Then the discrete logarithm
+  problem is following. Given $y\in\GG$, find a smallest integer $x$
+  such that $g^x=y$ in finite group $\GG$. Discrete logarithm problem
+  is known to be hard in general, i.e., all universal algorithms for
+  computing logarithm run in time $\Omega(\sqrt{\abs{\GG}})$.
+  \begin{enumerate}
+  \item Show that for a fixed group $\GG$, there exists a Turing
+    machine that finds the discrete logarithm for every $y\in\GG$ in
+    $\Oh(\log_2\abs{\GG})$ steps.
+  \item Show that for a fixed group $\GG$, there exists an analogous
+    Random Access Machine that achieves the same efficiency.
+  \item Generalise the previous construction and show that for every
+    fixed function $f:\set{0,1}^n\to\set{0,1}^m$ there exists a Turing
+    machine and a Random Access Machine such that they compute $f(x)$
+    for every input $x\in\set{0,1}^n$ in $\Oh(n+m)$ steps.
+  \item Are these constructions also valid in practise? Explain why
+    these inconsistencies disappear when we formalise algorithms
+    through universal computing devices.
+  \end{enumerate}
+  \textbf{Hint:} What is the time-complexity of binary search
+  algorithms?
+
+\item Consider a classical Turing machine without internal working
+  tapes, i.e., the Turning machine has a single one-sided (input) tape
+  that initially contains inputs and must contain the desired output
+  after the execution.
+  \begin{enumerate}
+  \item Show that all sorting algorithms take at least $\Omega(n^2)$
+    steps where $n$ is the total length of inputs $x_1,\ldots, x_k$.
+    What is the time-complexity of best sorting algorithms? Explain
+    this contradiction.
+  \item Does the minimal time-complexity change if the Turing machine
+    has internal working tapes?
+  \item Sketch how one can simulate execution of Random Access
+    Machines on a Turing machine. What is the corresponding overhead?
+  \item[($\star$)] Construct a set of tasks that can be implemented
+    significantly more efficiently on Turing machines with $\ell+1$
+    working tapes than on Turing machines with $\ell$ tapes.
+  \end{enumerate}
+  \textbf{Hint:} It is well-known fact that reversing $n$-bit string
+  takes $\Omega(n^2)$ steps on a Turing machine without working tapes.
+
+
+\item Let $\AD_1,\AD_2,\AD_3,\AD_5$ be algorithms for finding discrete
+  logarithm such that the success probability is bounded $$49\cdot
+  \advDLXX{\GG}{\AD_i}\geq \pr{x\gets\AD_i(y): y=g^x}\geq 7\cdot
+  \advDLXX{\GG}{\AD_i}$$ if $\pi(y)=1$. Find tight lower and upper
+  bounds of $\advDLXX{\GG}{\AD}$ for the following adversary $\ADB$
+  \begin{small}
+  \begin{align*}
+  \begin{fblock}{\ADB(y)}
+    & i\getsu\set{1,2,3}, x\gets\AD_i(y)\\
+    & \IF \pi_i(y)=1\ \THEN\\
+    &\begin{cblock}
+      &\IF g^x\neq y \wedge \pi_4(y)=1\ \THEN \RETURN \AD_4(y)\\
+      &\ELSE \RETURN x
+    \end{cblock}\\
+    & \ELSE \IF \pi_5(y)=1\ \THEN \RETURN \AD_5(y)\\
+    & \ELSE \RETURN \AD_1(y)  
+  \end{fblock}
+  \end{align*}%
+  \end{small}%
+  provided that $\pr{y\getsu\GG:\pi_i(y)=1}=\frac{1}{42+i}$ and
+  $\advDLXX{\GG}{\AD_i}=i^2\cdot\varepsilon$.
+
+\item  Let $\GG$ be a finite $q$-element group such that all
+  elements $y\in\GG$ can be expressed as powers of $g\in\GG$.
+  \begin{enumerate}
+  \item Let $\AD$ be an algorithm that always finds a discrete
+    logarithm with the expected running-time $\tau$. Construct a
+    $t$-time algorithm $\ADB$ that fails with probability $2^{-80}$
+    and its running-time $t$ is linear in $\tau$.
+  \item Let $\AD$ be an algorithm for finding the highest bit of
+    discrete logarithm such that $\pr{\AD(y)\text{ guesses
+        correctly}}\geq \varepsilon>\frac{1}{2}$ for any
+    $y\in\GG$. Construct an algorithm that fails with probability
+    $2^{-80}$. 
+  \item Let $\AD$ be a discrete logarithm finder that uses algorithm
+    $\AD$ five times to get inputs for the aggregating algorithm $\ADC$    
+    \begin{align*}
+    \begin{fblock}{\ADB(y)}
+    & x_1\gets\AD(y), \ldots, x_5\gets\AD(y)\\
+    & \RETURN \ADC_1(x_1,\ldots,x_5)  
+    \end{fblock}     
+    \end{align*}%
+    The construction guarantees that $\ADC$ succeeds in finding the
+    discrete logarithm of $y$ if all $x_i$ are correct. Find the
+    $\advDLXX{\GG}{\ADB}$ if 
+    \begin{align*}
+     \pr{y\gets\GG: \text{the output of $\AD(y)$ is correct}}=\varepsilon\enspace.      
+    \end{align*}
+  \end{enumerate}
+  \textbf{Hints:} Use Chebyshev's, Jensen's and  Markov's inequalities.
+
+
+\item A cryptosystem is a triple of algorithms $(\KKK,\EEE,\DDD)$ such
+  that the equality $\DDD(\EEE(m,k),k)=m$ holds for all messages
+  $m\in\MSPACE$ and keys \mbox{$k\gets\KKK$}. Cryptosystem is
+  perfectly secure if a ciphertext $c$ reveals nothing about the
+  corresponding message $m$, i.e., $\pr{m|c}=\pr{m}$. 
+  \begin{enumerate}
+  \item Prove that cryptosystem is perfectly secure only if
+    $H(m|c)=H(m)$. What about the implication to the other direction?
+  \item Show that $H(k,m,c)\geq H(m|c)+H(c)$. For which enciphering
+    algorithms does the equality $H(k,m,c)= H(m|c)+H(c)$ hold?
+  \item Show that $H(k,m,c)=H(k)+H(c|k)$. Conclude that cryptosystem
+    is perfectly secure only if $H(k)\geq H(m)$. 
+  \item Show that $H(k|c)=H(m)+H(k)+H(c|m,k)-H(c)$. What does the
+    result mean in practise?
+  \end{enumerate}
+
+\item Estimate how much time is needed to break the following three
+  file encryption methods without using cipher-specific attacks.
+  \begin{enumerate}
+  \item The file is encrypted with $128$-bit AES cipher and the
+    key is stored in a special file that is protected with a
+    password. Namely, the key is encrypted with another key that is
+    derived form the password.
+  \item The file is encrypted with old $56$-bit DES cipher and
+    the key is stored in the special file that is encrypted with a
+    public key. The corresponding secret key is stored in the ID card.
+  \item The file is encrypted with $80$-bit IDEA cipher and
+    the key is stored in the special file that is encrypted with a
+    public key. The corresponding secret key is stored in the TPM chip.
+  \end{enumerate}
+
+\item There are many ways how to attack a standard e-banking
+  system. First, an attacker can distribute malware that logs all
+  kinds of passwords. Secondly, an attacker can send out forged
+  e-mails that instruct bank customers to send passwords to a certain
+  mail account. Thirdly, an attacker can attack the underlying
+  cryptographic protection mechanism.  When the attacker has a control
+  over the account, he or she has to withdraw the money through an
+  auxiliary account belonging to a mule. This poses a risk as mules do
+  not always deliver the money to attacker's account.
+
+  Compute a success probabilities of all attack scenarios and find the
+  one with highest expected gain, given only some estimates of
+  conditional probabilities. Namely, let $\textsf{Malware}$,
+  $\mathsf{Phishing}$ and $\mathsf{CryptoBreak}$ denote success in the
+  first attack step. Let $\mathsf{Detect}$ denote the event that an
+  unauthorised bank transfer or the attack itself is
+  detected. Finally, let $\textsf{Cheat}$ denote the event that mule
+  cheats and the attacker does not get the money. Then 
+  \begin{align*}
+    &\begin{aligned}    
+      \pr{\textsf{Malware}}&=10^{-3}\\
+      \pr{\textsf{Phishing}}&=10^{-2}\\
+      \pr{\textsf{CryptoBreak}}&=10^{-27}\\
+     \pr{\mathsf{Detect}|\mathsf{Draw\ 100}}&=10^{-2}\\
+      \pr{\mathsf{Detect}|\mathsf{Draw\ 1000}}&=10^{-1}\\
+      \pr{\mathsf{Detect}|\mathsf{Draw\ 10000}}&=1 
+   \end{aligned}&&
+    \begin{aligned}
+      \pr{\mathsf{Detect}|\mathsf{Malware}}&=10^{-4}\\
+      \pr{\mathsf{Detect}|\mathsf{Phishing}}&=1\\
+      \pr{\mathsf{Detect}|\mathsf{CryptoBreak}}&=0\\
+      \pr{\mathsf{Cheat}|\mathsf{Draw\ 100}}&=0\\
+      \pr{\mathsf{Cheat}|\mathsf{Draw\ 1000}}&=10^{-1}\\
+      \pr{\mathsf{Cheat}|\mathsf{Draw\ 1000}}&=10^{-2}
+    \end{aligned}
+  \end{align*}
+  What is probability that the corresponding attacks remain unnoticed?
+
+\item[($\square$)] Let $\AD$ be a solver for the Computational
+  Diffie-Hellman problem with the advantage
+  $\advCDHXX{\GG}{\AD}=\varepsilon>\frac{1}{2}$. Now consider a
+  success amplification by majority voting
+  \begin{align*}
+  \begin{fblock}{\ADB^\AD(x,y)}
+    &\begin{forblock}{i\in\set{1,\ldots,n}}
+      &a\getsu\ZZ_q,b\getsu\ZZ_q\\
+      &z_i\gets\AD(xg^a,yg^b)\cdot x^{-b} y^{-a} g^{-ab}\\
+    \end{forblock}\\
+   & \text{Output the most frequent value among } z_1,\ldots z_n.
+  \end{fblock}
+  \end{align*}
+  Find a better lower bound of the advantage $\advCDHXX{\GG}{\ADB}$ than
+  was given in the lecture. Show that your bound is asymptotically
+  tight.
+ 
+\item[($\star$)] Let $\GG$ be a finite $q$-element group such that all
+  elements $y\in\GG$ can be expressed as powers of $g\in\GG$. Let
+  $\psi:\ZZ_q\to\set{0,1}$ be a non-trivial linear predicate, i.e.,
+  $\psi(x+y)=\psi(x)\oplus\psi(y)$ and $\psi(x)\neq 0$ for some
+  $x$. Show that if there exists an efficient procedure $\AD$ with the
+  advantage
+  \begin{align*}
+    \ADV^\psi_\GG(\AD)=\pr{y\gets\GG:\AD(y)=\psi(\log y)} 
+     > \textstyle \frac{1}{2}\enspace, 
+  \end{align*}
+  then it possible to compute discrete logarithm efficiently, i.e.,
+  the running-time of the construction depends linearly on the
+  running-time of $\AD$ for fixed advantage $\ADV^\psi_\GG(\AD)$. How
+  does the running-time depend on $\ADV^\psi_\GG(\AD)$?
+
+\item[($\star$)] Let $\GG$ be a finite $q$-element group such that all
+  elements $y\in\GG$ can be expressed as powers of $g\in\GG$. Show
+  that if there exists an efficient procedure $\AD$ that can always
+  compute the highest bit of $\log y$ then the discrete logarithm
+  problem is easy. Extend the proof to the case where the advantage
+  $\ADV(\AD)=\pr{y\gets\GG: \AD(y) \text{ guesses correctly}}>
+  \frac{1}{2}$. How does the running-time depend on $\ADV(\AD)$?
+
+
+\end{enumerate}
+\end{document}

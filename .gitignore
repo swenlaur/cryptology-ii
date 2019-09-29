@@ -6,10 +6,13 @@
 **/*.dvi
 **/*.synctex.gz
 
-
 # Mac OS trash
 **/.DS_Store
 
 # Omnigraffle trash
 **/*.graffle
-lectures/**/illustration-sources
+**/illustration-sources
+
+# Ignore additional material
+**/articles
+

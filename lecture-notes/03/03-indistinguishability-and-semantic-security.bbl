@@ -1,0 +1,10 @@
+\begin{thebibliography}{BDJR97}
+
+\bibitem[BDJR97]{FOCS1997EXT:Bellare1997}
+Mihir Bellare, Anand Desai, E.~Jokipii, and Phillip Rogaway.
+\newblock A concrete security treatment of symmetric encryption.
+\newblock Available from
+  http://www-cse.ucsd.edu/users/mihir/papers/sym-enc.html, 1997.
+\newblock Full version of the FOCS publication.
+
+\end{thebibliography}

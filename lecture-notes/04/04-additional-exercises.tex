@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+\newcommand{\PKC}{\mathscr{C}}
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise Session IV / Additional Exercises 
+
+\begin{enumerate}
+
+\item Pseudorandom permutation family $\FFF$ can be converted into a
+  pseudorandom generator by choosing a function $f\getsu \FFF$ and
+  then using the counter scheme
+  $\textsc{Ctr}_f(n)=f(0)\|f(1)\|\ldots\|f(n)$. Alternatively, we can
+  use the following iterative output feedback $\textsc{Ofb}_f(n)$
+  scheme
+  \begin{align*}
+    c_1\gets f(0),c_2\gets f(c_1),\ldots, c_n\gets f(c_{n-1})\enspace,
+  \end{align*}
+  where $c_1,\ldots,c_n$ is the corresponding output. In both cases,
+  the function $f$ is the seed of the pseudorandom function.  Compare
+  the corresponding security guarantees. Which of them is better if we
+  assume that $\FFF$ is $(n,t,\varepsilon)$-pseudorandom permutation
+  family?
+
+  \textbf{Hint:} To carry out the security analysis, formalise the
+  hypothesis testing scenario as a game pair and then gradually
+  convert one game to another by using the techniques introduced in
+  Exercise Session IV.  Pay a specific attention to the cases when
+  $c_i=c_{i+k}$ for some $k>0$.
+
+
+
+\item [$(\star)$] The counter mode converts any pseudorandom function
+  into a pseudorandom generator. Give a converse construction that
+  converts any pseudorandom generator into a pseudorandom
+  function. Give the corresponding security proof together with
+  precise security guarantees.
+
+  \textbf{Hint:} Use a stretching function
+  $f:\set{0,1}^n\to\set{0,1}^{2n}$ to fill a complete binary tree with
+  $n$-bit values.
+
+
+
+
+
+\item Let $\FFF$ be a $(t,q,\varepsilon)$-pseudorandom function family
+  that maps a domain $\MSPACE$ to the range $\CSPACE$. Let
+  $g:\MSPACE\to\set{0,1}$ be an arbitrary predicate. What is the
+  success probability of a $t$-time adversary $\AD$ in the following
+  games?
+  \begin{align*}
+    \begin{game}{\GAME_0^\AD}
+      &m\getsu \MSPACE\\
+      &f\getsu \FFF\\
+      &c\gets f(m)\\
+      &\RETURN [\AD(c)\iseq m]
+    \end{game}
+    &&
+    \begin{game}{\GAME_1^\AD}
+      &m\getsu \MSPACE\\
+      &f\getsu \FFF\\
+      &c\gets f(m)\\
+      &\RETURN [\AD(c)\iseq g(m)]
+    \end{game}
+ \end{align*}
+ Establish the same result by using the IND-SEM theorem. More
+ precisely, show that the hypothesis testing games
+ \begin{align*}
+    \begin{game}{\GAME_{m_0}^\AD}
+      &f\getsu \FFF\\ 
+      &c\gets f(m_0)\\
+      &\RETURN \AD(c)
+    \end{game} 
+     &&
+    \begin{game}{\GAME_{m_1}^\AD}
+      &f\getsu \FFF\\ 
+      &c\gets f(m_1)\\
+      &\RETURN \AD(c)
+    \end{game} 
+ \end{align*}
+ are $(t,2\varepsilon)$-indistinguishable for all
+ $m_0,m_1\in\MSPACE$.
+
+\item Feistel cipher
+  $\textsc{Feistel}_{f_1,\ldots,f_k}:\set{0,1}^{2n}\to\set{0,1}^{2n}$
+  is a classical block cipher construction that consists of many
+  rounds.  In the beginning of the first round, the input $x$ is split
+  into two halves such that $L_0\|R_0=x$. Next, each round uses a
+  random function $f_i\gets\FFFALL$ to update both halves:
+  \begin{align*}
+    L_{i+1}\gets R_i\qquad\text{and}\qquad R_{i+1}\gets L_i\oplus f_i(R_i)\enspace.
+  \end{align*}
+  The output of the Feistel cipher $
+  \textsc{Feistel}_{f_1,\ldots,f_k}(L_0\|R_0)= L_k\|R_k$.
+  \begin{enumerate}
+  \item Show that the Feistel cipher is indeed a permutation.
+  \item Show that the two-round Feistel cipher
+    $\textsc{Feistel}_{f_1,f_2}(L_0\|R_0)$ where $f_1,f_2\gets\FFFALL$
+    is not a pseudorandom permutation. Give a corresponding
+    distinguisher that uses two encryption queries.
+  \item Show the three-round Feistel cipher
+    $\textsc{Feistel}_{f_1,f_2,f_3}(L_0\|R_0)$ where
+    $f_1,f_2,f_3\gets\FFFALL$ is a pseudorandom permutation. For the
+    proof, note that the output of the three round Feistel cipher can
+    be replaced with uniform distribution if $f_2$ and $f_3$ are
+    always evaluated at distinct inputs. Estimate the probability that
+    the $i$th encryption query creates the corresponding input
+    collision for $f_2$.  Estimate the probability that the $i$th
+    encryption query creates an input collision for $f_3$.
+ 
+  \item[($\bullet$)] Show that the tree-round Feistel cipher
+    $\textsc{Feistel}_{f_1,f_2,f_3}(L_0\|R_0)$ is not pseudorandom if
+    the adversary can also make decryption queries.
+  \item [($\star$)] Show that the four-round Feistel cipher
+    $\textsc{Feistel}_{f_1,f_2,f_3,f_4}(L_0\|R_0)$ where
+    $f_1,f_2,f_3,f_4\gets\FFFALL$ is indistinguishable from $\FFFPERM$
+    even if the adversary can make also decryption calls.
+  \end{enumerate}
+\item[$(\star)$] Note that exercises above and the PRP/PRF swithing
+  lemme give a circular constructions: PRP $\Rightarrow$ PRF
+  $\Rightarrow$ PRF, PRF $\Rightarrow$ PRG $\Rightarrow$
+  PRF. Consequently, the existence assumptions for pseudorandom
+  permutations, pseudorandom functions and pseudorandom generators are
+  equivalent. However, the equivalence of existence assumptions is
+  only quantitative.
+  \begin{enumerate}
+  \item Analyse the tightness of all constructions. More precisely,
+    start with a certain primitive, do the full cycle and analyse how
+    much the resulting degradation of efficiency and security
+    guarantees. Interpret the results: which existence assumptions is
+    the must powerful.
+  \item Give a direct circular construction: PRP $\Rightarrow$ PRG
+    $\Rightarrow$ PRG that is better than combined construction over
+    PRF or show that both combined construction are optimal.
+  \end{enumerate}
+\end{enumerate}
+
+\end{document}

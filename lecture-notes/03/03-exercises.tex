@@ -1,0 +1,218 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Fall 2016 / Exercise Session III 
+
+
+\begin{enumerate}
+
+
+\item Let $\mathcal{X}_0$ be a uniform distribution over $\ZZ_{16}$
+  and let $\mathcal{X}_1$ be a uniform distribution over
+  $\set{0,2,4,6,8,10,12,14}$. 
+  \begin{enumerate}
+  \item What is the statistical difference between $\mathcal{X}_0$ and $\mathcal{X}_1$?
+  \item Find an distinguishing strategy $\AD$ that minimises the ratio
+    of false positives $\beta(\AD)$ and achieves false negative rate
+    $\alpha(\AD)=0\%$.
+
+  \item Find an distinguishing strategy $\AD$ that minimises the ratio
+    of false positives $\beta(\AD)$ and achieves false negative rate
+    $\alpha(\AD)\leq 50\%$.
+
+  \item Generalise the distinguishing strategy and find minimal ratio
+    of false positives $\beta(\AD)$ for all bounds
+    $\alpha(\AD)\leq \alpha_0$.
+   \end{enumerate}
+ \item Normally, it is impossible to compute computational distance
+   between two distributions directly since the number of potential
+   distinguishing algorithms is humongous. However, for really small
+   time-bounds it can be done. Here, we assume that all distinguishers
+   $\AD:\ZZ_{16}\to\set{0,1}$ are implemented as Boolean circuits
+   consisting of $\textsc{Not}$, $\textsc{And}$ and $\textsc{Or}$
+   gates and the corresponding time-complexity is just the number of
+   logic gates. For example, $\AD(x_3x_2x_1x_0)= x_1$ has
+   time-complexity $0$ and $\AD(x_3x_2x_1x_0)= x_1\vee \neg x_3\wedge
+   x_2$ has  time-complexity $3$.
+   \begin{enumerate}
+   \item Let $\mathcal{X}_0$ be a uniform distribution over $\ZZ_{16}$
+     and let $\mathcal{X}_1$ be a uniform distribution over
+     $\set{0,2,4,6,8,10,12,14}$. What is $\CD_x^1(\XXX_0,\XXX_1)$?
+   \item Find a uniform distribution $\XXX_2$ over some $8$ element
+     set such that $\CD_x^1(\XXX_0,\XXX_2)$ is minimal. Compute
+     $\CD_x^2(\XXX_0,\XXX_2)$ and $\CD_x^3(\XXX_0,\XXX_2)$.
+   \item Find a uniform distribution $\XXX_3$ over some $8$ element
+     set such that the distance sum $\CD_x^1(\XXX_1,\XXX_0)+
+     \CD_x^1(\XXX_0,\XXX_3)\neq\CD_x^1(\XXX_1,\XXX_3)$
+   \item Estimate for which value of $t$ the distances
+     $\CD_x^t(\XXX_0,\XXX_1)$ and $\SD_x(\XXX_0,\XXX_1)$ coincide for
+     all distributions over $\ZZ_{16}$.
+   \end{enumerate}
+   \item Let $\AD$ be a $t$-time distinguisher and let
+   $\alpha(\AD)=\pr{\AD=1|\HYP_0}$ and $\beta(\AD)=\pr{\AD=0|\HYP_1}$
+   be the ratios of false negatives and false positives. Show that for
+   any $c\in[0,1]$ there exists a $t+\Oh(1)$-time adversary $\ADB$ such that
+  \begin{align*}
+    \alpha(\ADB)=(1-c)\cdot\alpha(\AD)\qquad\text{and}\qquad
+    \beta(\ADB)=c+(1-c)\cdot\beta(\AD)\enspace.
+  \end{align*}
+  Are there any practical settings where such trade-offs are
+  economically justified? Give some real world examples.
+
+  \textbf{Hint:} What happens if you first throw a fair coin and run
+  $\AD$ only if you get tail and otherwise output $0$?
+
+
+\item[$(\star)$] Let the time-complexity of distinguishing algorithms
+  be defined as in Exercise~2. Find disjoint distributions $\XXX_0$
+  and $\XXX_1$ over $\ZZ_{256}$ such that their computational distance
+  is minimal. Tabulate the results for time-bounds $0,1,\ldots,
+  16$. More precisely, find the optimal distribution pair for each
+  time-bound and their computational distance for all time-bounds.
+
+\item Consider the following game, where an adversary $\AD$ gets three
+  values $x_1$, $x_2$ and $x_3$. Two of them are sampled from the
+  efficiently samplable distribution $\XXX_0$ and one of them is
+  sampled from the efficiently samplable distribution $\XXX_1$. The
+  adversary wins the game if it correctly determines which sample is
+  taken from $\XXX_1$.
+  \begin{enumerate}
+  \item Find an upper bound to the success probability if
+    distributions $\XXX_0$ and $\XXX_1$ are
+    $(t,\varepsilon)$-indistinguishable.
+  \item How does the bound on the success change if we modify the game
+    in the following manner. First, the adversary can first make its
+    initial guess $i_0$. Then the challenger reveals $j\neq i_0$ such
+    that $x_j$ was sampled from $\XXX_0$ and then the adversary can
+    output its final guess $i_1$.
+
+    \textbf{Hint:} How well the adversary can perform if the
+    challenger gives no samples to the adversary? How can you still
+    simulate the game to the adversary who expects these samples?
+   
+\end{enumerate}
+
+
+\item Recall that a game is a two-party protocol between the
+  challenger $\GAME$ and an adversary $\AD$ and that the output of the
+  game $\GAME^\AD$ is always determined by the challenger. Prove the
+  following claims:
+  \begin{enumerate}
+  \item Any hypothesis testing scenario $\HYP$ can be formalised as a
+    game $\GAME$ such that $\pr{\AD=b|\HYP}=\pr{\smash{\GAME^\AD=b}}$
+    for all adversaries $\AD$.
+  \item For two simple hypotheses $\HYP_0$ and $\HYP_1$, there is a
+    game $\GAME$ such that
+    \begin{align*}
+      \CD_\star^t(\HYP_0,\HYP_1)=2\cdot\max_{\AD\text{ is
+          $t$-time}}\abs{\pr{\smash{\GAME^\AD=1}}-{\textstyle\frac{1}{2}}}\enspace.
+    \end{align*}
+  \item The computational distance between  games defined as follows
+    \begin{align*}
+      \CD_\star(\GAME_0,\GAME_1)=\max_{\AD\text{ is
+          $t$-time}}\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}}\enspace.
+    \end{align*}
+  Show that this quantity is indeed a pseudo-metric:
+   \begin{align*}
+     \CD_\star^t(\GAME_0,\GAME_1)&=\CD_\star^t(\GAME_1,\GAME_0)\enspace,\\
+     \CD_\star^t(\GAME_0,\GAME_2) &\leq \CD_\star^t(\GAME_0,\GAME_1)+\CD_\star^t(\GAME_1,\GAME_2)\enspace. 
+   \end{align*}
+   When is the computational distance a proper metric, i.e.,  
+   \begin{align*}
+     \CD_\star^t(\GAME_0,\GAME_1)\neq 0\qquad\Leftrightarrow\qquad \SD_\star(\GAME_0,\GAME_1)\neq 0\enspace?
+   \end{align*}
+  \end{enumerate}
+
+
+\item Let $\XXX_0$ and $\XXX_1$ efficiently samplable distributions
+  that are $(t,\varepsilon)$-indis\-tinguishable. Show that
+  distributions $\XXX_0$ and $\XXX_1$ remain computationally
+  indistinguishable even if the adversary can get $n$ samples.
+  \begin{enumerate}
+  \item First estimate computational distances between following games
+    \begin{align*}
+      \begin{game}{\GAME_{00}^\AD}
+      &x_0\gets\XXX_0\\
+      &x_1\gets\XXX_0\\
+      &\RETURN \AD(x_0,x_1)
+      \end{game}
+      \qquad
+      \begin{game}{\GAME_{01}^\AD}
+      &x_0\gets\XXX_0\\
+      &x_1\gets\XXX_1\\
+      &\RETURN \AD(x_0,x_1)
+      \end{game}
+      \qquad
+      \begin{game}{\GAME_{11}^\AD}
+      &x_0\gets\XXX_1\\
+      &x_1\gets\XXX_1\\
+      &\RETURN \AD(x_0,x_1)
+      \end{game}  
+   \end{align*}
+   \textbf{Hint:} What happens if you feed a sample $x_0\gets\XXX_0$
+   together an unknown sample $x_1\gets\XXX_i$ to $\AD$ and use the
+   reply to guess $i$.
+ \item Generalise the argumentation to the case, where the adversary
+   $\AD$ gets $n$ samples from a distribution $\XXX_i$. That is,
+   define the corresponding sequence of games $\GAME_{00\ldots
+     0},\ldots,\GAME_{11\ldots 1}$.
+ \item Why do we need to assume that distributions $\XXX_0$ and
+   $\XXX_1$ are efficiently samplable?
+  \end{enumerate}
+
+\item[$(\star)$] Usually, the statistical distance
+  $\SD_\star(\GAME_0,\GAME_1)$ is defined as a limiting value
+  $\SD_\star(\GAME_0,\GAME_1)=\lim_{t\to
+    \infty}\CD_\star^t(\GAME_0,\GAME_1)$.  Express the statistical
+  distance in terms of the distributions of challenger replies
+  \begin{align*}
+   p_i(y_i|x_1,y_1,\ldots,x_i)=
+  \pr{\begin{aligned}
+      &\text{$\GAME_i$ sends $y$ as the $i$th message to $\AD$ given}\\
+      &\text{that preceding messages were $x_1,y_1,\ldots,x_i$}       
+    \end{aligned}}
+  \end{align*}
+  where $x_1$ be the first message sent by the challenger $\GAME_i$,
+  $y_1$ the corresponding reply from the adversary $\AD$ and the last
+  message $y_n$ corresponds to the output of the game. Note that there
+  are essentially two types of games. In the interactive hypothesis
+  testing games, the output of $\GAME_i$ is determined by the last
+  reply $x_n$ of $\AD$, i.e., $y_n=x_n$. In other more general types
+  of games, $y_n$ can arbitrarily depend on the previous messages
+  $x_1,\ldots,x_n$ received by the challenger $\GAME_i$.
+
+\item[$(\star)$] Prove that $(t,\varepsilon)$-pseudorandom generators
+  $f:\set{0,1}^n\to\set{0,1}^m$ exist for sufficiently big values of
+  $m$ and $n$, if we do not limit the computational complexity of the
+  function $f$. Give an interpretation to this result.
+
+  \textbf{Hint:} First prove that there are only finite number of
+  $t$-time adversaries and that these adversaries can perfectly
+  distinguish only a fixed number functions
+  $f:\set{0,1}^n\to\set{0,1}^m$ for any number of $m,n$. 
+
+
+\item[$(\star)$] Let $f:\SSS\to\set{0,1}^*$ be an efficiently
+  predictable from $f(s)$. That is, there exists a $t$-time algorithm
+  that achieves
+  \begin{align*}
+    \advSEMXX{f,f}{\AD}=\pr{s\gets\SSS:\AD(f(s))=f(s)}-\pr{s\gets \SSS: f(s)=f(s)}\geq \varepsilon
+    \enspace
+  \end{align*}
+  for some probability distribution over $\SSS$.  Prove that there
+  exist a $2t$ algorithm $\ADB$ and two states $s_0,s_1\in\SSS$ such
+  that $\advINDXX{f(s_0),f(s_1)}{\ADB}\geq \varepsilon$. Conclude that
+  $f$ cannot be deterministic and $\pr{f(s)=y}\leq \varepsilon$ for an
+  invertible random function $f$. State the last result in terms of
+  min-entropy.
+\end{enumerate}
+
+\end{document}
+

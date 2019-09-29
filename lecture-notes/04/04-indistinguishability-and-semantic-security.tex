@@ -1,0 +1,313 @@
+\documentclass{llncs}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\bibliographystyle{alpha} 
+
+\title{A Connection between Indistinguishability and Semantic Security}
+\author{Sven Laur}
+\institute{University of Tartu}
+
+\begin{document}
+\maketitle
+
+\section{Formal Definitions}
+
+Intuitively, if objects are indistinguishable then we cannot determine
+their personal properties which vary among the population. Indeed, if
+we could reliably determine wheter an object is green or not then we
+could easily distinguish green objects from yellow ones. Hence,
+indistinguishability indirectly implies that one can reliably detect
+only trivial properties that either hold or do not hold for the entire
+population. This basic argumentation template forms the cornerstone of
+contemporary cryptography. In the following, we fill out all details
+that are needed to convert this informal argumentation to a formal
+proof.
+
+Let $\SSS$ be a distribution of secret values $s$ and let
+$\supp(\SSS)$ be the corresponding support.  Then we can define
+indistinguishability of states $\supp(\SSS)$ w.r.t. a function
+$f:\SSS\to\XXX$. We say that states from $\supp(\SSS)$ are
+\emph{$(t,\varepsilon)$-indistinguishable} if for any
+$s_0,s_1\in\supp(\SSS)$ and for any $t$-time algorithm $\AD$:
+\begin{align*}
+  \advIndXX{s_0,s_1}{\AD}%
+  =\abs{\pr{x\gets f(s_0):\AD(x)=1}-\pr{x\gets f(s_1):\AD(x)=1}}%
+  \leq \varepsilon\enspace.
+\end{align*}
+
+To define semantic security, we have to formalise which properties of
+a hidden state are plausible or relevant. Essentially, we can talk
+about semantic security w.r.t. \emph{computable} functions
+$g:\SSS\to\YYY$. Of course, for fixed input and output domains
+$\SSS$ and $\YYY$ all functions are computable and thus this
+restriction is only a cosmetic addition that represents our intent. In
+some scenarios, there are obvious restrictions to the function
+$g$. For instance, we might require that the output of $g$ must be
+computable during the next one hundred years. 
+
+Now note that for any function $g$ there is a trivial predictor
+algorithm $\AD_*$ that outputs the most probable outcome of $g$ over
+the distribution $\SSS$ and thus the advantage of an algorithm $\AD$
+is defined as the difference
+\begin{align*}
+  \pr{s\gets\SSS, x\gets f(s): \AD(x)=g(s)}-
+  \pr{s\gets\SSS, x\gets f(s): \AD_*(x)=g(s)}\enspace.
+\end{align*}
+More formally, we say that states $\supp(\SSS)$ are
+\emph{$(t,\varepsilon)$-semantically secure} w.r.t. functions $f$ and
+$g$ if for any $t$-time adversary $\AD$ the corresponding advantage
+ \begin{align*}
+   \advSemXX{f,g}{\AD}%
+   &=\pr{ \AD(x)=g(s)}
+   -\max_{y_*\in\YYY}\pr{s\gets\SSS:g(s)=y_*}\leq\varepsilon\enspace.
+\end{align*}
+
+\section{Indistinguishability Implies Semantic Security}
+
+The main aim of this section is to prove the classical theorem about
+semantic security and introduce basic concepts of game-playing
+proofs.
+
+\begin{theorem}\label{thm:ind-sem}
+  If states from $\supp(\SSS)$ are
+  \emph{$(2t,\varepsilon)$-indistinguishable} w.r.t. the function $f$,
+  then states $\supp(\SSS)$ are also $(t,\varepsilon)$-semantically
+  for all functions $g$, i.e., $\advSemXX{f,g}{\AD}\leq\varepsilon$
+  for all $t$-time adversaries $\AD$.
+\end{theorem}
+
+\begin{proof}
+In order to present the proof modularly in easily understandable
+steps, we start from the basic semantic security game
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &s\gets\SSS\\
+    &x\gets f(s)\\
+    &y\gets\AD(x)\\
+    &\RETURN [y\iseq g(s)]
+  \end{game}
+\end{align*}
+and then gradually rewrite the game until we obtain the desired bound
+on the success probability 
+\begin{align*}
+\pr{\GAME^\AD=1}\leq\pr{\smash{\GAME^{\AD_*}=1}}+\varepsilon\enspace.  
+\end{align*}
+
+\paragraph{\textsc{Coin fixing}.} Note that $g$ does not have to be a
+deterministic function. However, if $\advSemXX{f,g}{\AD}>\varepsilon$
+for some randomised function $g:\SSS\times\Omega\to\YYY$, then there
+exists a deterministic function $g_*$ such that
+$\advSemXX{f,g_*}{\AD}>\varepsilon$. Indeed,  by definition
+\begin{align*}
+  \advSemXX{f,g}{\AD}%
+  &=\pr{\GAME^{\AD}=1}-\pr{\smash{\GAME^{\AD_*}=1}}\\
+  &=\sum_{\omega_0\in\Omega}\pr{\omega\gets\Omega:\omega=\omega_0}
+  \cdot\brak{\pr{\GAME_{\omega}^\AD=1}-\pr{\smash{\GAME_{\omega}^{\AD_*}=1}}}\\
+  &\leq\max_{\omega\in\Omega}\set{\pr{\GAME_{\omega}^\AD=1}-\pr{\smash{\GAME_{\omega}^{\AD_*}=1}}}
+\end{align*}
+where the game $\GAME_{\omega}$ is defined as follows
+\begin{align*}
+  \begin{game}{\GAME_{\omega}^\AD}
+    &s\gets\SSS\\
+    &x\gets f(s)\\
+    &y\gets\AD(x)\\
+    &\RETURN [y\iseq g(s;\omega)]
+  \end{game}
+\end{align*}
+Since $g_\omega(\cdot)=g(\cdot;\omega)$ is a deterministic function, we have obtained
+\begin{align*}
+  \advSemXX{f,g}{\AD}\leq\max_{\omega\in\Omega}\advSemXX{f,g_\omega}{\AD}
+\end{align*}
+and without loss of generality we can assume that $g$ is
+deterministic.  This kind of coin-fixing argument is common in many
+cryptographic proofs.
+
+\paragraph{\textsc{Sampling Idiom}.}
+As a next step, we will split the domain of $\SSS$ into a set of
+disjoint sub-domains that cover the entire domain
+\begin{align*}
+  \SSS_y\doteq\set{s\in\SSS: g(s)=y}\enspace.
+\end{align*}
+Since $g$ is deterministic the partition is indeed a well defined. Now
+a distribution $\SSS$ naturally defines a distribution over indices
+$y$. Let $\YYY_0$ be the distribution over elements of $\YYY$ such that
+for all $y_0\in\YYY$
+\begin{align*}
+  \pr{y\gets\YYY_0:y=y_0}=\pr{s\gets\SSS:s\in\SSS_{y_0}}\enspace.
+\end{align*}
+Secondly, let $\SSS_y$ denote also a conditional distribution that
+emerges if we restrict the set of outputs to the domain $\SSS_y$, that
+is, for all $s_0\in\SSS$ and $y\in\YYY$:
+\begin{align*}
+  \pr{s\gets\SSS_y:s=s_0}=\pr{s\gets \SSS: s=s_0|g(s)=y}\enspace.
+\end{align*}
+Then the sampling procedure $s\gets\SSS$ can be rewritten in two steps
+\begin{align*}
+  \begin{game}{\GAME_{*}^\AD}
+    &y\gets\YYY_0\\
+    &s\gets\SSS_y\\
+    &x\gets f(s)\\
+    &y\gets\AD(x)\\
+    &\RETURN [y\iseq g(s)]
+  \end{game}
+\end{align*}
+so that the success probability does not change for any adversary
+$\AD$. Indeed
+\begin{align*}
+  \pr{\GAME^{\AD}=1}%
+  &= \sum_{y\in\YYY}\pr{s\gets\SSS: g(s)=y_0}\pr{\GAME^{\AD}=1|g(s)=y_0}\\
+  &= \sum_{y\in\YYY}\pr{y\gets\YYY_0: y=y_0}\pr{\GAME_{y_0}^{\AD}=1}
+\end{align*}
+where the game $\GAME_{y_0}$ is defined as follows
+\begin{align*}
+  \begin{game}{\GAME_{y_0}^\AD}
+    &s\gets\SSS_{y_0}\\
+    &x\gets f(s)\\
+    &y\gets\AD(x)\\
+    &\RETURN [y\iseq g(s)]
+  \end{game}  
+\end{align*}
+To be punctual, one has to use the total probability formula and the
+definition of conditional probabilities to formally prove
+\begin{align*}
+ \pr{\GAME^{\AD}=1|g(s)=y_0}\equiv  \pr{\GAME_{y_0}^{\AD}=1}\enspace
+\end{align*}
+but this is a trivial exercise that is left to the reader. 
+
+\paragraph{\textsc{Choosing between several simple hypothesis}.}
+Already a superficial inspection of the game $\GAME_*$ reveals that an
+adversary $\AD$ must choose between multiple simple hypotheses
+$\HHH_{y_0}=[y\iseq y_0]$. As a next step, we can express 
+\begin{align*}
+  \pr{\GAME_*^\AD=1}%
+  &=\pr{y\gets \YYY_0:y=y_1}\pr{\GAME_{y_1}^\AD=1}\\
+  &\quad+\sum_{y_0\in\YYY\setminus y_1}\pr{y\gets \YYY_0:y=y_0}\pr{\GAME_{y_0}^\AD=1}
+\end{align*}
+where $y_1$ is the most probable index element. Now note that
+\begin{align*}
+  \pr{y_1}\pr{\GAME_{y_1}^\AD=1}&=
+  \pr{y_1}-\pr{y_1}\cdot\sum_{y_0\in\YYY\setminus y_1}\pr{s\gets\SSS_{y_1}:\AD(f(s))=y_0}\\
+  &\leq \pr{y_1}-\sum_{y_0\in\YYY\setminus y_1}\pr{y_0}\pr{s\gets\SSS_{y_1}:\AD(f(s))=y_0}
+\end{align*}
+since $\pr{y_0}\leq\pr{y_1}$ by the choice of $y_1$.
+Consequently,
+\begin{align*}
+  \pr{\GAME_*^\AD=1}%
+  &\leq \pr{y_1}+\sum_{y_0\in \YYY\setminus y_1}%
+  \pr{y_0}
+    \abs{\pr{
+    \begin{aligned}
+      &s\gets\SSS_{y_0}:\\
+      &\AD(\cdot)=y_0
+    \end{aligned}}%
+  -\pr{
+    \begin{aligned}
+      &s\gets\SSS_{y_1}:\\
+      &\AD(\cdot)=y_0
+    \end{aligned}}}\\
+   &\leq \pr{y_1}+
+    \max_{y_0\in\YYY}
+    \abs{\pr{
+    \begin{aligned}
+      &s\gets\SSS_{y_0}:\\
+      &\AD(\cdot)=y_0
+    \end{aligned}}%
+  -\pr{
+    \begin{aligned}
+      &s\gets\SSS_{y_1}:\\
+      &\AD(\cdot)=y_0
+    \end{aligned}}}\enspace.
+\end{align*}
+
+\paragraph{\textsc{From complex hypotheses to simple hypotheses}.}
+Note that in terms of $\SSS$ the last term in the upper bound
+obtained above is very close to a computational distance between
+complex hypotheses $[s\gets\SSS_{y_0}]$ and $[s\gets\SSS_{y_1}]$. 
+
+In fact, if we know the maximising value $y_0$, then we can convert a
+$t$-time algorithm $\AD$ that maximises the term into $2t$-time
+distinguisher $\ADB:\XXX\to\set{0,1}$. As $y_0$ can be at most
+$t$-bits long, we can test $[\AD(f(s))\iseq y_0]$ in $t$-time and
+consequently we can build $2t$-time algorithm $\ADB$ such that
+\begin{align*}
+  &p_0\doteq \pr{s\gets\SSS_{y_0}:\ADB(f(s))=1}=\pr{s\gets\SSS_{y_0}:
+    \AD(f(s))=y_0}\enspace,\\
+  &p_1\doteq\pr{s\gets\SSS_{y_1}:\ADB(f(s))=1}=\pr{s\gets\SSS_{y_1}:
+    \AD(f(s))=y_0}\enspace.
+\end{align*}
+Since
+\begin{align*}
+  p_0%
+  &=\sum_{s_0\in S_{y_0}\atop s_1\in S_{y_1}}\pr{s\gets\SSS_{y_0}:s=s_0}\pr{s\gets\SSS_{y_1}:s=s_1}\pr{\ADB(f(s_0))=1}\\
+  p_1 %
+  &=\sum_{s_0\in S_{y_0}\atop s_1\in
+    S_{y_1}}\pr{s\gets\SSS_{y_0}:s=s_0}\pr{s\gets\SSS_{y_1}:s=s_1}\pr{\ADB(f(s_1))=1}
+\end{align*}
+we can estimate
+\begin{align*}
+  \abs{p_0-p_1}
+  &=\Biggl|\sum_{s_0\in S_{y_0}\atop s_1\in S_{y_1}}\pr{s_0}\pr{s_1}\brak{\pr{\ADB(f(s_0))=1}-\pr{\ADB(f(s_1))=1}}\Biggr|\\
+  &\leq\sum_{s_0\in S_{y_0}\atop s_1\in S_{y_1}}\pr{s_0}\pr{s_1}\abs{\pr{\ADB(f(s_0))=1}-\pr{\ADB(f(s_1))=1}}\\
+  &\leq\max_{s_0\in S_{y_0}\atop s_1\in S_{y_1}}\abs{\pr{\ADB(f(s_0))=1}-\pr{\ADB(f(s_1))=1}}\\
+  &\leq\max_{s_0,s_1\in\SSS}\CD_x^{2t}([s\iseq s_0],[s\iseq s_1])\leq \varepsilon\enspace.
+\end{align*}
+
+\paragraph{\textsc{The final step}.}
+To summarise, we have obtained
+\begin{align*}
+  \pr{\GAME^\AD=1}&=\pr{\GAME_*^\AD=1}\leq \max_{y_0\in\YYY}\pr{y\gets\YYY_0:y=y_0}+\varepsilon\\
+  &\leq\max_{y_0\in\YYY}\pr{s\gets \SSS:g(s)=y_0}+\varepsilon\enspace. 
+\end{align*}
+\qed
+\end{proof}
+
+\section{Final Remarks}
+Note that the proof given above is strictly non-constructive and does
+not show how to convert a good predictor of $g$-values into a good
+distinguisher of hidden states $s_0,s_1\in\SSS$. Non-constructivity
+of the proof is simultaneously the main strength and weakness of this
+approach. Theorem~\ref{thm:ind-sem} is extremely powerful as a
+mathematical claim, since it assumes nothing from the sample
+distribution $\SSS$ and holds for all functions $g$. As a result,
+non-constructivity is essential in the proof, since we cannot assume
+that elements of $\SSS$ can be \emph{efficiently} sampled neither we
+can assume that the function $g$ is \emph{efficiently} computable.
+
+To be precise, non-constructivity enters into the proof in three
+places. First, we fix random coins $\omega$ so that $g(\cdot,\omega)$
+behaves better than $g(\cdot)$.  Second, we fix a most probable output
+$y_1$ and sub-distributions $\SSS_{y}$ for $y\in\YYY$. Third, we use
+two proof steps for finding an output $y_0\in\YYY$ and two states
+$s_0\in\SSS_{y_0}$, $s_1\in\SSS_{y_1}$ that maximises the difference
+$\abs{\pr{\AD(f(s_0))=y_0}-\pr{\AD(f(s_1))=y_0}}.$
+
+For a fixed distribution $\SSS$ and a fixed function $g(\cdot)$, the
+complexity of these non-constructive steps is irrelevant. For a
+hypothetical $t$-time algorithm $\AD$ that achieves
+$\advSemXX{f,g}{\AD}>\varepsilon$, there exist states
+$s_0,s_1\in\SSS$ and a corresponding $2t$-time algorithm $\ADB$ such
+that $\advIndXX{s_0,s_1}{\ADB}\geq \varepsilon$ and consequently the
+existence of such a $t$-time algorithm $\AD$ directly contradicts the
+security premise.
+
+However, the efficiency is important if the distribution $\SSS$ is
+not fixed beforehand and a contradiction triple $(\ADB, s_0,s_1)$ must
+be discovered on the fly. For instance, Theorem~\ref{thm:ind-sem} does
+not cover semantic security of ciphertexts in the settings, where an
+adversary can influence which messages are encrypted. The latter is
+not so far-fetched assumption. For instance, communication in a war is
+mostly about the adversarial behaviour and thus clearly controllable
+by adversary.
+
+To prove security in such settings, we have to weaken the claim so
+that the construction in the proof would become efficiently
+constructable. In particular, the distribution $\SSS$ must be
+efficiently samplable and $g$ efficiently computable. Then we can
+convert the original non-constructive proof into a constructive
+reduction. The details of this approach are thoroughly discussed
+in~\cite{FOCS1997EXT:Bellare1997}.
+
+\bibliography{references}
+
+\end{document}
