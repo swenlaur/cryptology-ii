@@ -1,0 +1,44 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{}
+\editor{}
+\tags{false positives, false negatives, statistical distance, computational distance}
+
+
+\begin{document}
+\begin{exercise}{Region of feasible distinguishers}
+Let simple hypotheses $\HHH_0$ and $\HHH_1$ be defined through the following distributions of observable outcomes $\XXX_0$ and $\XXX_0$:
+\begin{align*}
+\pr{x\gets\XXX_0:x=x_*}&=
+\begin{cases}
+ \frac{4}{42}, &\text{if } x_*\in\set{0,\ldots, 3}  \enspace,\\
+ \frac{3}{42}, &\text{if } x_*\in\set{4,\ldots, 7}  \enspace,\\ 
+ \frac{2}{42}, &\text{if } x_*\in\set{8,\ldots, 11} \enspace,\\ 
+ \frac{1}{42}, &\text{if } x_*\in\set{12,\ldots, 17}\enspace,\\ 
+ \frac{0}{42}, &\text{if } x_*\in\set{28,\ldots, 31}\enspace,\\
+\end{cases}\\
+\pr{x\gets\XXX_1:x=x_*}&=
+\begin{cases}
+ \frac{0}{42}, &\text{if } x_*\in\set{0,\ldots, 3}  \enspace,\\
+ \frac{1}{42}, &\text{if } x_*\in\set{4,\ldots, 19}  \enspace,\\ 
+ \frac{2}{42}, &\text{if } x_*\in\set{20,\ldots, 23} \enspace,\\ 
+ \frac{3}{42}, &\text{if } x_*\in\set{24,\ldots, 27}\enspace,\\ 
+ \frac{4}{42}, &\text{if } x_*\in\set{28,\ldots, 31}\enspace.\\
+\end{cases}
+\end{align*}
+Find the region of false positives and false negatives
+\begin{align*}
+\alpha(\AD)&=\pr{x\gets\XXX_0:\AD(X)=1}\\
+\beta(\AD)&=\pr{x\gets\XXX_0:\AD(X)=0}
+\end{align*}
+that are achievable by all distinguishing algorithms $\AD$. Sketch the region of achievable tradeoffs. Add the naive tradeoff lines based on statistical distance. Explain why the region has symmetry point $(\frac{1}{2}, \frac{1}{2})$. How does the region change if we consider only $t$-time distinguishers? Does  the region preserve symmetry?   
+
+\end{exercise}
+
+
+\begin{solution}
+\end{solution}
+
+\end{document}
+
