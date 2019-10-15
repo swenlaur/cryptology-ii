@@ -1,0 +1,64 @@
+\documentclass{crypto-exercise}
+\usepackage{todonotes}
+\author{Sven Laur}
+\contributor[Significantly expanded the original exposition]{Sven Laur}
+\editor{Sven Laur}
+
+\tags{simple reductions, random self-reducibility, Quadratic Residuosity problem, incomplete solution}
+
+\begin{document}
+\begin{exercise}{Random self-reducibility of Quadratic Residuosity}
+Show that Quadratic Residuosity problem for a fixed $N=pq$ where $p$ and $q$ are  
+some Blum primes is randomly self-reducible.
+Recall that a prime $p$ is a Blum prime if $p\equiv 3\mod 4$ and an element $y\in\ZZ_n$ is a quadratic residue if there exists $x$ such that $y=x^2\mod n$. 
+The element $y$ can be quadratic residue only if its Jacobi symbol $\brak{\frac{y}{n}}=1$.
+However, only half of the elements with Jacobi symbol one 
+\begin{align*}
+   J_n=\set{y\in\ZZ_N:\displaystyle{\brak{\frac{y}{n}}=1}}\enspace   
+\end{align*}
+belong to the set of quadratic residues
+\begin{align*}
+   QR_n=\set{y\in\ZZ_n:\exists x\in\ZZ_n: x^2\equiv y \pmod N}\enspace.   
+\end{align*}
+The Quadratic Residuosity problem is to distinguish between random elements of $QR_n$ and $J_n\setminus QR_n$.
+\end{exercise}
+
+\begin{solution}
+\paragraph{Advantage against Quadratic Residuosity.}
+\todo[inline]{Define advantage }
+
+\begin{align*}
+\advQRPXX{n}{\AD}= ??
+\end{align*}
+where
+\begin{align*}
+    \begin{game}{\BGAME_0^\AD}
+      &x\getsu QR_n\\
+      &??
+    \end{game}
+    \qquad\qquad
+       \begin{game}{\BGAME_1^\AD}
+      &x\getsu J_n\setminus QR_n\\
+      &??
+    \end{game}
+\end{align*}
+\ \\
+
+\paragraph{Number theoretic properties of Quadratic Residues.}
+One can show that Jacobi symbols satisfies following equations
+\begin{align*}
+    \brak{\frac{ab}{n}}=\brak{\frac{a}{n}}\cdot\brak{\frac{b}{n}}
+    \qquad\text{and}\qquad
+    \brak{\frac{a^2}{n}}=1\enspace.
+\end{align*}
+
+\todo[inline]{Explain how one can rerandomise Quadratic Residues}  
+
+
+\paragraph{Reduction construction.}
+\todo[inline]{Give a reduction construction}
+\todo[inline]{Analyse it success and running-time.}
+
+\end{solution}
+
+\end{document}
