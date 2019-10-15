@@ -1,0 +1,30 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{}
+\editor{Sven Laur}
+\tags{indistinguishability, hard-core predicate}
+
+
+\begin{document}
+\begin{exercise}{Hard-core predicate based on indistinguishability}
+A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable} also known as \emph{$(t,\varepsilon)$-hardcore predicate} for a function $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+  \end{align*}
+Show that $\pi:\SSS\to\set{0,1}$ must be almost regular if $\pi$ is hard-core predicate. 
+Let $\XXX_i$ denote the distribution of $f(s)$ for $s\getsu\SSS_i$ where $\SSS_0=\set{s\in\SSS:\pi(s)=0}$ and $\SSS_1=\set{s\in\SSS:\pi(s)=1}$. 
+Show that if the distributions $\XXX_0$ and $\XXX_1$ are $(t,\varepsilon)$-indistinguishable then $\pi$ is also a hardcore predicate. 
+Analyse how the prediction advantage depends on regularity. 
+Is it possible to prove the reverse implication? 
+\end{exercise}
+\begin{solution}\ \\
+\textbf{Hint}: Give alternative definition of hard-core bits in terms of two games $\BGAME_0$ and $\BGAME_1$.\\
+\textbf{Hint}: Define $\ADB$ such that $\BGAME_0^\ADB\equiv \GAME_0^\AD$. What is the corresponding $\BGAME_1^\ADB$?\\
+ 
+
+
+\end{solution}
+\end{document}
