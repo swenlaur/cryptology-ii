@@ -1,0 +1,30 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{}
+\contributor[]{}
+\tags{indistinguishability, hard-core predicates, Decisional Diffie-Hellman}
+
+
+\begin{document}
+\begin{exercise}{Hard-core predicate based on Decisional Diffie-Hellman problem}
+A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable}  for a function
+  $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f,\pi}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+\end{align*}
+Such predicates are also known as \emph{$(t,\varepsilon)$-hardcore predicates}. Let $\GG$ be a $q$-element $(t,\varepsilon_1)$-secure Decisional Diffie-Hellman group with a generator $g$. Let $\rho:\GG\to\set{0,1}$ be $\varepsilon_2$-regular:
+\begin{align*}
+\abs{\pr{h\gets\GG: \rho(h)=0}- \pr{h\gets\GG: \rho(h)=1}}\leq \varepsilon_2\enspace.
+\end{align*}
+Show that the function $f:\ZZ_q\times\ZZ_q\to\GG\times\GG$ and the predicate $\pi: \ZZ_q\times\ZZ_q\to\set{0,1}$ defined as follows
+\begin{align*}
+f(x,y)&=(g^x, g^y)\\
+\pi(x,y)&= \rho(g^{xy})
+\end{align*}  
+gives a rise to an hard-core predicate. Find exact security quantifications. When does this imply that the individual bits of $g^{xy}$ are unpredictable for the adversaries in the Diffie-Hellman key exchange protocol.
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}

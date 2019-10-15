@@ -1,0 +1,28 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{}
+\editor{Sven Laur}
+\tags{indistinguishability, hard-core predicate, one-way permutation}
+
+
+\begin{document}
+\begin{exercise}{Pseudorandom generator based on hard-core bits of a permutation}
+A predicate $\pi$ is a \emph{$(t,\varepsilon)$-unpredictable} also known as \emph{$(t,\varepsilon)$-hardcore predicate} for a function $f:\SSS\to\XXX$ if for any $t$-time adversary
+  \begin{align*}
+    \advHCPredXX{f}{\AD}%
+    =2\cdot\abs{\pr{s\getsu\SSS:\AD(f(s))=\pi(s)}-{\textstyle\frac{1}{2}}}\leq\varepsilon\enspace.
+  \end{align*}
+Let $\pi:\set{0,1}^n\to\set{0,1}$ be a $(t,\varepsilon)$-hardcore predicate for a permutation $f:\set{0,1}^n\to\set{0,1}^{n}$. 
+Prove that the concatenation $g_1(s)=f(s)||\pi(s)$ is $(t,\varepsilon)$-pseudorandom generator. 
+Prove that the double-concatenation $g_2(s)=f(f(s))\|\pi(f(s)) \|\pi(s)$ is $(t,2\varepsilon)$-pseudorandom generator. Can this proof be generalised for other concatenation functions $g_i(s)=f(\ldots f(f(s))\ldots)\|\pi(f(\ldots f(f(s))\ldots))\|\ldots \pi(f(s))\|\pi(s)$?    
+\end{exercise}
+\begin{solution}\ \\
+\textbf{Hint}: Give alternative definition of hard-core bits in terms of two games $\BGAME_0$ and $\BGAME_1$.\\
+\textbf{Hint}: Define $\ADB$ such that $\BGAME_0^\ADB\equiv \GAME_0^\AD$. What is the corresponding $\BGAME_1^\ADB$?\\
+ 
+
+
+\end{solution}
+\end{document}
