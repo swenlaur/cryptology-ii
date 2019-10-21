@@ -1,0 +1,166 @@
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{amssymb}
+\RequirePackage{amsmath}
+\RequirePackage[mathscr]{eucal}
+\RequirePackage{bbm}
+\RequirePackage{extarrows}
+
+%%%%% Mathematical symbols %%%%%
+
+% Various algebraic structures
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\II}{\mathbb{I}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\GF}{\mathsf{GF}}
+\newcommand{\GG}{\mathbb{G}}
+ 
+% Calligraphic symbols for sets
+\newcommand{\AAA}{\mathcal{A}}
+\newcommand{\BBB}{\mathcal{B}}
+\newcommand{\CCC}{\mathcal{C}}
+\newcommand{\DDD}{\mathcal{D}}
+\newcommand{\EEE}{\mathcal{E}}
+\newcommand{\FFF}{\mathcal{F}}
+\newcommand{\GGG}{\mathcal{G}}
+\newcommand{\HHH}{\mathcal{H}}
+\newcommand{\III}{\mathcal{I}}
+\newcommand{\JJJ}{\mathcal{J}}
+\newcommand{\KKK}{\mathcal{K}}
+\newcommand{\LLL}{\mathcal{L}}
+\newcommand{\MMM}{\mathcal{M}}
+\newcommand{\NNN}{\mathcal{N}}
+\newcommand{\OOO}{\mathcal{O}}
+\newcommand{\PPP}{\mathcal{P}}
+\newcommand{\QQQ}{\mathcal{G}}
+\newcommand{\RRR}{\mathcal{R}}
+\newcommand{\SSS}{\mathcal{S}}
+\newcommand{\TTT}{\mathcal{T}}
+\newcommand{\UUU}{\mathcal{U}}
+\newcommand{\VVV}{\mathcal{V}}
+\newcommand{\WWW}{\mathcal{W}}
+\newcommand{\XXX}{\mathcal{X}}
+\newcommand{\YYY}{\mathcal{Y}}
+\newcommand{\ZZZ}{\mathcal{Z}}
+
+% Other mathematical symbols
+\DeclareMathOperator{\Oh}{O}
+\DeclareMathOperator{\oh}{o}
+\newcommand{\PSET}{\mathcal{P}}
+\newcommand{\iseq}{\stackrel{?}{=}}
+\newcommand{\VAR} {\mathbf{D}}
+\DeclareMathOperator*{\EXP} {\mathbf{E}}
+\newcommand{\SD}  {\mathsf{sd}}
+\newcommand{\CD}  {\mathsf{cd}}
+
+% Shorthands for mathematical bracket operators
+\newcommand{\floor}[1] {\left\lfloor #1\right\rfloor}
+\newcommand{\ceil} [1] {\left\lceil  #1\right\rceil}
+\newcommand{\round}[1] {\left\lfloor #1\right\rceil}
+\newcommand{\brak} [1] {\left(#1\right)}
+\newcommand{\ssbrak}[1]{[\![#1]\!]}
+\newcommand{\set}  [1] {\left\{#1\right\}}
+\newcommand{\abs}  [1] {\left|#1\right|}
+\newcommand{\norm} [1] {\left\|#1\right\|}
+\newcommand{\pr}   [1] {\Pr\left[#1\right]}
+\renewcommand{\exp}[1] {\mathrm{exp}\left(#1\right)}
+
+% Asymptotic complexity
+\newcommand{\kk} {\mathbbmss{k}}
+\newcommand{\poly}{\mathbf{poly}}
+\newcommand{\negl}{\mathbf{negl}}
+\newcommand{\polylog}{\mathbf{polylog}}
+
+
+%%%%% Cryptographic primitives %%%%%
+
+% Cryptosystems
+\newcommand{\SK}    {\mathsf{sk}}
+\newcommand{\PK}    {\mathsf{pk}}
+\newcommand{\GEN}   {\mathsf{Gen}}
+\newcommand{\ENC}   {\mathsf{Enc}}
+\newcommand{\DEC}   {\mathsf{Dec}}
+\newcommand{\CSPACE}{\mathcal{C}}
+\newcommand{\DSPACE}{\mathcal{D}}
+\newcommand{\KSPACE}{\mathcal{K}}
+\newcommand{\MSPACE}{\mathcal{M}}
+\newcommand{\RSPACE}{\mathcal{R}}
+\newcommand{\TSPACE}{\mathcal{T}}
+
+% Commitment schemes
+\newcommand{\COM}   {\mathsf{Com}}
+\newcommand{\CERT}  {\mathsf{Cert}}
+\newcommand{\VERIFY}{\mathsf{Ver}}
+\newcommand{\EXTR}  {\mathsf{Extr}}
+\newcommand{\EQUIV} {\mathsf{Equiv}}
+
+%%%%% Cryptographic notation %%%%%
+
+% Protocols
+\newcommand{\PROT}  {\pi}
+\newcommand{\PROTID} {\pi^\circ}
+\newcommand{\VIEW}   {\mathsf{view}}
+\newcommand{\VIEWID} {\mathsf{view}^\circ}
+\newcommand{\INPDIST}{\mathfrak{D}}
+\newcommand{\ADVSTR} {\mathcal{A}}
+
+% Adversaries and aaversary distributions
+\newcommand{\AD}   {\mathscr{A}}
+\newcommand{\ADID} {\mathscr{A}^\circ}
+\newcommand{\ADB}  {\mathscr{B}}
+\newcommand{\ADBID}{\mathscr{B}^\circ}
+\newcommand{\ADC}  {\mathscr{C}}
+\newcommand{\ADCID}{\mathscr{C}^\circ}
+\newcommand{\ADDIST}   {\mathfrak{A}}
+\newcommand{\ADBDIST}  {\mathfrak{B}}
+\newcommand{\ADCDIST}  {\mathfrak{C}}
+\newcommand{\ADDISTID} {\mathfrak{A}^\circ}
+\newcommand{\ADBDISTID}{\mathfrak{B}^\circ}
+\newcommand{\ADCDISTID}{\mathfrak{C}^\circ}
+
+% Oracles
+\newcommand{\ORA}{\mathscr{O}}
+\newcommand{\ORS}{\mathscr{O}_{\mathrm{s}}}
+\newcommand{\ORF}{\mathscr{O}_{\mathrm{f}}}
+
+% Other participants
+\newcommand{\PARTY}     {\mathscr{P}}
+\newcommand{\PARTYID}   {\mathscr{P}^\circ}
+\newcommand{\TTP}       {\mathscr{T}}
+\newcommand{\SIM}       {\mathsf{Sim}}
+\newcommand{\HALTM}     {\mathscr{H}}
+\newcommand{\KEXTR}     {\mathscr{K}}
+
+% Games and hypotheses
+\newcommand{\HYP}{\mathcal{H}}
+\newcommand{\GAME}{\mathcal{G}}
+\newcommand{\BGAME}{\mathcal{Q}}
+\newcommand{\GIDEAL}{\GAME_{\scriptscriptstyle\mathrm{ideal}}}
+\newcommand{\GREAL}{\GAME_{\scriptscriptstyle\mathrm{real}}}
+\newcommand{\GIDATK}{\GAME_{\scriptscriptstyle\mathrm{id\text{-}atk}}}
+\newcommand{\GREATK}{\GAME_{\scriptscriptstyle\mathrm{re\text{-}atk}}}
+
+
+% Advantages
+%\DeclareMathOperator{\ADV}{Adv}
+\newcommand{\ADV}{\mathsf{Adv}}
+\newcommand{\ADVIND}{\ADV^{\mathrm{ind}}}
+
+% ReductionArrows
+\newcommand{\Redarrow}[2]
+{\smash{\xLongrightarrow[{\makebox[0em][c]{\ }\raisebox{0.9ex}[-1ex]
+ {\ensuremath{\scriptscriptstyle #2}}}]{\scriptscriptstyle #1}}}
+
+
+
+
+
+
+
+
+
+
