@@ -88,12 +88,12 @@ Consequently, we must upper bound the $\pr{\GAME_2^\AD=1}$ to bound $\ADVOW{\HHH
 \end{game}      
 \end{align*}
 For further analysis recall that we can use sampling idiom for restructuring the process that creates $(m_0,y)$.  
-Recall that the procedure $m_0\gets \MSPACE, y_0\gets h(m_0)$ defines a unique distribution $\YYY_0$ of hash values $y_0$. Moreover, there exists a family of sets $\MMM_y=\set{m: f(m)=y}$ such that the procedure $y_0\gets\YYY_0, m_0\getsu\MMM_y$ defines the same distribution of $(m_0,y_0)$  as the first procedure. Consequently, we can express $\GAME_3$ as follows:
+Recall that the procedure $m_0\gets \MSPACE, y_0\gets h(m_0)$ defines a unique distribution $\YYY_0$ of hash values $y_0$. Moreover, there exists a family of sets $\MMM_y=\set{m: f(m)=y}$ such that the procedure $y_0\gets\YYY_0, m_0\getsu\MMM_{y_0}$ defines the same distribution of $(m_0,y_0)$  as the first procedure. Consequently, we can express $\GAME_3$ as follows:
 \begin{align*}
 \begin{game}{\GAME_4^\AD}
  & h\getsu\HHH\\
  &y_0\gets\YYY_0\\
- &m_0\getsu\MSPACE_y\\
+ &m_0\getsu\MSPACE_{y_0}\\
  &m_1\gets \AD(h,y_0)\\
  &\RETURN [ m_0 \iseq m_1] \enspace.
 \end{game}      
@@ -104,7 +104,7 @@ Since $m_1$ does not depend on $m_0$ we can simplify the game further:
  & h\getsu\HHH\\
  & y_0\gets\YYY_0\\
  &m_1\gets \AD(h,y_0)\\
- &m_0\getsu\MSPACE_y\\
+ &m_0\getsu\MSPACE_{y_0}\\
  &\RETURN [ m_0 \iseq m_1] \enspace.
 \end{game}      
 \end{align*}
