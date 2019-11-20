@@ -1,0 +1,62 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Complete rewrite]{Sven Laur}
+\editor{Sven Laur}
+\tags{CBC mode, pseudorandom function}
+
+\newcommand{\ADVMAC}[2]{\ADV^{\mathsf{mac}}_{#1}(#2)}
+\newcommand{\ADVCR}[2]{\ADV^{\mathsf{cr}}_{#1}(#2)}
+
+\newcommand{\VER}{\mathsf{Ver}}
+\newcommand{\HASH}{\mathsf{Hash}}
+\newcommand{\MACH}{\mathsf{HashMac}}
+
+
+\begin{document}
+\begin{exercise}{Fixed domain CBC is PRF}
+Let $\MMM$ is an Abelian group and let $\FFF_{all}$ be a family of all functions $f:\MMM\to\MMM$.
+Show that functions 
+\begin{align*}
+g_1(m_1) &= f(m_1)\enspace,\\
+g_2(m_1,m_2)&=f(g_1(m_1)+m_2)\enspace,\\
+g_3(m_1,m_2,m_3)&=f(g_2(m_1,m_2)+m_3)\enspace, \\
+&\ldots
+\end{align*}
+are pseudorandom functions. Explain why these functions are easily distinguishable from random if you can query two functions simultaneously, i.e., evaluate CBC construction on different input sizes.
+\end{exercise}
+
+\begin{solution}
+Recall that $\FFF$ is $(t,q,\varepsilon)$-pseudorandom function family if any $t$-time adversary $\AD$ that makes at most $q$ oracle queries finds \ldots.
+
+\vspace*{2ex}
+\noindent
+\textsc{Simplified problem.}
+Let us prove the pseudorandomness of $g_2$. \ldots. 
+For clarity let $(x_1,y_1)\ldots, (x_q, y_q)$ be the queries to the oracle $g_2(\cdot,\cdot)$.
+Let $z_i=f(x_i)$ and $w_i=z_i+y_i$.
+Now for a moment assume that all $x_i$ are different. 
+Then by the definition of $\FFF_{all}$, we get \ldots  and thus we can replace $g_2$ with a random function\ldots
+
+
+\vspace*{2ex}
+\noindent
+\textsc{General solution.}
+The analysis done above is suitable for any $i$. Indeed, let $g_{i-1}$ be \ldots. 
+ \ldots
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Qualitative analysis.} Note that the success bound grows \ldots 
+
+
+
+
+
+
+
+
+\end{solution}
+\end{document}  
