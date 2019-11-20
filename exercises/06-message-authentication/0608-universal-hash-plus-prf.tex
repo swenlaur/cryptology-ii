@@ -1,0 +1,69 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor[Initial solution]{Alisa Pankova}
+\contributor[Complete rewrite]{Sven Laur}
+\editor{Sven Laur}
+\tags{collision resistant hash function, message authentication code, horizon splitting}
+
+\newcommand{\ADVMAC}[2]{\ADV^{\mathsf{mac}}_{#1}(#2)}
+\newcommand{\ADVCR}[2]{\ADV^{\mathsf{cr}}_{#1}(#2)}
+
+\newcommand{\VER}{\mathsf{Ver}}
+\newcommand{\HASH}{\mathsf{Hash}}
+\newcommand{\MACH}{\mathsf{HashMac}}
+
+
+\begin{document}
+\begin{exercise}{UH + PRF = MAC}
+Let $h:\XXX\times\KKK\to\TTT$ universal hash function and let $\FFF$ be a $(t,\varepsilon)$-pseudorandom function family with elements $f:\TTT\to\TTT$. 
+Prove that a keyed hash function $g:\XXX\times\KKK\times\FFF\to\TTT$ defined as
+$g(m, k, f)=f(h(m, k))$ is weakly collision resistant. 
+\end{exercise}
+
+\begin{solution}
+Recall that a keyed function $g$ is $(t,q,\varepsilon)$-\emph{weakly collision resistant} if any $t$-time adversary $\AD$ that makes at most $q$ oracle queries finds a collision with probability
+\begin{align*}
+  \advWCRXX{g}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon\enspace
+\end{align*}
+where the security game is defined as follows
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &k\getsu\KKK\\
+    &f\getsu\FFF\\
+    & (m_0, m_1)\gets \AD^{g(\cdot, k, f)} \\
+    &\RETURN [m_0\neq m_1]\wedge[g(m_0,k,f)=g(m_1,k, f)]\enspace.\\
+  \end{game}
+\end{align*}
+Recall that a keyed hash function $h$ is universal if for any $x_0\neq x_1$, the outcome pair $h(x_0, k), h(x_1,k)$ is uniformly distributed over $\TTT\times\TTT$.
+Recall that $\FFF$ is $(t,q,\varepsilon)$-pseudorandom function family if any $t$-time adversary $\AD$ that makes at most $q$ oracle queries finds \ldots.
+
+\vspace*{2ex}
+\noindent
+\textsc{Simplified problem.}
+Let us first consider the case where $\AD$ makes exactly 3 calls to $g$ to generate a pair $x_0, x_1$.
+Let $x_1,\ldots, x_3$ be the inputs to the oracle calls.
+Then we can simplify the security game $\GAME$ by inlining all definition. \ldots
+As \ldots we can replace $\FFF$ with the family of all functions.  \ldots 
+Now it is straightforward to see that we can replace oracle answers with random replies. The latter decreases success probability at most by \ldots. For the formal reasoning let us look at the sequence of games \ldots.
+Now that $\AD$ gets replies that are independent form queries, it cannot learn anything about the outcomes of $h$. Consequently, \ldots 
+
+\vspace*{2ex}
+\noindent
+\textsc{General solution.}
+We can easily lift the simplified solution to the general case where $\AD$ makes exactly $q$ oracle calls. \ldots
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Qualitative analysis.} Note that the success bound consists of two components \ldots 
+
+
+
+
+
+
+
+
+\end{solution}
+\end{document}  
