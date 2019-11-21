@@ -1,0 +1,60 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\tags{Naor commitment, hiding, binding}
+
+
+\begin{document}
+\begin{exercise}{Naor commitments with extended message space}
+The main drawback of the Naor commitment scheme is message expansion -- to commit one bit one must send $n$ bits. 
+One possibility is to increase the size of the message space.  
+Let the message space $\MSPACE$ be a subset of a finite field $(\FF_{2^n};+,\times)$ such that we can treat all $n$-bit strings as elements of $\FF_{2^n}$. 
+Then we can define modified commitment scheme:
+\begin{align*}
+  \begin{aligned}
+  \begin{fblock}{\GEN}
+    & \PK\getsu\FF_{2^n}^*\\
+    &\RETURN \PK       
+    \end{fblock}\\
+    \
+  \end{aligned}
+  \qquad
+  \begin{fblock}{\COM_\PK(x)}
+    & d\gets\set{0,1}^k\\
+    & c\gets f(d)+ x\times \PK\\
+    & \RETURN (c,d) 
+  \end{fblock}
+  \qquad
+  \begin{fblock}{\OPEN_\PK(c,d)}
+    &y\gets c\oplus f(d)\\
+    &\IF y\notin\PK\times\MSPACE\ \THEN \RETURN \bot\\
+    &\ELSE \RETURN y\times \PK^{-1}
+  \end{fblock}
+\end{align*}
+Establish the corresponding security guarantees under the assumption that $f:\set{0,1}^k\to\set{0,1}^n$ is a $(t_1,\varepsilon_1)$-pseudorandom generator. How big must be the message space $\MSPACE\subseteq \FF_{2^n}$ to achieve reasonable security guarantees against double openings?
+\end{exercise}
+
+\begin{solution} \
+
+\vspace*{2ex}
+\noindent
+\textsc{Binding}.
+The outcome $c, d_1,d_2$  of an adversary $\AD$ can be double opening only if $\PK$ is a solution to equation \ldots.
+As this equation can have at most \ldots solutions the number of public keys that can lead to a double opening is bounded by \ldots. Consequently, \ldots
+
+\vspace*{2ex}
+\noindent
+\textsc{Hidding}.
+Recall that commitment scheme is $(t,\varepsilon)$-hiding if any $t$-time adversary \ldots
+Recall that a function $f$ is a $(t,\varepsilon)$-pseudorandom generator if \ldots 
+
+\vspace*{2ex}
+\noindent
+\textsc{Qualitative analysis of the binding bound}.\ldots as a result the size of the message space $\MMM$ is bounded by \ldots
+
+
+
+\end{solution}
+
+
+
+\end{document}
