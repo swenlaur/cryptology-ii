@@ -1,0 +1,37 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{proof-of-possession, disjunctive proof, witness-indistinguishability }
+
+
+\begin{document}
+\begin{exercise}{Disjunctive POP is witness indistinguishable}
+Let $(\SK_0, \PK_0)$ and $(\SK_1, \PK_1)$ be private and public keys of an encryption scheme $(\GEN,\ENC,\DEC)$. 
+Then a disjunctive proof for the possession of secret keys $\SK_0$ and $\SK_1$ is defined as follows:
+\begin{enumerate}
+  \item[1.] The verifier $\VERIFIER$ chooses $m\getsu\MSPACE$ and
+    sends the corresponding challenge $\ENC_{\SK_0}(m;r_0)$ for
+    $r_0\gets\RSPACE$, and $\ENC_{\SK_1}(m;r_1)$ for $r_1\gets\RSPACE$
+    together with encryptions of random nonces $\ENC_{\SK_0}(r_1)$ and
+    $\ENC_{\SK_1}(r_0)$ to $\PROVER$.
+  \item[2.]  Given challenge ciphertexts $c_1,c_2,c_3,c_4$, the prover
+    $\PROVER$ uses one of the secret keys $\SK_i$ to decrypt a
+    challenge $\overline{m}$ and the nonce $r_{\neg i}$ used to
+    randomise the other encryption $c_{\neg i}$. If $c_{\neg i}=
+    \ENC_{\PK_{\neg i}}(\overline{m};r_{\neg i})$, the prover
+    $\PROVER$ sends $\overline{m}$ to $\VERIFIER$, otherwise $\PROVER$
+    can halt as $\VERIFIER$ cheats.
+  \item[3.] The verifier $\VERIFIER$ accepts if $\overline{m}=m$.
+\end{enumerate}
+Prove that even an unbounded cheating verifier cannot learn whether the prover possesses $\SK_0$ or $\SK_1$  
+\end{exercise}
+\begin{solution}
+Let us first formalise by games $\GAME_0$ and $\GAME_1$ what happens if the prover knows $\SK_0$ or $\SK_1$.\ldots 
+Let us now modify the games so that the game pair encodes indistinguishability advantage \ldots
+Now we can prove that in both games the honest prover rejects exactly the same challenges \ldots Next note that for a valid challenge the response is the same in both games. \ldots
+
+
+
+
+\end{solution}
+\end{document}
