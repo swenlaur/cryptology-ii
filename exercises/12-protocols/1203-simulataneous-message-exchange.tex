@@ -1,0 +1,98 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\editor{Sven Laur}
+\tags{Simultaneous message exchange, input extraction, output equivocation, stateful protocols}
+
+\newcommand{\REWRITE}{\qquad\scalebox{1.5}{$\rightsquigarrow$}\qquad}
+
+\newcommand{\CS}{\mathcal{C}om}
+\newcommand{\IEXTR}{\mathscr{K}}
+\newcommand{\OEQUIV}{\mathscr{E}}
+\newcommand{\FAIL}{\mathsf{Fail}}
+\newcommand{\ELIF}{\mathsf{else\ if}\ }
+
+\makeatletter
+%\newcommand{\xleftrightarrow}[2][]{\ext@arrow 3359\leftrightarrowfill@{#1}{#2}}
+\newcommand{\xdashrightarrow}[2][]{\ext@arrow 0359\rightarrowfill@@{#1}{#2}}
+\newcommand{\xdashleftarrow}[2][]{\ext@arrow 3095\leftarrowfill@@{#1}{#2}}
+\newcommand{\xdashleftrightarrow}[2][]{\ext@arrow 3359\leftrightarrowfill@@{#1}{#2}}
+\def\rightarrowfill@@{\arrowfill@@\relax\relbar\rightarrow}
+\def\leftarrowfill@@{\arrowfill@@\leftarrow\relbar\relax}
+\def\leftrightarrowfill@@{\arrowfill@@\leftarrow\relbar\rightarrow}
+\def\arrowfill@@#1#2#3#4{%
+  $\m@th\thickmuskip0mu\medmuskip\thickmuskip\thinmuskip\thickmuskip
+   \relax#4#1
+   \xleaders\hbox{$#4#2$}\hfill
+   #3$%
+}
+\makeatother
+
+\begin{document}
+
+
+\begin{exercise}{Security of simultaneous message exchange protocol}
+Analyse security of the following  simplistic protocol for simultaneous message exchange 
+\begin{align*}
+&\PARTY_1(x_1) &&  &&\PARTY_2(x_2) \\
+&&\xdashleftrightarrow[\hspace*{2cm}]{\fbox{$\PK\gets\GEN$}\atop {\phantom{ \textstyle c} \atop\PK}}\\
+&(c,d)\gets\COM_\PK(x_1)\\
+&&\xrightarrow[\hspace*{2cm}]{\PK,c}\\
+&&\xleftarrow[\hspace*{2cm}]{x_2}\\
+&&\xrightarrow[\hspace*{2cm}]{d}\\
+&&&&& x_1\gets\OPEN_\PK(c,d)\\
+&\RETURN (x_1,x_2)
+&& &&\RETURN (x_1,x_2)
+\end{align*}
+where bits $x_1$ and $x_2$ are private protocol inputs and a triple of algorithms $(\GEN,\COM,\OPEN)$ is  a commitment scheme $\CS$ with appropriate properties. The dashed line denotes sub-protocol for fixing the commitment parameters.
+In the following, we assume that the protocol has a trusted setup where parameter generation is done by a trusted third party. 
+Consider security only against static malicious corruption. 
+\end{exercise}
+
+\begin{solution}
+\ \\
+\textsc{Right ideal implementation.}
+As the first party $\PARTY_1$ can refuse to open its input based on the opponents input $x_2$, we must consider the  idealised functionality where the first party $\PARTY_1$ is in the dominant position:
+\begin{align*}
+&\PARTY_1(x_1) &&&& \TTP  &&&&\PARTY_2(x_2) \\
+&&&\xrightarrow[\hspace*{2cm}]{x_1}
+&&&\xleftarrow[\hspace*{2cm}]{x_2}\\
+&&&\xleftarrow[\hspace*{2cm}]{x_2}\\
+&&&\xrightarrow[\hspace*{2cm}]{\textsc{Abort}/\textsc{Continue}}\\
+&&&&&&\xrightarrow[\hspace*{2cm}]{x_1}\\
+&\RETURN (x_1,x_2)
+&&&&&&&&\RETURN (x_1,x_2)
+\end{align*}
+
+
+\noindent
+\textsc{\textcolor{red}{(e)} Output equivocation based on trusted setup.} 
+We can use equivocal commitments to bypass problems in the output equivocation phase. But this leads to a setting with a trusted setup. 
+
+\medskip
+\noindent
+\textcolor{red}{
+\begin{itemize}
+\item Construct the corresponding simulator for malicious $\PARTY_2$ by modifying the input extraction and output equivocation blocks
+\item Prove that the corresponding simulator achieves the desired goal. That is, the joint output distributions are identical in the real and ideal world.   
+\end{itemize}
+}
+
+\noindent
+\textsc{\textcolor{red}{(f)} Input extraction based on trusted setup.} 
+The simulation efficiency for a malicious $\PARTY_1^*$ depends on the size of $\XXX_2$ as the input extractor needs to iterate over all potential inputs $x_2$ to unlock the commitment. This problem can be bypassed if we use trusted setup with extractable commitment schemes.
+
+\medskip
+\noindent
+\textcolor{red}{
+\begin{itemize}
+\item Construct the corresponding simulator for malicious $\PARTY_1$ by modifying the input extraction block so that its efficiency does not depend on the size of $\XXX_2$.
+\item Prove that the corresponding simulator achieves the desired goal. That is, the joint output distributions are identical in the real and ideal world.   
+\end{itemize}
+}
+
+
+\end{solution}
+\end{document}
+

@@ -1,0 +1,92 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\editor{Sven Laur}
+\tags{Oblivious transfer, input extraction, output equivocation, stateful protocols}
+
+\newcommand{\REWRITE}{\qquad\scalebox{1.5}{$\rightsquigarrow$}\qquad}
+
+\newcommand{\CS}{\mathcal{C}om}
+\newcommand{\IEXTR}{\mathscr{K}}
+\newcommand{\OEQUIV}{\mathscr{E}}
+\newcommand{\FAIL}{\mathsf{Fail}}
+\newcommand{\ELIF}{\mathsf{else\ if}\ }
+
+\makeatletter
+%\newcommand{\xleftrightarrow}[2][]{\ext@arrow 3359\leftrightarrowfill@{#1}{#2}}
+\newcommand{\xdashrightarrow}[2][]{\ext@arrow 0359\rightarrowfill@@{#1}{#2}}
+\newcommand{\xdashleftarrow}[2][]{\ext@arrow 3095\leftarrowfill@@{#1}{#2}}
+\newcommand{\xdashleftrightarrow}[2][]{\ext@arrow 3359\leftrightarrowfill@@{#1}{#2}}
+\def\rightarrowfill@@{\arrowfill@@\relax\relbar\rightarrow}
+\def\leftarrowfill@@{\arrowfill@@\leftarrow\relbar\relax}
+\def\leftrightarrowfill@@{\arrowfill@@\leftarrow\relbar\rightarrow}
+\def\arrowfill@@#1#2#3#4{%
+  $\m@th\thickmuskip0mu\medmuskip\thickmuskip\thinmuskip\thickmuskip
+   \relax#4#1
+   \xleaders\hbox{$#4#2$}\hfill
+   #3$%
+}
+\makeatother
+
+\begin{document}
+
+
+\begin{exercise}{Security of against malicious server}
+Analyse security of the Aiello-Ishai-Reingold oblivious transfer for additively homomorphic encryption scheme with prime order message space:  
+\begin{align*}
+&\PARTY_1(b) &&  &&\PARTY_2(x_0,x_1) \\
+&&\xdashleftrightarrow[\hspace*{2cm}]{\fbox{$\PK,\SK\gets\GEN$}\atop {\phantom{ \textstyle c} \atop\SK,\PK \hspace{1.3cm}\PK}}\\
+&c\gets\ENC_\PK(b)\\
+&&\xrightarrow[\hspace*{2cm}]{c}\\
+&&&&&r\gets\MMM \\
+&&&&&d_0=\ENC_\PK(br+x_0) \\
+&&&&&d_1=\ENC_\PK((1-b)r+x_1)\\
+&&\xleftarrow[\hspace*{2cm}]{d_0,d_1} && \\
+&\RETURN \DEC_\SK(d_b)
+&& &&\RETURN \emptyset
+\end{align*}
+where $b\in\set{0,1}$ and $x_0,x_1\in\MMM$ are private protocol inputs and a triple of algorithms $(\GEN,\ENC,\DEC)$ is an additively homomorphic encryption scheme. The dashed line denotes sub-protocol for fixing the commitment parameters. 
+Prove that there exist an efficient simulator for $\PARTY_2$ if the set of plausible attack goals consists of computationally bounded predicates.
+\end{exercise}
+
+\begin{solution}
+\ \\
+\textsc{Right ideal implementation.}
+As the party $\PARTY_2$ gets no output fairness is acheivable:
+\begin{align*}
+&\PARTY_1(b) &&&& \TTP  &&&&\PARTY_2(x_0, x_1) \\
+&&&\xrightarrow[\hspace*{2cm}]{b}
+&&&\xleftarrow[\hspace*{2cm}]{x_0,x_1}\\
+&&&\xleftarrow[\hspace*{2cm}]{x_b}
+&&&\xrightarrow[\hspace*{2cm}]{\emptyset}\\
+&\RETURN x_b
+&&&&&&&&\RETURN \emptyset
+\end{align*}
+
+\noindent
+\textsc{\textcolor{red}{(a)} Input extractor for $\PARTY_2$.}
+\textcolor{red}{
+\begin{itemize}
+\item Construct input extractor for $\PARTY_2^*$ 
+\item Show that outputs of $\PARTY_1$ in real and ideal world coincide. 
+\end{itemize}}
+
+\noindent
+\textsc{\textcolor{red}{(b)} Output extractor for $\PARTY_2$.}
+\textcolor{red}{
+\begin{itemize}
+\item Construct output equivocator for $\PARTY_2^*$ that achieves $1/2$ statistical distance for the joint output distribution $\psi_1, \psi_2$.
+\item Show that the construction is tight for unbounded predicates 
+\end{itemize}}
+
+\noindent
+\textsc{\textcolor{red}{(c)} Output extractor for $\PARTY_2$.}
+\textcolor{red}{
+\begin{itemize}
+\item Show that outputs are computationally indistinguishable for time-bounded predicates
+\end{itemize}}
+
+\end{solution}
+\end{document}
+
