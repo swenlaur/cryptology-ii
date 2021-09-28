@@ -1,0 +1,114 @@
+\documentclass{crypto-exercise}
+\usepackage{hyperref}
+\author{Sven Laur}
+
+
+\tags{Computational Diffie-Hellman problem, random self-reducibility}
+
+\begin{document}
+\begin{exercise}{Tight amplification of CDH}
+  Let $\GG$ be a finite group of prime order $q$ such that all elements $y\in\GG$ can be
+  expressed as powers of $g\in\GG$. Then the Computational
+  Diffie-Hellman (CDH) problem is following. Given $x=g^a$ and
+  $y=g^b$, find a group element $z=g^{ab}$. 
+  Let $\AD$ is the algorithm designed to solve a random instance of CDH. 
+  Then we can use the following algorithm
+  \begin{align*}
+  \begin{fblock}{\ADB(x,y)}
+   &r,t\gets\ZZ_q, s\gets\ZZ_q^*\\
+   &w\gets\AD(x\cdot g^r, y^s\cdot g^t)\\
+   &z\gets\left(\frac{w}{x^t \cdot y^{rs} \cdot g^{rt}}\right)^{-s}\\
+   &\RETURN z 
+  \end{fblock}
+  \end{align*}
+ to reduce an instance of CDH to a random instance of CDH.
+ Moreover, we can amplify the success probability by majority voting
+  \begin{align*}
+   \begin{fblock}{\ADB_n(x,y)}
+   &\begin{forblock}{i\in\set{1,\ldots,n}}
+     &r,t\gets\ZZ_q, s\gets\ZZ_q^*\\ 
+     &w_i\gets\AD(x\cdot g^r, y^s\cdot g^t)\\
+     &z_i\gets\left(\frac{w_i}{x^t \cdot y^{rs} \cdot g^{rt}}\right)^{-s}\\
+   \end{forblock} \\
+   &\RETURN \textsc{Majority}(z_1,\ldots,z_n) 
+  \end{fblock}
+  \end{align*}
+  Prove that the reduction works and define a sharp enough lower bound on the success probability.
+  Sketch how the bound behaves as a function of $n$. 
+  How big must $\ADVCDH{\GG}{\AD}$ be for the amplification to work at all?  
+\end{exercise}
+\begin{solution}
+We divide the analysis into four distinct parts. First, we establish randomisation. Second, we establish correctness. Third, we establish properties of the output distribution $z$. Fourth, we use 
+McDiarmid's inequality together with inclusion-excusion formula to estimate the success probability for majority voting.
+  
+\vspace*{2ex}
+\noindent\textsc{Randomisation of inputs.}
+Let $\alpha,\beta$ be such that $x=g^\alpha$, $y=g^\beta$. 
+Let $\alpha_*, \beta_*$ be such that $x\cdot g^r=g^{\alpha_*}$, $y^s\cdot g^t=g^{\beta_*}$.  
+
+
+\vspace*{2ex}
+\noindent\textsc{Correctness.}
+Let $\gamma,\delta$ be such that $w=g^\gamma$ and $z=g^\delta$. 
+Now if $\AD$ returns a correct answer then 
+\begin{align*}
+\gamma=??
+\end{align*}
+and thus 
+\begin{align*}
+\delta=??
+\end{align*}
+
+\vspace*{2ex}
+\noindent\textsc{Randomisation of outputs.}
+Assume that $\AD$ gives incorrect answer. 
+Namely, let the answer of $\AD$ is offset by the multiplicative term $g^\epsilon$. Then the same offset propagates to the final answer in the algorithm $\ADB$ as
+\begin{align*}
+\gamma&=??\\
+\delta&=??
+\end{align*} 
+As the order of the group is prime we get ???
+
+
+\vspace*{2ex}
+\noindent\textsc{Success bounds for amplification strategy.}
+Let us now analyse the algorithm $\ADB_n$. 
+Let $u_i$ be the $i$-th element in the list of distinct incorrect outcomes and $k$ be the number distinct incorrect outcomes. 
+By construction the there can be at most $n$ incorrect but distinct outcomes.
+Let $v_i$ be number of outputs $z_i$ that are equal to $u_i$.
+Let $u_*$ be the correct outcome and $v_*$ be the number of correct outputs. 
+Let $\mathsf{Fail}(i)$ denote the event that $v_i > v_*$. 
+For obvious reasons, the failure probability is
+\begin{align*}
+\pr{\mathsf{Fail}}=\pr{\mathsf{Fail}(1)\vee \mathsf{Fail}(2) \ldots \vee\mathsf{Fail}(k) }
+\end{align*}
+By the inclusion-exclusion formula
+\begin{align*}
+\pr{\mathsf{Fail}}&\leq \sum_{i=1}^k \pr{\mathsf{Fail}(1)}\\
+\pr{\mathsf{Fail}}&\geq \sum_{i=1}^k \pr{\mathsf{Fail}(i)} 
+-\sum_{i,j=1}^k \pr{\mathsf{Fail}(i)\wedge \mathsf{Fail}(j)}
+\end{align*}
+To estimate the probability of $\mathsf{Fail}(i)$ let us define a random variable
+\begin{align*}
+X_k=
+\begin{cases}
+-1,  &\text{if } z_k=u_*\enspace,\\
+1, &\text{if } z_k=u_i,\enspace,\\
+0,  &\text{otherwise}\enspace.
+\end{cases}
+\end{align*}
+Then the probability of $\mathsf{Fail}(i)$ is determined by sign of the sum $X_1+\cdots+X_{n}$.
+This allows us to apply  McDiarmid's inequality.
+
+\vspace*{1ex}
+\noindent\textbf{Theorem.}
+Let $X_1,\ldots, X_m$ be independent random variables in the range $[-1,1]$.
+Then for any $t>0$
+\begin{align*}
+\pr{\sum_{i=1}^n X_i- \mathbf{E}\left[\sum_{i=1}^n X_i\right]\geq t}\leq e^{-\frac{2t^2}{4n}}
+\end{align*}
+ 
+As a result we can establish ...
+
+\end{solution}
+\end{document}
