@@ -1,0 +1,246 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+\newcommand{\PKC}{\mathscr{C}}
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise Session V 
+
+\begin{enumerate}
+
+\item Recall that the message space of the ElGamal cryptosystem is a
+  $(t,\varepsilon_1)$-DDH group $\GG$. The latter is rather limiting,
+  since normally one needs to encrypt $n$-bit messages and not the
+  group elements. The simplified ElGamal cryptosystem is defined as
+  follows:
+  \begin{itemize}
+  \item $\GEN$ returns $\SK=x$ and $\PK=y=g^x$ for $x\getsu\ZZ_{\abs{\GG}}$;
+  \item $\ENC_\PK(m)=(g^k,h(y^k)\oplus m)$; 
+  \item $\DEC_\SK(c_1,c_2)=c_2\oplus h(c_1^x)$;
+  \end{itemize}
+  where $h:\GG\to\set{0,1}^n$ is a almost regular hash function. That
+  is, the distribution $h(y)$ for $y\getsu\GG$ is statistically
+  $\varepsilon_2$-close to the uniform distribution over
+  $\set{0,1}^n$. Prove that the simplified ElGamal cryptosystem is
+  also IND-CPA secure and give the corresponding security bounds.
+
+
+  \textbf{Hint:} Modify the security proof for the ElGamal
+  cryptosystem to accommodate the change. Where do you need almost
+  regularity?
+  \begin{itemize}
+  \item[$(\star)$] In practice, it is difficult if not impossible to
+    define almost regular hash function $h:\GG\to\set{0,1}^n$. Relax
+    the security requirements even further so that the corresponding
+    construction is also practical.
+  \end{itemize}
+
+
+
+
+\item Prove the only non-trivial inclusion result for homological
+  classification of public key cryptosystems. What about symmetric key
+  cryptosystems?  
+ 
+  \textbf{Theorem}. Assume that $\pi(\cdot)$ is always a $t_\pi$-time
+  predicate and it is always possible to obtain a sample from
+  $\MSPACE_0$ in time $t_m$. If the cryptosystem $\PKC$ is
+  $(t,\varepsilon)$-IND-CCA2 secure, then for all $(t-t_g-2t_m)$-time
+  adversaries $\AD$:
+  \begin{align*}
+  \advNMCCAIIXX{\PKC}{\AD}\leq\varepsilon\enspace.
+  \end{align*}
+  Why does not a similar proof exists for
+  IND-CCA1$\Rightarrow$NM-CCA1?
+
+\item[$(\star)$] In a fixed plaintext attack (FPA), an adversary has
+  to fix the queried messages ahead of other
+  interactions. Consequently, it might be possible to achieve a
+  security goal against fixed plaintext attacks (CPA) that is
+  infeasible against chosen ciphertext attacks. This separation
+  manifests already if we consider indistinguishability as a security
+  goal. Recall that a cryptosystem is $(t,\varepsilon)$-IND-FPA if for
+  all $t$-time adversaries
+  \begin{align*}
+    \advINDFPAXX{}{\AD}=\abs{\pr{\smash{\GAME_0^\AD=1}}-\pr{\smash{\GAME_1^\AD=1}}}\leq\varepsilon
+  \end{align*}
+  where
+  \begin{align*}
+    \begin{game}{\GAME_0^\AD}
+      &(m_0,m_1)\gets\AD\\
+      &(\SK,\PK)\gets\GEN\\
+      &\RETURN \AD(\ENC_\PK(m_0))
+    \end{game}
+    \qquad
+    \begin{game}{\GAME_1^\AD}
+      &(m_0,m_1)\gets\AD\\
+      &(\SK,\PK)\gets\GEN\\
+      &\RETURN \AD(\ENC_\PK(m_1))
+    \end{game}
+  \end{align*}
+  \begin{enumerate}
+  \item Prove that if the message space $\MSPACE=\set{0,1}$ then
+    IND-FPA security implies IND-CPA security. Generalise the proof
+    and show that IND-FPA security also implies IND-CPA security of
+    encryption tuples
+    \begin{align*}
+      \overline{\ENC}_\PK(x_1,\ldots,x_n)=\bigl(\ENC_\PK(x_1),\ldots,\ENC_\PK(x_n)\bigr)
+      \enspace.
+    \end{align*}
+  \item Give a corresponding construction that converts any IND-FPA
+    secure encryption scheme to the IND-CPA secure encryption
+    scheme. What is the corresponding overhead in communication and
+    computation if we want to preserve the size of the message space?
+  \item Prove that IND-FPA security still implies IND-CPA security for
+    larger message spaces; however, the IND-CPA advantage can be
+    $\Oh(\abs{\MSPACE})$ times larger than the IND-FPA advantage. What
+    is the optimal trade-off point for construction given in~(b).
+  \item Finally, prove that the reduction result obtained in~(c) is
+    tight. For that, give a construction that takes in an IND-CPA
+    secure cryptosystem and creates a new cryptosystem that is
+    functional and IND-FPA secure but the IND-CPA advantage meets the
+    bound derived in~(d). If the bounds do not mach exactly, the
+    reduction given in~(c) might be non-optimal. Hence, it is
+    important to study the relation between the upper and the lower
+    bound on advantage obtained in~(c)~and~(d).
+  \end{enumerate}
+
+
+\item Show that the Goldwasser-Micali cryptosystem is IND-CPA secure
+  if the Quadratic Residuosity Problem is hard. All necessary concepts
+  are defined below. The proof is similar to the analysis of the
+  ElGamal cryptosystem.
+
+  \textbf{Number theory.} A prime $p$ is a Blum prime if $p\equiv
+  3\mod 4$. Let $N=pq$ where $p,q$ are Blum primes. Then for each
+  element $a\in\ZZ_N$, we can efficiently compute the Jacobi symbol
+  $(\frac{a}{n})$. One can show that Jacobi symbols satisfies
+  following equations
+  \begin{align*}
+    \brak{\frac{ab}{n}}=\brak{\frac{a}{n}}\cdot\brak{\frac{b}{n}}
+    \qquad\text{and}\qquad
+    \brak{\frac{a^2}{n}}=1\enspace.
+  \end{align*}
+  In the following, we also need a set 
+  \begin{align*}
+   J_N(1)=\set{x\in\ZZ_N:\brak{\frac{x}{n}}=1}\enspace.   
+  \end{align*}
+  Finally, recall that an element $b$ is a quadratic residue if there
+  exists $a$ such that $b=a^2\mod N$.  The set of quadratic residues
+  is denoted by $QR_N$.
+
+  \textbf{Quadratic residuosity problem.}  Let $\PP_n$ denote uniform
+  distribution over $n$-bit Blum primes.  We say that the set of
+  $n$-bit Blum primes is $(t,\varepsilon)$-secure with respect to
+  quadratic residuosity problem if for all $t$-time adversaries $\AD$:
+  \begin{align*}
+    \advQRPXX{\PP_n}{\AD}=\abs{\pr{\smash{\BGAME_0^\AD=1}}-\pr{\smash{\BGAME_0^\AD=1}}}\leq\varepsilon
+  \end{align*}
+  where
+  \begin{align*}
+    \begin{game}{\BGAME_0^\AD}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu QR_N\\
+      &\RETURN \AD(x)
+    \end{game}
+    \qquad\qquad
+       \begin{game}{\BGAME_1^\AD}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu J_N\setminus QR_N\\
+      &\RETURN \AD(x)
+    \end{game}
+  \end{align*}
+
+   
+  \textbf{Goldwasser-Micali cryptosystem.}
+  \begin{itemize}
+  \item \textbf{Key generation.}  Sample primes $p,q\in\PP(n)$ and
+    choose quadratic non-residue $y\in J_N(1)$ modulo $N=pq$. Set
+    $\PK=(N,y)$, $\SK=(p,q)$.
+  \item\textbf{Encryption.} First choose a random $x\gets\ZZ_N^*$ and then compute
+    \begin{align*}
+      \enc{0}=x^2\mod N \quad\text{and}\quad \enc{1}=yx^2\mod N.
+    \end{align*}
+  \item\textbf{Decryption.} Output $0$ if the ciphertext $c$ is
+    quadratic residue and $1$ otherwise. The latter is easy if the
+    factorisation of $N$ is known.
+  \end{itemize}
+
+
+
+\item Let $(\GEN,\ENC,\DEC)$ be a public key cryptosystem and
+  $\GEN^\circ,\ENC^\circ,\DEC^\circ)$ a symmetric key cryptosystem. Then we can
+  define a hybrid cryptosystem.
+  \begin{itemize}
+  \item \textbf{Key generation.} Run the key generation algorithm
+    $\GEN$ and output the corresponding secret and public key pair
+    $(\SK,\PK)$.
+  \item \textbf{Encryption.} Given a message $m$, generate a session
+    key $\SK^\circ\gets\GEN^\circ$ and output a pair
+    $c_1\gets\enc{\SK_\circ}$ and $c_2\gets\ENC^\circ_{\SK^\circ}(m)$.
+  \item\textbf{Decryption.} To decrypt a ciphertext $(c_1,c_2)$, first
+    reconstruct the session key $\SK^\circ\gets\dec{c_1}$ and then
+    recover  $m\gets\DEC^\circ_{\SK^\circ}(c_2)$.
+  \end{itemize}
+  Analyse the IND-CPA security proof for the hybrid encryption scheme.
+  \begin{enumerate}
+  \item Note that the change in the first proof step does not require
+    full IND-CPA security. Derive a minimal reasonable security
+    condition for the public key encryption scheme so that the proof
+    would still hold. A security condition is reasonable if it
+    contains no explicit references to the symmetric cryptosystem and
+    would be universal for all symmetric key cryptosystems. To achieve
+    that, you might slightly change the construction of hybrid 
+    encryption scheme. Interpret the result. 
+   
+  \item Prove that the same proof construction can be used to shows
+    that hybrid encryption scheme preserves IND-CCA1 security.  Derive
+    corresponding security guarantees. Generalise results of~(a).
+
+  \item[$(\star)$] Why cannot we use the same proof construction to
+    show that hybrid preserves IND-CCA2 security? Give a separation
+    that invalidates the first proof step and the entire claim about
+    IND-CCA2 security. A separation is construction that takes in
+    primitives needed in construct and then modifies them so that new
+    primitives still satisfy the premises but the final claim does not
+    hold, i.e., no proof can exist.
+  \end{enumerate}
+
+\item A cryptosystem is homomorphic if there exists an efficient
+  multiplication operation defined over the ciphertext space $\CSPACE$
+  such that for any valid encryption $c_1\gets\ENC_\PK(m_1)$ the
+  distribution $c_1\cdot \ENC_\PK(m_2)$ coincides with the
+  distribution $\ENC_\PK(m_1\otimes m_2)$, where $\otimes$ is a binary
+  operation defined over the message space $\MSPACE$. Show that
+  \begin{enumerate}
+  \item the RSA cryptosystem is multiplicatively homomorphic;
+  \item the ElGamal cryptosystem is multiplicatively homomorphic;
+  \item the Goldwasser-Micali cryptosystem is XOR homomorphic; 
+  \end{enumerate}
+
+\item Prove the following claims about public key cryptosystems
+  \begin{enumerate}
+  \item A homomorphic cryptosystem cannot be non-malleable.
+  \item NM-CPA security implies IND-CPA security.
+  \item NM-CCA1 security implies IND-CCA1 security.
+  \item NM-CCA2 security implies IND-CCA2 security.
+  \end{enumerate}
+
+\item[$(\star)$] Show as many separations among the security
+  properties of cryptosystem as you can. For example, show that there
+  are IND-CPA secure cryptosystems that are not IND-CCA1 secure.
+
+\end{enumerate}
+
+
+\end{document}
