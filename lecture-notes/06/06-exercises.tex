@@ -1,0 +1,239 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise session VI 
+
+
+\section*{Formal Security Definition}
+
+Recall that a keyed hash function $h:\MSPACE\times\KSPACE\to\TSPACE$
+is a $(t,q,\varepsilon)$-\emph{secure message authentication code} if
+any $t$-time adversary $\AD$:
+\begin{align*}
+  \advMACXX{h}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon\enspace,
+\end{align*}
+where the security game is following
+ \begin{align*}
+  \begin{game}{\GAME^\AD}
+    &k\getsu\KSPACE\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}}
+      &\text{Given } m_i\gets \AD \text{ send }
+      t_i\gets h(m_i,k) \text{ back to $\AD$}\\
+    \end{forblock}\\
+    &(m,t)\gets\AD\\
+    &\RETURN [t\iseq h(m,k)]\wedge[(m,t)\notin\set{(m_1,t_1),\ldots,(m_q,t_q)}]
+  \end{game}
+\end{align*}
+
+
+\section*{Applications of Message Authetication Codes}
+
+\begin{enumerate}
+\item Although a good message authentication code
+  $h:\MSPACE\times\KSPACE\to\TSPACE$ protects against impersonation
+  and substitution attacks, it does not guarantee security against
+  reflection and interleaving attacks.
+  \begin{enumerate}
+  \item Show that message authentication protocol, where $\PARTY_1$
+    sends $m$ and the corresponding authentication tag $t\gets h(m,k)$
+    to $\PARTY_2$, is not secure if we want to send several messages.
+  \item Construct a protocol for authenticated communication that
+    preserves message order and handles bidirectional message
+    transfer.
+  \item Construct a similar protocol without an internal state. Use
+    random nonces $r_i\gets\RSPACE$ to guarantee that messages arrive
+    in correct order.
+  \item What are the advantages and disadvantages of stateful and
+    stateless protocols for authenticated communication?
+  \end{enumerate}
+
+\item Let $(\GEN,\ENC,\DEC)$ be a IND-CPA secure symmetric encryption
+  scheme and let $h$ be a secure message authentication code with the
+  appropriate message and key domains. Show that the following
+  protection methods assure IND-CCA2 security:
+  \begin{enumerate}
+  \item first encrypt and then authenticate
+    \begin{align*}
+      \begin{fblock}{\mathsf{Auth\text{-}Enc}_{\SK,k}(m)}
+      & c_1\gets\ENC_\SK(m)\\
+      & c_2\gets h(c_1,k)\\
+      & \RETURN (c_1,c_2)  
+      \end{fblock}
+      \qquad\qquad
+      \begin{aligned}       
+      \begin{fblock}{\mathsf{Auth\text{-}Dec}_{\SK,k}(c_1,c_2)}
+      & \IF c_2\neq h(c_1,k)\ \THEN \RETURN \bot\\ 
+      & \ELSE \RETURN \DEC_\SK(c_1)\\
+      \end{fblock}\\
+      \
+      \end{aligned}
+    \end{align*}
+  \item first authenticate and then encrypt
+    \begin{align*}
+      \begin{aligned}
+      \begin{fblock}{\mathsf{Auth\text{-}Enc}_{\SK,k}(m)}
+      & t\gets h(m,k)\\
+      & \RETURN \ENC_\SK(m,t)\\
+      \end{fblock}\\
+      \
+      \end{aligned}
+      \qquad\qquad
+      \begin{aligned}       
+      \begin{fblock}{\mathsf{Auth\text{-}Dec}_{\SK,k}(c)}
+      & (m,t)\gets\DEC_\SK(c)\\
+      & \IF t\neq h(m,k)\ \THEN \RETURN \bot\\ 
+      & \ELSE \RETURN m\\
+      \end{fblock}\\
+      \
+      \end{aligned}
+    \end{align*}
+  \item What are the advantages and drawbacks of both approaches?  Why
+    the construction does not generalise to public key cryptosystems?
+  \end{enumerate}
+\end{enumerate}
+
+\section*{Common Message Authentication Codes}
+
+
+\begin{enumerate}
+\addtocounter{enumi}{2} 
+
+
+\item A keyed hash function $h:\MSPACE\times\KSPACE\to\TSPACE$ is
+  $(t,q,\varepsilon)$-\emph{weakly collision resistant} if any
+  $t$-time adversary $\AD$ that makes at most $q$ oracle queries finds
+  a collision with probability
+  \begin{align*}
+    \advWCRXX{h}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon\enspace
+  \end{align*}
+  where the security game is defined as follows
+  \begin{align*}
+    \begin{game}{\GAME^\AD}
+      &k\getsu\KSPACE\\
+      &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}}
+        & \text{Given }m_i\gets \AD \text{ send } t_i\gets h(m_i,k)
+          \text{ back to }\AD.\\
+      \end{forblock}\\
+      &(m_0,m_1)\gets\AD\\
+      &\RETURN [m_0\neq m_1]\wedge[h(m_0,k)=h(m_1,k)]\\
+    \end{game}
+  \end{align*}
+
+  \begin{enumerate}
+  \item Let $h:\MSPACE^*\times\KSPACE_1\to\MSPACE_2$ and
+    $f:\MSPACE_2\times\KSPACE_2\to\TSPACE$ be keyed hash functions
+    such that $h$ is $(t,q_1,\varepsilon_1)$-weakly collision
+    resistant and $f$ is $(t,q_2,\varepsilon_2)$-secure message
+    authentication code. Show that the $\textsc{Nmac}$ construction
+    \begin{align*}
+      \textsc{Nmac}_{f,h}(m,k_1,k_2)=f(h(m,k_1),k_2)
+    \end{align*}
+    is secure message authentication code.
+
+  \item Analyse the $\textsc{Nmac}$ construction under the assumption
+    that that $h$ is $(t,q_1,\varepsilon_1)$-weakly collision
+    resistant and $\FFF=\set{f_k}$ where $f_k(x)=f(x,k)$ is
+    $(t,q_2,\varepsilon_2)$-pseudorandom function family.
+
+
+  \item[$(?)$] The $\textsc{Nmac}$ construction is often instantiated
+    with a single cryptographic hash function
+    $h:\set{0,1}^*\to\set{0,1}^{256}$ by defining
+    $f(m,k_1)=h(k_1\|\texttt{42}\|m)$ and
+    $g(m,k_2)=h(k_2\|\texttt{13}\|m)$. Is this construction secure?
+  \end{enumerate}
+
+  \textbf{Hint:} Write down the corresponding security game. What
+  happens if the adversary provides a message $m$ that creates a
+  collision $h(m,k)=h(m_i,k)$ as an answer? How probable this event can be?
+
+
+\item A keyed hash function $h:\MSPACE\times\KSPACE\to\TSPACE$ is
+  $\varepsilon_1$-almost universal if for all distinct message pairs
+  $m_0\neq m_1$ the collision probability is bounded
+  \begin{align*}
+    \pr{k\getsu\KSPACE: h(m_0,k)=h(m_1,k)} \leq \varepsilon_1\enspace.
+  \end{align*}
+  Prove that hybrid-MAC construction
+  \begin{align*}
+    \textsc{Hyb-Mac}_{f,h}(m,k_1,k_2)= f(h(m,k_1),k_2)
+  \end{align*}
+  is secure message authentication code if
+  $\FFF=\set{f_{k_2}}_{k_2\in\KSPACE_2}$ is
+  $(t,q,\varepsilon_2)$-pseudo\-random function family and
+  $h:\MSPACE\times\KSPACE_2\to\TSPACE$ is $\varepsilon_1$-almost
+  universal. What are the corresponding security guarantees?
+    
+  \textbf{Hints:} Write down the corresponding security game. Unroll
+  the for cycle. Replace $f$ with a random function. Replace $t_i$
+  with randomly chosen element of $\TSPACE$ when possible. Most
+  importantly, treat the cases when $f$ is evaluated several times at
+  the same argument correctly. What is the main difference in the
+  security analysis compared to the previous exercise?
+
+
+
+\item The polynomial message authentication code is secure only if we
+  do not reuse the authentication key. Construct a modified stateful
+  authentication code that allows us to use the same key for many
+  messages. You can use the AES block cipher as a
+  $(t,\varepsilon)$-pseudorandom permutation:
+  \begin{enumerate}
+  \item use the AES cipher to build hybrid-MAC; 
+  \item use the AES cipher to stretch the initial key.
+  \end{enumerate}
+  Give the corresponding security proofs.
+
+\item Let $\FFF\subseteq\set{f:\MSPACE\to\MSPACE}$ be a pseudorandom
+  function family. Then we can use the $\textsc{Cbc-Mac}$ construction
+  to stretch the input domain:
+  \begin{align*}
+    f^{(k)}(m_1,\ldots,m_k)=f(f(\cdots f(f(m_1)+ m_2)+\cdots+m_{k-1})+m_k)\enspace,
+  \end{align*}
+  provided that $(\MSPACE,+)$ is a commutative group. Prove the
+  following facts about $\textsc{Cbc-Mac}$ construction.
+  \begin{enumerate}
+  \item If $f$ is $(t,q,\varepsilon)$-pseudorandom function, then
+    $f^{(k)}:\MSPACE^k\to\MSPACE$ is also pseudorandom function. Find
+    the corresponding security guarantees.
+
+    \textbf{Hint:} Write down the corresponding security game and
+    simplify the evaluation of $f^{(k)}$ until all intermediate values
+    are chosen uniformly from $\MSPACE$. Compute the probability of
+    collisions.
+
+  \item Let $f^{(*)}:\MSPACE^*\to\MSPACE$ be a natural extension for
+    variable input lengths, i.e.,
+    $f^{(*)}(m_1,\ldots,m_k)=f^{(k)}(m_1,\ldots,m_k)$ for any
+    $k\in\NN$. Prove that $f^{(*)}$ is not a pseudorandom
+    function. Give a corresponding distinguisher that makes only $3$
+    oracle calls.
+
+  \item Can we use $\textsc{Cbc-Mac}$ as an message authentication code?
+  \end{enumerate}
+
+  \item The hybrid hybrid CBC-MAC construction is following
+  \begin{align*}
+    \textsc{Hyb-Cbc-Mac}(m,f_1,f_2)=f_2\bigl(f_1^{(*)}(m)\bigr)\quad\text{for}\quad
+    f_1\in\FFF_1, f_2\in\FFF_2\enspace,
+  \end{align*}
+  where $\FFF_1$ and $\FFF_2$ be a pseudorandom permutation
+  families. Show that the $\textsc{Hyb-Cbc-Mac}$ construction is
+  secure message authentication code even for variable input lengths.
+  What is the role of $f_2$?
+
+
+
+\end{enumerate}
+
+
+\end{document}
