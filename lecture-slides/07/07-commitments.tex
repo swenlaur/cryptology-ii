@@ -1,0 +1,493 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Commitment Schemes}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{7 April, 2010}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\renewcommand{\SK}{{\red{\mathsf{sk}}}}
+\renewcommand{\PK}{{\blue{\mathsf{pk}}}}
+
+
+\begin{document}
+\titlefoil
+
+
+\middlefoil{Formal Syntax}
+
+
+
+\foilhead[-1.5cm]{Canonical use case}
+
+\illustration[scale=0.75, angle=-90, clip, trim=1.5cm 0.0cm 13.5cm 0.0cm]{commitment-scheme.eps}
+
+\begin{triangles}
+\item A randomised key generation algorithm $\GEN$ outputs a
+  \emph{public parameters} $\PK$ that must be authentically
+  transferred all participants.
+\item A commitment function $\COM_\PK:\MSPACE\to\CSPACE\times\DSPACE$
+  takes in a \emph{plaintext} and outputs a corresponding
+  \emph{digest} $c$ and decommitment string $d$.
+\item A commitment can be opened with 
+  $\OPEN_\PK:\CSPACE\times\DSPACE\to\MSPACE\cup\set{\bot}$.
+\item The commitment primitive is \emph{functional} if for all
+  $\PK\gets\GEN$ and $m\in\MSPACE$:
+  \begin{align*}
+    \OPEN_\PK(\COM_\PK(m))=m\enspace.    
+  \end{align*}
+\end{triangles}
+
+\foilhead[-1cm]{Binding property}
+
+A commitment scheme is $(t,\varepsilon)$-\emph{binding} if for any
+$t$-time adversary $\AD$:
+\begin{align*}
+  \advBindXX{}{\AD}=\pr{\GAME^\AD=1}\leq \varepsilon\enspace,
+\end{align*}
+where the challenge game is following
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+   & \PK\gets\GEN\\
+   & (c,d_0,d_1)\gets\AD(\PK)\\
+   & m_i\gets\OPEN_\PK(c,d_i) \FOR i=0,1\\
+   & \IF m_0=\bot\ \OR m_1=\bot\ \THEN \RETURN 0\\ 
+   &\ELSE \RETURN \neg[m_0\iseq m_1]
+  \end{game}
+\end{align*}
+
+\foilhead[-1cm]{Collision resistant hash functions}\enlargethispage{1cm}
+
+A function family $\HHH$ is $(t,\varepsilon)$-\emph{collision
+  resistant} if for any $t$-time adversary $\AD$:
+\begin{align*}
+  \advCRXX{\HHH}{\AD}=\pr{\GAME^\AD=1}\leq \varepsilon\enspace,
+\end{align*}
+where the challenge game is following
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+   & h\getsu\HHH\\
+   & (m_0,m_1)\gets\AD(h)\\
+   & \IF m_0=m_1\  \THEN \RETURN 0\\ 
+   &\ELSE \RETURN [h(m_0)\iseq h(m_1)]
+  \end{game}
+\end{align*}
+
+\foilhead[-1cm]{Hash commitments}
+
+Let $\HHH$ be $(t,\varepsilon)$-collision resistant hash
+function family. Then we can construct a binding commitment:
+\begin{triangles}
+  \item The setup algorithm returns $h\getsu\HHH$ as a public parameter.
+  \item To commit $m$, return $h(m)$ as digest and $m$ as a
+    decommitment string.
+  \item The message $m$ is a valid opening of  $c$ if $h(m)=c$.
+\end{triangles}\vspace{2ex}
+
+\textbf{Usage}
+\begin{triangles}
+  \item Integrity check for files and file systems in general.
+  \item Minimisation of memory footprint in servers:
+    \begin{enumerate}
+      \item A server stores the hash $c\gets h(m)$ of an initial application data $m$.
+      \item Data is stored by potentially malicious clients.
+      \item Provided data $m'$ is correct if $h(m')=c$. 
+    \end{enumerate}
+\end{triangles}
+
+\foilhead[-1cm]{Hiding property}
+
+A commitment scheme is $(t,\varepsilon)$-\emph{hiding} if for any
+$t$-time adversary $\AD$:
+\begin{align*}
+  \advHidXX{}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq \varepsilon\enspace,
+\end{align*}
+where \vspace*{-2ex}
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+   & \PK\gets\GEN\\
+   & (m_0,m_1)\gets\AD(\PK)\\
+   & (c,d)\gets\COM_\PK(m_0)\\
+   & \RETURN \AD(c)
+  \end{game}
+  \qquad
+  \begin{game}{\GAME_1^\AD}
+   & \PK\gets\GEN\\
+   & (m_0,m_1)\gets\AD(\PK)\\
+   & (c,d)\gets\COM_\PK(m_1)\\
+   & \RETURN \AD(c)
+  \end{game}
+\end{align*}
+
+\foilhead[-1cm]{Any cryptosystem is a commitment scheme}
+
+\textbf{Setup:}\vspace*{1ex}\\
+\hspace*{1.5em} Compute $(\PK,\SK)\gets\GEN$ and delete $\SK$ and output $\PK$.
+\bigskip
+\spreadappart
+
+\textbf{Commitment:}\vspace*{1ex}\\
+\hspace*{1.5em} To commit $m$, sample necessary randomness
+$r\gets\RSPACE$ and output:
+\begin{align*}
+  \begin{cases}
+    c\gets\ENC_\PK(m;r)\enspace,\\
+    d\gets (m,r)\enspace.
+  \end{cases}
+\end{align*}
+\spreadappart
+
+\textbf{Opening:}\vspace*{1ex}\\
+\hspace*{1.5em} A tuple $(c,m,r)$ is a valid decommitment of $m$ if $c=\ENC_\PK(m;r)$. 
+\lastline
+
+
+\foilhead[-1cm]{Security guarantees}
+
+If a cryptosystem is $(t,\varepsilon)$-IND-CPA secure and functional,
+then the resulting commitment scheme is $(t,\varepsilon)$-hiding and
+perfectly binding.
+
+\vskip 1cm
+
+\begin{diamonds}
+\item We can construct commitment schemes from the ElGamal and
+  Goldwasser-Micali cryptosystems.
+\item For the ElGamal cryptosystem, one can create public parameters
+  $\PK$ without the knowledge of the secret key $\SK$.
+\item The knowledge of the secret key $\SK$ allows a participant to
+  extract messages from the commitments.
+\item The extractability property is useful in security proofs.
+\end{diamonds}
+
+
+\middlefoil{Simple Commitment Schemes}
+
+
+\foilhead[-1cm]{Modified Naor commitment scheme}
+
+\textbf{Setup:}\vspace*{1ex}\\
+\hspace*{1.5em} Choose a random $n$-bit string $\PK\getsu\set{0,1}^n$. \\
+\hspace*{1.5em} Let $f:\set{0,1}^k\to\set{0,1}^n$ be a pseudorandom generator. 
+\bigskip
+\spreadappart
+
+\textbf{Commitment:}\vspace*{1ex}\\
+\hspace*{1.5em} To commit $m\in\set{0,1}$, generate
+$d\gets\set{0,1}^k$ and compute digest
+\begin{align*}
+  c\gets
+  \begin{cases}
+    f(d),&\text{if } m=0 \enspace,\\
+    f(d)\oplus\PK,&\text{if } m=1\enspace.
+  \end{cases}
+\end{align*}
+\spreadappart
+
+\textbf{Opening:}\vspace*{1ex}\\
+\hspace*{1.5em} Given $(c,d)$ check whether $c=f(d)$ or $c=f(d)\oplus\PK$. 
+\lastline
+
+
+\foilhead[-1cm]{Security guarantees}\enlargethispage{1cm}
+
+If $f:\set{0,1}^k\to\set{0,1}^n$ is $(t,\varepsilon)$-secure
+pseudorandom generator, then the modified Naor commitment scheme is
+$(t,2\varepsilon)$-hiding and $2^{2k-n}$-binding. 
+
+\textbf{Proof}
+
+Hiding claim is obvious, since we can change $f(d)$ with uniform
+distribution.  For the binding bound note that
+\begin{align*}
+ \abs{\PPP\KKK_{\mathrm{bad}}}&= \#\set{\PK:\exists d_0,d_1:\ f(d_0)\oplus f(d_1)=\PK}\leq 2^{2k}\\
+ \abs{\PPP\KKK_{\mathrm{all}}}&= \#\set{0,1}^n= 2^{n}
+\end{align*}
+and thus
+\begin{align*}
+  \advBindXX{}{\AD}\leq \pr{\PK\in\PPP\KKK_{\mathrm{bad}}}\leq 2^{2k-n}\enspace.
+\end{align*}
+
+
+\foilhead[-1cm]{Discrete logarithm}
+
+Let $\GG=\langle g\rangle$ be a $q$-element group that is generated by
+a single element $g$. Then for any $y\in\GG$ there exists a minimal
+value $0\leq x \leq q$ such that\vspace*{-1ex}
+\begin{align*}
+ g^x=y  \quad\Leftrightarrow\quad x=\log_g y\enspace.
+\end{align*}\vspace*{-3ex}\\
+A group $\GG$ is \emph{$(t,\varepsilon)$-secure DL group} if for any
+$t$-time adversary $\AD$\vspace*{-0ex}
+\begin{align*}
+  \advDLXX{\GG}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon\enspace,
+\end{align*}\vspace*{-3ex}\\
+where\vspace*{-2ex}
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &y\getsu\GG\\
+    & x\gets\AD(y)\\
+    &\RETURN [g^x\iseq y]
+  \end{game}
+\end{align*}
+
+
+\foilhead[-1cm]{Pedersen commitment scheme}
+
+
+\textbf{Setup:}\vspace*{1ex}\\
+\hspace*{1.5em} Let $q$ be a prime and let $\GG=\langle g\rangle$ be a $q$-element DL-group.\\
+\hspace*{1.5em} Choose $y$ uniformly from $\GG\setminus\set{1}$ and set $\PK\gets (g,y)$.
+\bigskip\spreadappart
+
+\textbf{Commitment:}\vspace*{1ex}\\
+\hspace*{1.5em} To commit $m\in\ZZ_q$, choose $r\getsu\ZZ_q$ and output
+\begin{align*}
+  \begin{cases}
+    c\gets g^m y^r \enspace,\\
+    d\gets (m,r)\enspace.
+  \end{cases}
+\end{align*}
+\spreadappart
+
+\textbf{Opening:}\vspace*{1ex}\\
+\hspace*{1.5em} A tuple $(c,m,r)$ is a valid decommitment for $m$ if $c=g^my^r$.
+\lastline
+
+
+\foilhead[-1cm]{Security guarantees} 
+
+
+Assume that $\GG$ is $(t,\varepsilon)$-secure discrete logarithm
+group. Then the Pedersen commitment is perfectly hiding and
+$(t,\varepsilon)$-binding commitment scheme.
+
+\textbf{Proof}
+\begin{triangles}
+\item \textsc{Hiding}. The factor $y^r$ has uniform distribution over
+  $\GG$, since $y^r=g^{xr}$ for $x\neq 0$ and $\ZZ_q$ is simple ring: $x\cdot\ZZ_q=\ZZ_q$.
+\item \textsc{Binding}. A valid double opening reveals a discrete logarithm of $y$:
+  \begin{align*}
+    g^{m_0} y^{r_0}=g^{m_1}y^{r_1}\quad\Leftrightarrow\quad
+    \log_g y=\frac{m_1-m_0}{r_0-r_1}\enspace.
+  \end{align*}
+  Note that $r_0\neq r_1$ for valid double opening. Hence, a double
+  opener $\AD$ can be converted to a discrete logarithm finder.
+
+\end{triangles}
+
+\middlefoil{Other Useful Properties}
+
+\foilhead[-1cm]{Extractability}
+
+A commitment scheme is $(t,\varepsilon)$-\emph{extractable} if there
+exists a modified setup procedure $(\PK,\SK)\gets \GEN^*$
+such that
+\begin{triangles}
+\item the distribution of public parameters $\PK$ coincides with the
+  original setup;
+\item there exists an efficient extraction function
+  $\EXTR_\SK:\CSPACE\to\MSPACE$ such that for any $t$-time adversary
+  $\advExtrXX{}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon$ where
+  \begin{align*}
+    \begin{game}{\GAME^\AD}
+      &(\PK,\SK)\gets\GEN^*\\
+      &(c,d)\gets\AD(\PK)\\
+      &\IF \OPEN_\PK(c,d)=\bot\ \THEN \RETURN 0\\
+      &\ELSE \RETURN \neg [\OPEN_\PK(c,d)\iseq \EXTR_\SK(c)]
+    \end{game}
+  \end{align*}
+\end{triangles}
+
+
+\foilhead[-1cm]{Equivocability}
+
+A commitment scheme is \emph{equivocable} if there
+exists 
+\begin{triangles}
+\item a modified setup procedure $(\PK,\SK)\gets \GEN^*$
+\item a modified fake commitment procedure  $(\hat{c},\sigma)\gets\FCOM_\SK$  
+\item an efficient equivocation algorithm $\hat{d}\gets\EQUIV_\SK(\hat{c},\sigma,m)$
+\end{triangles}
+ such that
+\begin{triangles}
+\item the distribution of public parameters $\PK$ coincides with the
+  original setup;
+\item fake commitments $\hat{c}$ are indistinguishable from real commitments
+\item fake commitments $\hat{c}$ can be opened to arbitrary values
+  \begin{align*}
+   \forall  m\in\MSPACE,  (\hat{c},\sigma)\gets\FCOM_\SK, \hat{d}\gets \EQUIV_\SK(\hat{c},\sigma,m):
+    \OPEN_\PK(\hat{c},\hat{d})\equiv m\enspace.
+  \end{align*}
+\item opening fake and real commitments are indistinguishable.
+\end{triangles}
+
+
+\foilhead[-1cm]{Formal security definition}
+
+A commitment scheme is $(t,\varepsilon)$-\emph{equivocable} if
+for any $t$-time adversary $\AD$\vspace*{-0.5ex}
+\begin{align*}
+  \advEquivXX{}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq\varepsilon\enspace,
+\end{align*}
+where\vspace*{-2ex}
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &\PK\gets\GEN\\
+    &\begin{ublock}{m_i=\bot}
+      &m_i\gets\AD\\
+      &(c,d)\gets\COM_\PK(m_i)\\
+      &\text{Give }(c,d)\text{ to } \AD
+    \end{ublock}\\
+   &\RETURN \AD
+  \end{game}
+  \qquad
+  \begin{game}{\GAME_1^\AD}
+    &(\PK,\SK)\gets\GEN^*\\
+    &\begin{ublock}{m_i=\bot}
+      &(c,\sigma)\gets\FCOM_\SK, m_i\gets\AD\\
+      &d\gets\EQUIV_\SK(c,\sigma,m_i)\\
+      &\text{Give }(c,d)\text{ to } \AD
+    \end{ublock}\\
+   &\RETURN \AD
+  \end{game}
+\end{align*}%
+\end{small}%
+
+
+\foilhead[-1cm]{A famous example}
+
+The Pedersen is perfectly equivocable commitment.
+\begin{triangles}
+  \item \textbf{Setup.} Generate $x\gets\ZZ_q^*$ and  set $y\gets g^x$.
+  \item \textbf{Fake commitment.} Generate $s\gets\ZZ_q$ and output $\hat{c}\gets g^s$.
+  \item \textbf{Equivocation.} To open $\hat{c}$, compute $r\gets (s-m)\cdot x^{-1}$.
+\end{triangles}
+\Bigskip
+
+
+\textbf{Proof}
+\begin{triangles}
+ \item Commitment value $c$ has uniform distribution. 
+ \item For fixed  $c$ and $m$, there exists a unique value of $r$.
+\end{triangles}
+Equivocation leads to perfect simulation of $(c,d)$ pairs.
+
+
+
+\foilhead[-1cm]{Homomorphic commitments}
+
+A commitment scheme is $\otimes$-\emph{homomorphic} if there exists
+an efficient coordinate-wise multiplication operation $\cdot$ defined
+over $\CSPACE$ and $\DSPACE$ such that
+\begin{align*}
+  \COM_\PK(m_1)\cdot\COM_\PK(m_2)\equiv \COM_\PK(m_1\otimes m_2)\enspace, 
+\end{align*}
+where the distributions coincide even if $\COM_\PK(m_1)$ is fixed.
+\vskip 3ex
+
+\textbf{Examples}
+\begin{triangles}
+  \item ElGamal commitment scheme
+  \item Pedersen commitment scheme 
+\end{triangles}
+
+
+
+\middlefoil{Active Attacks}
+
+\foilhead[-1cm]{Non-malleability wrt opening}
+\illustration[scale=0.75, angle=-90, clip, trim=1.5cm 0.0cm 13.5cm 0.0cm]{active-attack-i.eps}
+
+A commitment scheme is non-malleable wrt. opening if an adversary who
+knows the input distribution $\red{\MSPACE_0}$ cannot alter commitment
+and decommitment values $c,d$ on the fly so that
+\begin{triangles}
+\item $\AD$ cannot \emph{efficiently} open the altered commitment
+  value $\overline{c}$ to a message $\overline{m}$ that is related to
+  original message $m$.
+\end{triangles}
+\bigskip
+\spreadappart
+
+Commitment $c$ does not help the adversary to create other commitments.
+\lastline
+
+\foilhead[-1.5cm]{Formal definition}
+
+\begin{small}%
+\begin{align*}%
+  \begin{game}{\GAME_0^\AD}
+    &\PK\gets\GEN\\
+    &\red{\MSPACE_0}\gets\AD(\PK)\\
+    &m\gets\red{\MSPACE_0} \\
+    &(c,d)\gets\COM_\PK(m)\\
+    &\pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(c)\\
+    &\hat{d}_1,\ldots\hat{d}_n\gets\AD(d)\\
+    &\IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\
+    &\hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i=1,\ldots,n\\
+    &\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+  \end{game}
+  \qquad
+  \begin{game}{\GAME_1^\AD}
+    &\PK\gets\GEN\\
+    &\red{\MSPACE_0}\gets\AD(\PK)\\
+    &m\gets\red{\MSPACE_0},\orangecommand{\smash{\overline{m}\gets\red{\MSPACE_0}}} \\
+    &\smash{\orangecommand{\!\!(\overline{c},\overline{d})\gets\COM_\PK(\overline{m})}}\\
+    &\pi(\cdot),\hat{c}_1,\ldots,\hat{c}_n\gets\AD(\smash{\orangecommand{\!\!\overline{c}\!\!}})\\
+    &\hat{d}_1,\ldots\hat{d}_n\gets\AD(\smash{\orangecommand{\!\!\overline{d}\!\!}})\\
+    &\IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\
+    &\hat{m}_i\gets\OPEN_\PK(\hat{c}_i,\hat{d}_i)\ \FOR i=1,\ldots,n\\
+    &\RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n)
+  \end{game}
+\end{align*}%
+\end{small}%
+
+\foilhead[-1.5cm]{Non-malleability wrt commitment}
+
+\illustration[scale=0.75, angle=-90, clip, trim=1.5cm 0.0cm 13.5cm 0.0cm]{active-attack-ii.eps}
+
+A commitment scheme is non-malleable wrt commitment if an adversary
+$\AD_1$ who knows the input distribution $\red{\MSPACE_0}$ cannot
+alter the commitment value $c$ on the fly so that
+\begin{triangles}
+\item an unbounded adversary $\AD_2$ cannot open the altered
+  commitment value $\overline{c}$ to a message $\overline{m}$ that is
+  related to original message $m$.
+\end{triangles}
+\bigskip
+\spreadappart
+
+Commitment $c$ does not help the adversary to create other commitments
+even if some secret values are leaked after the creation of $c$ and $\overline{c}$.
+\lastline
+
+\foilhead[-1cm]{Homological classification}
+
+\illustration[scale=0.75, angle=-90, clip, trim=0.0cm 0.0cm 11.0cm 0.0cm]{homological-classification.eps} 
+
+Can we define decommitment oracles such that the graph depicted
+above captures relations between various notions where
+\begin{triangles}
+  \item NM1-XXX denotes non-malleability wrt opening,
+  \item NM2-XXX denotes non-malleability wrt commitment.
+\end{triangles}
+
+\end{document}
+
+
