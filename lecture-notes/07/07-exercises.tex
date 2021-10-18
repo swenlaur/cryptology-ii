@@ -1,0 +1,221 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Homework VII
+\begin{enumerate}
+\item To minimise memory footprint in servers, operational information
+  is often stored by clients and provided on demand. Web cookies are
+  the most famous example. Such a storage strategy opens up new attack
+  vectors, since malicious clients can provide inconsistent data that
+  might lead to crashes or code injection attacks.
+  \begin{enumerate}
+  \item Design simple integrity tests based on collision resistant
+    hash function if the stored data is always used as a single unit.
+  \item Provide a solution if stored data is structured and only few
+    substructures are used in each operation. For example, the entire
+    file system is stored at client cite who can potentially alter it.
+  \item Design a data protection model for BitTorrent like
+    application, where the data is hosted by many potentially
+    malicious sub-servers and a client assembles the entire file by
+    combining the data streams.
+  \item[$(?)$] The MD5 hash function was recently shown to be weak, i.e., it
+    is possible to find collisions. However, the attacker cannot
+    control the values of colliding messages. Are now all integrity
+    protection mechanisms based on MD5 insecure or not?
+
+    \textbf{Clarification:} The MD5 hash function is iterative
+    \begin{align*}
+      f^*(m_1,\ldots m_n)=f(f(\cdots
+      f(f(\mathsf{iv},m_1),m_2),\ldots,m_{n-1}),m_n)
+    \end{align*}
+    where $f:\TSPACE\times\MSPACE\to\TSPACE$ is a dedicated
+    compression function.
+  \end{enumerate}
+  Compute all corresponding security guarantees provided that the hash
+  function is sampled form the $(t,\varepsilon)$-collision-resistant
+  function family $\HHH$.
+
+\item There are several other properties that hash function families
+  can have besides collision resistance.
+  \begin{itemize}
+  \item A hash function family $\HHH$ is $(t,\varepsilon)$-secure
+    one-way function family if for any $t$-time adversary $\AD$
+    \begin{align*}
+      \pr{h\getsu\HHH, m_0\getsu\MSPACE, m_1\gets\AD(h,h(m_0)): h(m_0)=h(m_1)}\leq\varepsilon\enspace.
+    \end{align*}
+  \item A hash function family $\HHH$ is $(t,\varepsilon)$-secure
+    against second preimage if for any $t$-time adversary $\AD$
+    \begin{align*}
+      \pr{
+        \begin{aligned}
+         & h\getsu\HHH, m_0\getsu\MSPACE, m_1\gets \AD(h,m_0):\\
+         & m_0\neq m_1\wedge h(m_0)=h(m_1)
+        \end{aligned}}\leq\varepsilon\enspace.
+    \end{align*}
+  \end{itemize}
+  Establish the corresponding homological classification of these
+  three properties under the assumption that $\HHH$ is a compressing
+  function family. Provide the corresponding reductions.
+  \begin{enumerate}
+  \item Show that collision resistance implies security against second
+    preimage attacks.
+  \item Show that security against second preimage attacks implies
+    one-wayness.
+  \item Give interpretation to all three properties. Is the MD5
+    function still secure against second preimage attacks?
+  \item[$(\star)$] Give the corresponding separations that show that
+    the corresponding inclusions are strict under the assumption that
+    $\HHH$ is compressing function family.
+  \end{enumerate}
+
+
+
+\item The main drawback of the modified Naor commitment scheme is
+  message expansion---to commit one bit one must send $n$ bits. One
+  possibility is to increase the size of the message space.  Let the
+  message space $\MSPACE$ be a subset of a finite field
+  $(\FF_{2^n};+,\times)$ such that we can treat all $n$-bit strings as
+  elements of $\FF_{2^n}$. Then we can define modified commitment
+  scheme:
+    \begin{align*}
+      \begin{aligned}
+      \begin{fblock}{\GEN}
+       & \PK\getsu\FF_{2^n}^*\\
+       &\RETURN \PK       
+      \end{fblock}\\
+      \
+      \end{aligned}
+      \qquad
+      \begin{fblock}{\COM_\PK(x)}
+        & d\gets\set{0,1}^k\\
+        & c\gets f(d)+ x\times \PK\\
+        & \RETURN (c,d) 
+      \end{fblock}
+      \qquad
+      \begin{fblock}{\OPEN_\PK(c,d)}
+        &y\gets c\oplus f(d)\\
+        &\IF y\notin\PK\times\MSPACE\ \THEN \RETURN \bot\\
+        &\ELSE \RETURN y\times \PK^{-1}
+      \end{fblock}
+    \end{align*}
+    Establish the corresponding security guarantees under the
+    assumption that $f:\set{0,1}^k\to\set{0,1}^n$ is a
+    $(t_1,\varepsilon_1)$-pseudorandom generator.
+
+    How big must be the message space $\MSPACE\subseteq \FF_{2^n}$ to
+    achieve reasonable security guarantees against double openings?
+
+    \textbf{Hint:} How many decommitment pairs can lead to a double
+    opening? How is this number related to the size of $\FF_{2^n}$ and
+    $\MSPACE$?
+
+
+  \item Another way to improve the modified Naor commitment scheme is
+    to use a collision resistant hashing to build a list commitment
+    scheme on top of the ordinary commitment scheme:
+    \begin{align*}
+      \begin{fblock}{\GEN}
+        &\PK\getsu\set{0,1}^n\\
+        &h\getsu\HHH\\
+        &\RETURN (\PK,h)
+      \end{fblock}
+      \qquad
+      \begin{fblock}{\COM_{\PK,h}(x_1,\ldots,x_{\ell})}
+        &(c_i,d_i)\gets \mathsf{Naor\text{-}Com}_{\PK}(x_i),\ i=1,\ldots,\ell\\ 
+        &c_*\gets h(c_1,\ldots,c_{\ell})\\
+        &\RETURN (c_*,(c_1,\ldots,c_{\ell},d_1,\ldots,d_{\ell})) 
+      \end{fblock}
+    \end{align*}
+    where the decommitment procedure just verifies
+    $c_*=h(c_1,\ldots,c_\ell)$ and restores
+    $x_i\gets\OPEN_\PK(c_i,d_i)$ for $i=1,\ldots,\ell$.
+    \begin{enumerate}
+    \item Establish security guarantees under the assumption that the
+      basic commitment scheme is $(t_1,\varepsilon_1)$-hiding and
+      $(t_2,\varepsilon_2)$-binding and $\HHH$ is a
+      $(t_3,\varepsilon_3)$-collision resistant hash function family.
+    \item Modify the compaction strategy so that it is possible to
+      open individual bits without leaking information about the
+      others.
+ 
+    \item[$(?)$] Can we use a pseudorandom generator $f$ for compacting the
+      decommitment? What happens if we generate $d_0,\ldots,d_{\ell-1}$ by
+      stretching a single master seed $d_*$? Provide 
+      corresponding security guarantees.
+    \end{enumerate}
+  
+  \item One of the most elegant properties of additively homomorphic
+    commitments is the ability to do verifiable shuffling.  As an
+    example consider the following card shuffling protocol:
+    \begin{enumerate}
+    \item[$\PARTY_1$] generates a random permutation
+      $\pi:\set{1,\ldots,36}\to\set{1,\ldots,36}$. Let $P$ be the
+      corresponding $36\times 36$ zero-one matrix such that
+      $\pi(\vec{y})=P\vec{y}$ for any $n$-element vector $\vec{y}$ and
+      let $(c_{ij},d_{ij})\gets\COM_\PK(p_{ij})$. Next, $\PARTY_1$
+      sends the matrix of commitments $c_{ij}$ to $\PARTY_2$.
+    \item[$\PARTY_2$] computes randomly shuffled card pack. First
+      $\PARTY_1$ chooses a random permutation $x_1,\ldots,x_{36}$ of
+      the set $\set{1,\ldots,36}$. Next, $\PARTY_2$ computes
+      \begin{align*}
+        e_i\gets c_{i1}^{x_1}\cdot c_{i2}^{x_2}\cdots c_{in}^{x_n} c_i^*\enspace,
+      \end{align*}
+      where $(c_i^*,d_i^*)\gets\COM_\PK(0)$, and sends
+      $e_1,\ldots,e_n$ to $\PARTY_2$.
+    \end{enumerate}
+   \begin{enumerate}
+   \item Prove that the values $e_1,\ldots, e_n$ are indeed randomly
+     shuffled commitments of $x_1,\ldots, x_n$.
+   \item Prove that neither $\PARTY_1$ not $\PARTY_2$ cannot guess
+     where is the commitment to $36$ among $e_1,\ldots,e_n$ if
+     commitment is $(t,\varepsilon)$-hiding.
+   \item Prove that $\PARTY_1$ and $\PARTY_2$ can release cards one by
+     one and one can detect cheating in the release phase if
+     commitment scheme is $(t,\varepsilon_1)$-binding.
+   \item How $\PARTY_1$ can prove that $c_{ij}$ are indeed commitments
+     to the permutation matrix under the assumption that $c_{ij}$ are
+     guaranteed to be commitments of zeros or ones?
+    
+     \textbf{Hint:} Can one characterise permutation matrices in terms
+     of row and column sums.
+   \item[$(\star)$] Use cut-and-choose techniques to make the protocol
+     secure against malicious corruption in the dealing phase.
+
+   \end{enumerate}
+
+ \item Consider the following simple user-aided key agreement
+   protocol. The public key $\PK$ of a server $\PARTY_1$ is known to
+   all participants. If a participant $\PARTY_2$ wants to connect to
+   $\PARTY_1$ it generates a random session key $k\getsu\KSPACE$ and a
+   short authentication nonce $r\getsu\set{0,\ldots,9999}$ and sends
+   $\ENC_\PK(k\|r)$ to $\PARTY_1$. Next $\PARTY_1$ recovers $k$ and
+   $r$ and sends $r$ as an SMS back to $\PARTY_2$. The client
+   $\PARTY_2$ halts if the SMS does not correspond to his or her
+   authentication nonce.
+  \begin{enumerate}
+  \item Prove that a $t$-time adversary can alter the ciphertext
+    without being detected with probability at most
+    $10^{-4}+\varepsilon$ provided that the cryptosystem is
+    $(t,\varepsilon)$-IND-CCA2 secure and no adversary can alter the
+    SMS message.
+  \item Provide an explicit ciphertext altering strategy against
+    the ElGamal cryptosystem which succeeds with probability $\frac{1}{4}$
+    under the assumption that $k||r$ is uniformly distributed over the
+    message space $\GG$.
+  \end{enumerate}
+
+
+
+\end{enumerate}
+\end{document}
