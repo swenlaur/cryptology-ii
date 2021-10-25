@@ -1,0 +1,500 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Entity Authentication}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{9 April, 2010}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+\newcommand{\probes}{\mathsf{probes}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\renewcommand{\SK}{{\red{\mathsf{sk}}}}
+\renewcommand{\PK}{{\blue{\mathsf{pk}}}}
+
+
+
+
+
+\begin{document}
+\titlefoil
+
+\middlefoil{Formal Syntax}
+
+\foilhead[-1.5cm]{Entity authentication}
+
+\illustration[scale=0.8, angle=-90, clip, trim=1.5cm 0.0cm 12.5cm 0.7cm]{entity-authentication.eps} 
+
+\begin{triangles}
+\item The communication between the prover and verifier must be
+  authentic.
+\item To establish electronic identity, Charlie must generate
+  $(\PK,\SK)\gets\GEN$ and convinces others that the public
+  information $\PK$ represents him.
+\item The entity authentication protocol must convince the verifier
+  that his or her opponent possesses the secret $\SK$.
+\item An entity authentication protocol is \emph{functional} if an
+  honest verifier $\VERIFIER_{\blue{\PK}}$ always accepts an honest prover
+  $\PROVER_{\red{\SK}}$.
+\end{triangles}
+
+\foilhead[-1.0cm]{Classical impossibility results}
+
+\textbf{Inherent limitations.}  Entity authentication is impossible 
+\begin{itemize}
+ \item[(i)\,] \textbf{if} authenticated communication is unaffordable in the setup
+  phase;
+\item[(ii)] \textbf{if} authenticated communication is unaffordable in the second phase.
+\end{itemize}
+\bigskip
+
+
+\textbf{Proof.} Man-in-the-middle attacks. Chess-master attacks.
+\Bigskip  
+\spreadappart
+
+\textbf{Conclusions}
+\begin{triangles}
+  \item It is impossible to establish legal identity without physical measures.
+  \item Any smart card is susceptible to physical attacks regardless of
+    the cryptographic countermeasures used to authenticate transactions.
+  \item Secure e-banking is impossible if the user does not have full
+    control over the computing environment (secure e-banking is
+    practically impossible).
+\end{triangles}
+
+
+\foilhead[-1.5cm]{Physical and legal identities}
+
+\illustration[scale=0.8, angle=-90, clip, trim=0.5cm 0.0cm 13.0cm 0.7cm]{physical-and-legal-identities.eps}
+\bigskip
+\spreadappart
+
+\begin{triangles}
+\item Entity authentication is possible only if all participants have
+  set up a network with authenticated communication links.
+\item A role of a entity authentication protocol is to establish a
+  convincing bound between physical network address and legal
+  identities.
+\item A same legal identity can be in many physical locations and move
+  from one physical node to another node.
+\end{triangles}
+
+
+\middlefoil{Challenge-Response\vspace*{1ex}\\ Paradigm}
+
+\foilhead[-1.5cm]{Salted hashing}
+
+\textbf{Global setup:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  Authentication server $\VERIFIER$ outputs a description of a hash function $h$.
+\end{minipage}
+
+\textbf{Entity creation:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  A party $\PROVER$ chooses a password $\SK\getsu\set{0,1}^\ell$ and
+  a nonce $r\getsu\set{0,1}^k$. The public authentication information
+  is $\PK=(r,c)$ where $c\gets h(\SK,r)$.
+\end{minipage}
+
+\textbf{Entity authentication:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  To authenticate him- or herself, $\PROVER$ releases $\SK$ to the
+  server $\VERIFIER$ who verifies that the hash value is correctly
+  computed, i.e., $c= h(\SK,r)$.
+\end{minipage}\vspace*{2ex}
+
+\textbf{Theorem.}  If $h$ is $(t,\varepsilon)$-secure one-way
+function, then no $t$-time adversary $\AD$ without $\SK$ can succeed in the protocol
+with probability more than $\varepsilon$.
+\begin{triangles}
+\item There are no secure one-way functions for practical sizes of
+  $\SK$.
+\item A malicious server can completely break the security. 
+\end{triangles}
+
+
+\foilhead[-1.0cm]{RSA based entity authentication}
+
+\textbf{Global setup:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  Authentication server $\VERIFIER$ fixes the minimal size of RSA keys. 
+\end{minipage}
+
+
+\textbf{Entity creation:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  A party $\PROVER$ runs a RSA key generation algorithm
+  $(\PK,\SK)\gets\GEN_{\mathrm{rsa}}$ and outputs the public key $\PK$
+  as the authenticating information.
+\end{minipage}
+
+\textbf{Entity authentication:}  \\
+\hspace*{0.03\linewidth}
+\begin{minipage}[t]{0.97\linewidth}
+  \begin{enumerate}
+  \item $\VERIFIER$ creates a challenge $c\gets\ENC_\PK(m)$ for
+    $m\getsu\MSPACE$ and sends $c$ to $\PARTY$.
+  \item $\PROVER$ sends back $\overline{m}\gets\DEC_\SK(c)$.
+  \item $\VERIFIER$ accepts the proof if $m=\overline{m}$.
+  \end{enumerate}
+\end{minipage}
+\bigskip
+\spreadappart
+
+This protocol can be generalised for any public key cryptosystem.\\
+The general form of this protocol is known as
+\emph{challenge-response protocol}.\\
+This mechanism provides explicit security guarantees in the TLS protocol.
+\lastline
+
+\foilhead[-1.5cm]{The most powerful attack model}
+
+\illustration[scale=0.65, angle=-90, clip, trim=1.0cm 0.0cm 13.0cm 0.7cm]{active-attack.eps} 
+
+Consider a setting, where an adversary $\AD$ can impersonate verifier $\VERIFIER$
+\begin{triangles}
+\item The adversary $\AD$ can execute several protocol instances with
+  the honest prover $\PROVER$ in parallel to spoof the challenge
+  protocol.
+\item The adversary $\AD$ may use protocol messages arbitrarily as
+  long as $\AD$ does not conduct the crossmaster attack.
+\end{triangles}
+Let us denote the corresponding success probability by
+\begin{align*}
+\advEAUTHXX{}{\AD}=\pr{\smash{(\PK,\SK)\gets\GEN: \VERIFIER^{\AD}=1}}\enspace.
+\end{align*}
+
+
+\foilhead[-1.0cm]{Corresponding security guarantees}
+
+
+
+\textbf{Theorem.}  If a cryptosystem used in the challenge-response
+protocol is $(t,\varepsilon)$-IND-CCA2 secure, then for any  $t$-time
+adversary $\AD$ the corresponding success probability 
+$\advEAUTHXX{}{\AD}\leq\frac{1}{\abs{\MSPACE}}+\varepsilon$.
+
+\textbf{Proof.} A honest prover acts as a decryption
+oracle.
+\bigskip
+
+\textbf{The nature of the protocol}
+\begin{triangles}
+\item The protocol proves only that the prover has access to the
+  decryption oracle and therefore the prover must \emph{possess} the
+  secret key $\SK$.
+\item The possession of the secret key $\SK$ does not imply the
+  \emph{knowledge} of it. For example, the secret key $\SK$ might be
+  hardwired into a smart card.
+\item Usually, the inability to decrypt is a strictly stronger
+  security requirement than the ability to find the secret key.
+\item \emph{Knowledge} is permanent whereas \emph{possession} can be
+  temporal.
+\end{triangles}
+
+
+\middlefoil{Proofs of knowledge}
+
+\foilhead[-1.0cm]{Schnorr identification protocol}
+
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm 0.0cm 11.0cm 0.7cm]{schnorr-identification-scheme.eps} 
+
+The group $\GG=\langle g\rangle$ must be a DL group with a prime cardinality $q$.
+\begin{triangles}
+  \item The secret key $x$ is the discrete logarithm of $y$.
+  \item The verifier $\VERIFIER$ is assumed to be semi-honest.
+  \item The prover $\PROVER$ is assumed to be potentially malicious. 
+  \item We consider only security in the standalone setting.
+\end{triangles}
+
+\foilhead[-1.0cm]{Zero-knowledge principle}
+
+\illustration[scale=0.8, angle=-90, clip, trim=3.5cm 2.0cm 4.0cm 2.0cm]{zero-knowledge.eps} 
+
+Lucy should be equally \emph{successful} in both experiments.
+
+\foilhead[-1.0cm]{Simulation principle}
+
+\illustration[scale=0.80, angle=-90, clip, trim=3.5cm 2.0cm 4.0cm 2.0cm]{simulation-principle.eps} 
+
+Lucy should not be able to distinguish between these two experiments.
+
+\foilhead[-1.0cm]{Zero-knowledge property}
+
+\textbf{Theorem.}  If a $t$-time verifier $\VERIFIER_*$ is semi-honest
+in the Schnorr identification protocol, then there exists
+$t+\Oh(1)$-algorithm $\VERIFIER_{\circ}$ that has the same output
+distribution as $\VERIFIER_*$ but do not interact with the prover
+$\PROVER$.
+\bigskip
+\spreadappart
+
+\textbf{Proof.}\\
+Consider a code wrapper $\SSS$ that chooses $\beta\getsu\ZZ_q$ and
+$\gamma\getsu\ZZ_q$ and computes $\alpha\gets g^\gamma\cdot
+y^{-\beta}$ and outputs whatever $\VERIFIER_*$ outputs on the
+transcript  $(\alpha,\beta,\gamma)$.
+
+
+\begin{triangles}
+\item If $x\neq 0$, then $\gamma=\beta+xk$ has indeed a uniform
+  distribution.
+  \item For fixed $\beta$ and $\gamma$, there exist only a single consistent value of $\alpha$.
+\end{triangles}
+{$\square$}
+\bigskip
+
+\textbf{Rationale:}
+Semi-honest verifier learns nothing from the interaction with the prover.
+The latter is known as \emph{zero-knowledge} property.
+
+ 
+
+\foilhead[-1.5cm]{Knowledge-extraction lemma}
+\illustration[scale=0.85, angle=-90, clip, trim=0.5cm 0.0cm 14.0cm 0.7cm]{knowledge-extraction-lemma.eps}
+
+This property is known as  \emph{special-soundness.}
+\begin{triangles}
+\item If adversary $\AD$ succeeds with probability $1$, then we can
+  extract the secret key $x$ by rewinding $\AD$ to get two runs with a
+  coinciding prefix $\alpha$.
+\item If adversary $\AD$ succeeds with a non-zero probability
+  $\varepsilon$, then we must use more advanced knowledge-extraction
+  techniques.
+\end{triangles}
+
+
+\foilhead[-1.5cm]{Find two ones in a row}
+\illustration[scale=0.85, angle=-90, clip, trim=4.5cm 0.0cm 10.5cm 0.7cm]{knowledge-extraction.eps}
+
+Let $A(r,c)$ be the output of the honest verifier $\VERIFIER(c)$ that
+interacts with a potentially malicious prover $\PROVER_*(r)$.
+\begin{triangles}
+\item Then all matrix elements in the same row $A(r,\cdot)$ lead to same $\alpha$ value.
+\item To extract the secret key $\SK$, we must find two ones in the same row.
+\item We can compute the entries of the matrix on the fly.
+\end{triangles}
+
+We derive the corresponding security guarantees a \emph{bit later}.
+
+
+\foilhead[-1.5cm]{Modified Fiat-Shamir identification protocol}
+
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm 0.0cm 10.0cm 0.7cm]
+{fiat-shamir-identification-scheme.eps} 
+
+All computations are done in $\ZZ_n$, where $n$ is an RSA modulus.
+\begin{triangles}
+  \item The secret key $s$ is a square root of $v$.
+  \item The verifier $\VERIFIER$ is assumed to be semi-honest.
+  \item The prover $\PROVER$ is assumed to be potentially malicious. 
+  \item We consider only security in the standalone setting.
+\end{triangles}
+
+
+
+\foilhead[-1.0cm]{Zero-knowledge property}
+
+\textbf{Theorem.}  If a $t$-time verifier $\VERIFIER_*$ is semi-honest
+in the modified Fiat-Shamir identification protocol, then there exists
+$t+\Oh(1)$-algorithm $\VERIFIER_{\circ}$ that has the same output
+distribution as $\VERIFIER_*$ but do not interact with the prover
+$\PROVER$.
+\bigskip
+
+\textbf{Proof.}\\
+Consider a code wrapper $\SSS$ that chooses $\beta\getsu\set{0,1}$,
+$\gamma\getsu\ZZ_n^*$, computes $\alpha\gets v^{-\beta}\cdot \gamma^2$
+and outputs whatever $\VERIFIER_*$ outputs on the transcript
+$(\alpha,\beta,\gamma)$.
+
+\begin{triangles}
+\item Since $s$ is invertible, we can prove that $s\cdot\ZZ_n^*=\ZZ_n^*$
+  and $s^2\cdot\ZZ_n^*=\ZZ_n^*$. As a result, $\gamma$ is independent of
+  $\beta$ and has indeed a uniform distribution.
+  \item For fixed $\beta$ and $\gamma$, there exist only a single consistent value of $\alpha$.
+\end{triangles}
+{$\square$}
+
+\foilhead[-1.0cm]{Knowledge-extraction lemma}
+
+\textbf{Theorem.} The Fiat-Shamir protocol is specially sound.
+
+\textbf{Proof.}  Assume that a prover $\PROVER_*$ succeeds for both
+challenges $\beta\in\set{0,1}$:
+\begin{align*}
+  \gamma_0^2=\alpha,\quad \gamma_1^2=\alpha
+  v\qquad\Longrightarrow\qquad
+  \frac{\gamma_1}{\gamma_0}=\sqrt{v}\enspace.
+\end{align*}
+
+The corresponding extractor construction $\KEXTR$:
+\begin{triangles}
+  \item Choose random coins $r$ for $\PROVER_*$.  
+  \item Run the protocol with $\beta=0$ and record $\gamma_0$
+  \item Run the protocol with $\beta=1$ and record $\gamma_1$
+  \item Return $\zeta=\frac{\gamma_1}{\gamma_0}$
+\end{triangles}
+
+\foilhead[-1.0cm]{Bound on success probability}
+
+\textbf{Theorem.}  Let $v$ and $n$ be fixed. If a potentially
+malicious prover $\PROVER_*$ succeeds in the modified Fiat-Shamir
+protocol with probability $\varepsilon> \frac{1}{2}$, then the
+knowledge extractor $\KEXTR^{\PROVER_*}$ returns $\sqrt{v}$ with
+probability $\varepsilon-\frac{1}{2}$.
+\bigskip
+
+\textbf{Proof.}  Consider the success matrix $A(r,c)$ as before.  Let
+$p_1$ denote the fraction rows that contain only single one and $p_2$
+the fraction of rows that contain two ones. Then evidently
+$p_1+p_2\leq 1$ and $\frac{p_1}{2}+ p_2\geq \varepsilon$
+and thus we can establish $p_2\geq \varepsilon-\frac{1}{2}$.
+$\square$
+\Bigskip
+
+\textbf{Rationale:} The knowledge extraction succeeds in general only
+if the success probability of $\PROVER_*$ is above $\frac{1}{2}$. The
+value $\kappa=\frac{1}{2}$ is known as \emph{knowledge error}.
+
+
+\middlefoil{Matrix Games}
+
+\foilhead[-1cm]{Classical algorithm}
+
+\textbf{Task:} Find two ones in a same row.
+
+$\underline{\mathsf{Rewind}}$:
+\begin{enumerate}
+ \item Probe random entries $A(r,c)$ until $A(r,c)=1$.
+ \item Store the matrix location $(r,c)$.
+ \item Probe random entries $A(r,\overline{c})$ in the same row until $A(r,\overline{c})=1$.
+ \item Output the location triple $(r,c,\overline{c})$.
+\end{enumerate}
+\vspace*{2cm}
+
+$\underline{\smash{\mathsf{Rewind\text{-}Exp}}}$:
+\begin{enumerate}
+  \item Repeat the procedure $\mathsf{Rewind}$ until $c\neq \overline{c}$.
+  \item Use the knowledge-extraction lemma to extract $\SK$.
+\end{enumerate}
+
+\foilhead[-1cm]{Average-case running time}
+
+\textbf{Theorem.}  If a $m\times n$ zero-one matrix $A$ contains
+$\varepsilon$-fraction of nonzero entries, then the $\mathsf{Rewind}$
+and $\mathsf{Rewind\text{-}Exp}$ algorithm make on average
+\begin{align*}
+  \EXP[\probes| \mathsf{Rewind}] &=\frac{2}{\varepsilon}\\
+  \EXP[\probes|\mathsf{Rewind\text{-}Exp}] &=\frac{2}{\varepsilon-\kappa}
+\end{align*}
+probes where $\kappa=\frac{1}{n}$ is a \emph{knowledge error}.
+
+\textbf{Proof.} We prove this theorem in another lecture.
+
+\foilhead[-1.0cm]{Strict time bounds}
+
+Markov's inequality assures that for a non-negative random variable $\probes$
+\begin{align*}
+  \pr{\probes\geq \alpha}\leq \frac{\E{\probes}}{\alpha}
+\end{align*}
+and thus $\mathsf{Rewind\text{-}Exp}$ succeeds with probability at
+least $\frac{1}{2}$ after $\frac{4}{\varepsilon-\kappa}$ probes.
+
+If we repeat the experiment $\ell$ times, we the failure probability
+goes to $2^{-\ell}$.
+
+
+
+
+\middlefoil{From Soundness to Security}
+
+\foilhead[-1.0cm]{Soundness and subjective security}
+
+Assume that we know a constructive proof:\vspace*{-2ex}
+\begin{quote}
+  If for fixed $\PK$ a potentially malicious $t$-time prover
+  $\PROVER_*$ succeeds with probability $\varepsilon>\kappa$, then a
+  knowledge extractor $\KEXTR^{\PROVER}$ that runs in time
+  $\tau(\varepsilon)=\Oh\bigl(\frac{t}{\varepsilon-\kappa}\bigr)$
+  outputs $\SK$ with probability $1-\varepsilon_2$.\vspace*{-2ex}
+\end{quote}
+and we \emph{believe}:\vspace*{-2ex}
+\begin{quote}
+  No human can create a $\tau(\varepsilon_1)$-time algorithm that
+  computes $\SK$ from $\PK$ with success probability at least
+  $1-\varepsilon_2$.\vspace*{-2ex}
+\end{quote}
+then it is \emph{rational} to assume that:\vspace*{-2ex} 
+\begin{quote}
+  No human without the knowledge of $\SK$ can create a algorithm
+  $\PROVER_*$ that succeeds in the proof of knowledge with probability
+  at least $\varepsilon_1$.
+\end{quote}
+
+\textbf{Caveat:} For each fixed $\PK$, there exists a trivial
+algorithm that prints out $\SK$. Hence, we cannot get objective
+security guarantees.
+
+
+\foilhead[-1.0cm]{Soundness and objective security}
+
+Assume that we know a constructive proof:\vspace*{-2ex}
+\begin{quote}
+  If for a fixed $\PK$ a potentially malicious $t$-time prover
+  $\PROVER_*$ succeeds with probability $\varepsilon>\kappa$, then a
+  knowledge extractor $\KEXTR^{\PROVER}$ that runs in time
+  $\tau(\varepsilon)=\Oh\bigl(\frac{t}{\varepsilon-\kappa}\bigr)$
+  outputs $\SK$ with probability $1-\varepsilon_2$.\vspace*{-2ex}
+\end{quote}
+and know a mathematical fact that  any $\tau(2\varepsilon_1)$-time algorithm $\AD$
+\begin{align*}
+\pr{(\PK,\SK)\gets\GEN:\AD(\PK)=\SK}\leq\varepsilon_1(1-\varepsilon_2)  
+\end{align*}
+then we can prove an average-case security guarantee:\vspace*{-2ex} 
+\begin{quote}
+  For any $t$-time prover $\PROVER_*$ that does not know the secret key 
+  \begin{align*}
+    \advEAUTHXX{}{\AD}=\pr{(\PK,\SK)\gets\GEN:
+      \VERIFIER^{\PROVER_*(\PK)}=1}\leq 2\varepsilon_1\enspace.
+  \end{align*}\ \vspace*{-6ex}
+\end{quote}
+
+\foilhead[-1.0cm]{Objective security guarantees}
+
+\textbf{Schnorr identification scheme}
+
+If $\GG$ is a DL group, then the Schnorr identification scheme is
+secure, where the success probability is averaged over all possible
+runs of the setup $\GEN$.
+
+\vskip 2cm
+\textbf{Fiat-Shamir identification scheme}
+
+Assume that modulus $n$ is chosen form a distribution $\NNN$ of RSA
+moduli such that on average factoring is hard over $\NNN$. Then the
+Fiat-Shamir identification scheme is secure, where the success
+probability is averaged over all possible runs of the setup $\GEN$ and
+over all choices of modulus $n$.
+
+
+
+\end{document}
