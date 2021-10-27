@@ -1,0 +1,226 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise Session VIII
+
+
+
+\begin{enumerate}
+
+\item Entity authentication protocols are often used to prove liveness
+  of a device or a person. For instance, ATM machines normally ask PIN
+  codes several times during long transactions to assure that the
+  person is still present. Such liveness proofs can be implemented
+  with one-way functions.
+  \begin{enumerate}
+  \item Let $f:\XXX\to\YYY$ be a one-way function and let $n$ be the
+    maximal number of protocol invocations. Then a secret key $\SK$
+    can be chosen as a tuple of random values $x_{1},\ldots
+    x_{n}\getsu \XXX$ and the corresponding public key $\PK$ as a
+    tuple of hash values $f(x_1),\ldots,f(x_n)$.
+
+    Each time when a party wants to prove liveness he or she will
+    release non-published sub-key $x_i$.  The proof is successful if
+    $f(x_i)\iseq y_i$ where $y_i$ is the $i$th component of the public
+    key $\PK$.
+  
+    Prove that if $f$ is $(t,\varepsilon_1)$-secure one-way function
+    and protocols are executed sequentially, then the probability that
+    a $t$-time adversary succeeds in the $i$th authentication without
+    seeing $x_i$ is at most $\varepsilon$.
+  \item Consider a modification of the scheme described above, where
+    $f:\XXX\to\XXX$ is a permutation and in the setup phase the party
+    computes an hash chain $x_n\getsu\XXX$, $x_i\gets f(x_{i+1})$ for
+    $i\in\set{1,\ldots,n-1}$ and publishes $x_0\gets f(x_1)$ as a
+    public key.  In liveness proofs, sub-keys $x_i$ are released
+    one-by-one as before. The proof is valid if $x_{i-1}=f(x_i)$.
+
+    Prove that $(t,\varepsilon)$-secure one-way permutation protocols
+    are executed sequentially, then the probability that a $t$-time
+    adversary succeeds in the $i$th authentication without seeing
+    $x_i$ is at most $\varepsilon$.
+\end{enumerate}
+ How large can be the success probability of a $t$-time adversary that
+ can attack any of these liveness proofs?
+  
+
+\item The sizes of the public and private of the liveness proofs
+  described in (a) part of the previous exercise grow linearly wrt to
+  the maximal number of invocations. The solution (b) requires a
+  linear amount of work wrt $n$ if we do not store the intermediate
+  states $x_i$ or some liveness proofs are missing.
+  \begin{enumerate}
+  \item Show that we can use a $(t,\varepsilon_2)$-collision resistant
+    hash function family to compact the public key. Describe the
+    corresponding compaction procedure and the resulting
+    proof. Estimate the size of proofs and the amount of time needed
+    to compute them.
+
+   \textbf{Hint:} Binary trees provide an optimal hashing scheme.
+ 
+ \item Show that we can use $(t,\varepsilon_3)$-pseudorandom function
+   family $\FFF$ to compact also the private key $\SK$. Describe the
+   corresponding scheme and recompute the security guarantees.
+   
+   \textbf{Hint:} How to stretch randomness in a most optimal way?
+   \end{enumerate}
+
+ \item Consider the following entity authentication protocol proposed
+   by Bellare and Rogaway. In the \textsc{Map-1} protocol, parties
+   $\PARTY_1$ and $\PARTY_2$ share the secret key $k\getsu\KSPACE$ of
+   a $(t,\varepsilon)$-pseudorandom function
+   $f:\set{0,1}^*\times\KSPACE\to\TSPACE$. More formally, the induced
+   function family $\FFF\doteq\set{f_k}$ is
+   $(t,\varepsilon)$-pseudorandom.
+  \begin{enumerate}
+  \item[1.] $\PARTY_1$ sends a random nonce $r_1\getsu\RSPACE$ to $\PARTY_2$.
+  \item[2.] $\PARTY_2$ generates a random nonce $r_2\getsu\RSPACE$ and
+    sends the identities $\ID_1,\ID_2$, nonces $r_1,r_2$ and the
+    authentication tag $f(\ID_1\|\ID_2\|r_1\|r_2,k)$ to $\PARTY_1$.
+  \item[3.] $\PARTY_1$ replies $\ID_1,r_2$ and the authentication tag
+    $f(\ID_1\|r_2,k)$ to $\PARTY_2$.
+  \end{enumerate}
+  Parties $\PARTY_1$ and $\PARTY_2$ halt if the received messages are
+  not in correct form. Otherwise, both parties are convinced that they
+  are indeed talking with each other. Analyse the security of
+  $\textsc{Map-1}$ protocol in the standalone setting, where
+  $\PARTY_1$ and $\PARTY_2$ run a single instance of the protocol by
+  sending messages through the adversary $\AD$ who can alter, drop or
+  insert messages into the conversation. The adversary $\AD$ succeeds
+  in deception if both parties reach accepting state but the adversary
+  has altered some messages.
+  \begin{enumerate}
+  \item Formalise the execution of $\textsc{Map-1}$ protocol as a game
+    that ends with $1$ iff $\AD$ succeeds in deception. Note that
+    $\AD$ does not have o respect the temporal order. For example,
+    $\AD$ can transfer $\hat{r}_1$ to $\PARTY_1$ before $\PARTY_1$ has
+    released $r_1$.
+    Estimate the probability that the adversary $\AD$ sends
+    $\hat{r}_1\neq r_i$ to $\PARTY_2$ and still succeeds in deception.
+  \item Estimate the probability that the adversary $\AD$ sends
+    $(\hat{\ID}_1,\hat{\ID}_2,\hat{r}_1,\hat{r}_2)\neq
+    (\ID_1,\ID_2,r_1,r_2)$ to $\PARTY_1$ and still succeeds in
+    deception.
+  \item Estimate the probability that $\AD$ sends
+    $(\hat{\ID}_1,\hat{r}_2)\neq(\ID_1,r_2)$ to $\PARTY_1$ and still
+    succeeds in deception.
+  \item Summarise the results and give the final bound on deception.
+  \end{enumerate}
+
+
+\item The Kerberos protocol is uses a trusted key generation server
+  $\TTP$ to set up shared keys between participants
+  $\PARTY_1,\ldots,\PARTY_n$. Let $(\GEN,\ENC,\DEC)$ be a IND-CCA2
+  secure symmetric cryptosystem. Then in a setup phase, each party
+  $\PARTY_i$ shares a secret key $\SK_i\gets\GEN$ with the trusted
+  server $\TTP$. To set up a new session key $\SK_{ij}\gets\GEN$
+  between $\PARTY_i$ and $\PARTY_j$, the parties $\PARTY_1$,
+  $\PARTY_2$ and $\TTP$ execute the following protocol.
+  \begin{enumerate}
+  \item[1.] $\PARTY_i$ sends $\ID_i,\ID_j$ and a random nonce
+    $r_1\getsu\RSPACE$ to the server $\TTP$.
+  \item[2.] $\TTP$ generates a new session key $\SK_{ij}\gets\GEN$ and
+    sends back:
+    \begin{align*}
+      \mathsf{ticket}&\gets\ENC_{\SK_j}(\SK_{ij},\ID_i,\text{expiration
+        time})\enspace,\\
+      \mathsf{enc\text{-}info}&\gets\ENC_{\SK_i}(\SK_{ij},r_1,\text{expiration
+      time},\ID_j)\enspace.
+    \end{align*}
+  \item[3.] $\PARTY_i$ decrypts $\mathsf{enc\text{-}info}$ creates
+    another nonce $r_2\getsu\RSPACE$ and sends $\mathsf{ticket}$ and
+    $\ENC_{\SK_{ij}}(\ID_i,r_2)$ to $\PARTY_j$, who replies
+    $\ENC_{\SK_{ij}}(r_2)$.
+  \end{enumerate}
+  Participants halt if some messages are not in expected form.  An
+  adversary $\AD$ succeeds in deception if either $\PARTY_1$ or
+  $\PARTY_2$ reach the accepting state but one of them has a
+  fraudulent output.
+  \begin{enumerate}
+  \item Estimate the probability that $\PARTY_i$ accepts altered
+    $\mathsf{enc\text{-}info}$.
+  \item Estimate the probability that $\PARTY_j$ accepts altered $\mathsf{ticket}$.
+  \item Estimate the probability that $\PARTY_j$ halts but $\PARTY_i$
+    accepts.
+  \item Give the final bound on the deception probability. 
+  \end{enumerate}
+
+\item Let $(\GEN,\ENC,\DEC)$ be $(t,\varepsilon)$-IND-CCA2 secure
+  cryptosystem such that the message space $\MSPACE$ is an additive
+  group. Then the classical challenge-response protocol for proving
+  the possession of  $\SK$ is following:
+  \begin{enumerate}
+  \item[1.] The verifier $\VERIFIER$ chooses $m\getsu\MSPACE$ and sends
+    $\ENC_\PK(m)$ to the prover $\PROVER$.
+  \item[2.] Given a challenge $c$, the prover $\PROVER$ replies
+    $\overline{m}\gets\DEC_\SK(c)$.
+  \item[3.] The verifier $\VERIFIER$ accepts if $m=\overline{m}$ to
+    $\VERIFIER$.
+  \end{enumerate}
+  However, sometimes one needs to prove that he or she possesses two
+  different secret keys or only one of them. The corresponding proofs
+  are known as conjunctive and disjunctive proofs.
+
+  \textbf{Conjunctive proof for secret keys $\SK_0$ and $\SK_1$:}
+  \begin{enumerate}
+  \item[1.] The verifier $\VERIFIER$ chooses $m_0,m_1\getsu\MSPACE$
+    and sends challenge $\ENC_{\PK_0}(m_0)$ and $\ENC_{\PK_1}(m_1)$ to
+    the prover $\PROVER$.
+  \item[2.] Given challenge ciphertexts $c_0,c_1$, the prover $\PROVER$
+    uses both secret keys $\SK_0$ and $\SK_1$ and replies
+    $\overline{m}_0\gets\DEC_{\SK_0}(c_0)$ and
+    $\overline{m}_1\gets\DEC_{\SK_1}(c_1)$ to $\VERIFIER$.
+  \item[3.] The verifier $\VERIFIER$ accepts if $m_0=\overline{m}_0$
+    and $m_1=\overline{m}_1$.
+  \end{enumerate}
+
+  \textbf{Disjunctive proof for secret keys $\SK_0$ and $\SK_1$:}
+  \begin{enumerate}
+  \item[1.] The verifier $\VERIFIER$ chooses $m\getsu\MSPACE$ and
+    sends the corresponding challenge $\ENC_{\SK_0}(m;r_0)$ for
+    $r_0\gets\RSPACE$, and $\ENC_{\SK_1}(m;r_1)$ for $r_1\gets\RSPACE$
+    together with encryptions of random nonces $\ENC_{\SK_0}(r_1)$ and
+    $\ENC_{\SK_1}(r_0)$ to $\PROVER$.
+  \item[2.]  Given challenge ciphertexts $c_1,c_2,c_3,c_4$, the prover
+    $\PROVER$ uses one of the secret keys $\SK_i$ to decrypt a
+    challenge $\overline{m}$ and the nonce $r_{\neg i}$ used to
+    randomise the other encryption $c_{\neg i}$. If $c_{\neg i}=
+    \ENC_{\PK_{\neg i}}(\overline{m};r_{\neg i})$, the prover
+    $\PROVER$ sends $\overline{m}$ to $\VERIFIER$, otherwise $\PROVER$
+    can halt as $\VERIFIER$ cheats.
+  \item[3.] The verifier $\VERIFIER$ accepts if $\overline{m}=m$.
+  \end{enumerate}
+  Consider a simple standalone setting, where a prover and a verifier
+  execute a protocol to be analysed only once in isolation and prove
+  the following facts about conjunctive and disjunctive proofs.
+  \begin{enumerate}
+  \item A prover can succeed in conjunctive proof only if he or she
+    knows both secret keys and a prover fails in disjunctive proof if
+    he or she does not know neither of the secret keys.
+  \item Even a malicious verifier cannot reliably detect which secret
+    key is known by the honest prover.
+  \end{enumerate}
+\item Conjunctive and disjunctive proofs of possession can be used as
+  a building-blocks for more complex relations. 
+  \begin{enumerate}
+  \item Construct a proof of possession, where the prover has to have
+    at least two secret keys out of three.
+  \item Generalise this construction and show that for any monotone
+    formula $\phi:\set{0,1}^n\to\set{0,1}$. More precisely, let the
+    $i$th bit of $x\in\set{0,1}^n$ denote whether a prover has a
+    secret key $\SK_i$. Show that there exists a proof of possession,
+    where a prover succeeds only if $\phi(x)=1$.
+  \end{enumerate}
+\end{enumerate}
+\end{document}
