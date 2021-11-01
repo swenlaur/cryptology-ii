@@ -1,0 +1,640 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Digital Signatures}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{16 April, 2010}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+\renewcommand{\SK}{{\red{\mathsf{sk}}}}
+\renewcommand{\PK}{{\blue{\mathsf{pk}}}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\newcommand{\probes}{\mathsf{probes}}
+\newcommand{\HALL}{\HHH_{\mathrm{all}}}
+
+
+\begin{document}
+\titlefoil
+
+\middlefoil{Formal Syntax}
+
+
+
+\foilhead[-2cm]{Digital signature scheme}
+
+\illustration[scale=0.75, angle=-90, clip, trim=1.5cm 4.0cm 13.0cm 1.0cm]{active-attack.eps}
+
+\begin{triangles}
+\item To establish electronic identity, Charlie must generate
+  $(\PK,\SK)\gets\GEN$ and convinces others that the public
+  information $\PK$ represents him.
+\item A \emph{keyed hash function} $\SIGN_\SK:\MSPACE\to\SSPACE$
+  takes in a \emph{plaintext} and outputs a corresponding
+  \emph{digital signature}.
+\item A \emph{public verification algorithm}
+  $\VERIFY_\PK:\MSPACE\times\SSPACE\to\set{0,1}$ tries to distinguish
+  between altered and original message pairs.
+\item The signature scheme is \emph{functional} if for all
+  $(\PK,\SK)\gets\GEN$ and $m\in\MSPACE$:
+  \centerline{$\VERIFY_\PK(m,\SIGN_\SK(m))=1$\enspace.}
+\end{triangles}
+
+
+\foilhead[-1cm]{Example. RSA-1024 signature scheme}
+
+\textbf{Key generation $\GEN$:}
+\begin{enumerate}
+\item Choose uniformly $512$-bit prime numbers $p$ and $q$.
+\item Compute $N=p\cdot q$ and $\phi(N)=(p-1)(q-1)$.
+\item Choose uniformly $e\gets\ZZ_{\phi(N)}^*$ and set $d=e^{-1}\mod \phi(N)$.
+\item Output $\SK=(p,q,e,d)$ and $\PK=(N,e)$.
+\end{enumerate}
+\Bigskip
+
+\textbf{Signing and verification:}
+\begin{align*}
+ &\MSPACE=\ZZ_N,\quad \SSPACE=\ZZ_N,\quad \RSPACE=\emptyset\\
+ &\begin{aligned}
+ \SIGN_\SK(\blue{m})&=\blue{m}^{\red{d}}\mod N \\
+ \VERIFY_\PK(\blue{m},\blue{s})&=1\quad\Leftrightarrow\quad  \blue{m}=\blue{s}^e\mod N\enspace.
+ \end{aligned}
+\end{align*}
+
+
+
+\foilhead[-1cm]{Security definitions}
+
+\textbf{Attack scenarios}
+\begin{triangles}
+\item \emph{Key only attack}. The adversary has access only to the
+  public key $\PK$.
+
+\item \emph{Chosen message attack.} Besides the public key $\PK$, the
+  adversary can adaptively query a list of valid signatures
+  $(m_1,s_1),\ldots,(m_n,s_n)$.
+\end{triangles}
+\bigskip
+
+
+\textbf{Attack types}
+\begin{triangles}
+\item \emph{Universal forgery.} The adversary must create a valid
+  signature for a prescribed message $m$ that is chosen from a
+  distribution $\red{\MSPACE_0}$.
+
+\item \emph{Existential forgery.} The adversary must create a valid
+  signature for some message $m$, i.e., there are no limitations on
+  the choice of message.
+\end{triangles}
+\Bigskip
+
+\centerline{\fbox{One more signature attack = Chosen message attack + Existential forgery}}
+
+
+\foilhead[-1cm]{Security against one more signature attack}
+
+A signature scheme is $(t,q,\varepsilon)$-\emph{secure against one more
+signature} attack if\vspace*{-1ex}
+\begin{align*}
+\advFORGEXX{}{\AD}=\pr{\smash{\GAME^\AD=1}}\leq\varepsilon
+\end{align*}
+\vspace*{-3.5ex}\\   
+for any $t$-time adversary $\AD$ where\vspace*{-1.5ex}
+\begin{small}
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &(\PK,\SK)\gets\GEN\\
+    &\!\!\!\begin{forblock}{i\in\set{1,\ldots,q}}
+    & m_i\gets\AD(s_{i-1})\\
+    & s_i\gets\SIGN_\SK(m_i)\\
+    \end{forblock}\\
+    &(m,s)\gets\AD\\
+    &\IF (m,s)\in\set{(m_1,s_1),\ldots,(m_q,s_q)} \RETURN 0\\
+    &\RETURN \VERIFY_\PK(m,s)
+  \end{game}
+\end{align*}%
+\end{small}%
+
+
+\foilhead[-1.0cm]{A conceptual description of digital signatures}
+
+A digital signature is a \emph{non-interactive} and
+\emph{transferable} counterpart of the following extended
+identification protocol:
+\begin{enumerate}
+\item Verifier sends a message $m$ to a prover.
+\item The prover accepts the message $m$.
+\item The prover authenticates him or herself by using $\SK$.
+\end{enumerate}
+\bigskip\spreadappart
+
+\emph{Transferability} means that signature must be verifiable by
+other parties that did not participate in the creation of the
+signature.
+\bigskip\spreadappart
+
+As a result, digital signature is either 
+\begin{triangles}
+\item a non-interactive proof of possession that is linked to the
+  message $m$.
+\item a non-interactive proof of knowledge that is linked to the
+  message $m$.
+\end{triangles}
+
+
+\middlefoil{Digital Signatures Based on\vspace*{1ex}\\ Proofs of Possession}
+
+
+\foilhead[-1cm]{Lamport one-time signatures}
+
+\textbf{Public parameters:}\vspace*{1ex}\\
+\hspace*{1em}
+\begin{minipage}{0.92\linewidth}
+  Let $\set{0,1}^n$ be the message space and $f:\XXX\to\YYY$ a one-way
+  function.
+\end{minipage}
+\bigskip
+
+\textbf{Key Generation:}\vspace*{1ex}\\
+\hspace*{1em}
+\begin{minipage}{0.92\linewidth}
+  Generate $2\times n$ random elements $x_{ij}\getsu\XXX$
+  and compute  $y_{ij}\gets f(x_{ij})$. The secret key is
+  $\SK=(x_{ij})$ and the public key is $\PK=(y_{ij})$.
+\end{minipage}
+\bigskip
+
+\textbf{Signing:}\vspace*{1ex}\\
+\hspace*{1em}
+\begin{minipage}{0.92\linewidth}
+  To sign a message $m=m_n\ldots m_1$ release  $\sigma=(x_{1m_1},\ldots,x_{nm_n})$.
+\end{minipage}
+\bigskip
+
+\textbf{Verification:}\vspace*{1ex}\\
+\hspace*{1em}
+\begin{minipage}{0.92\linewidth}
+  A signature $(m,\sigma)$ is valid if $f(\sigma_i)=y_{im_i}$ for $i=1,\ldots,n$.
+\end{minipage}
+\lastline
+
+\foilhead[-1cm]{Security of one-time signatures}
+
+\textbf{Theorem.}  If $f$ is $(t,\varepsilon)$-one-way function, then
+Lamport signature scheme is $(t,1,2n\varepsilon)$-secure against one
+more signature attack.
+
+\textbf{Proof.}
+A successful forgery must reveal an inverse of $y_{i\neg m_i}$ for some $i$. 
+\begin{align*}
+  \begin{fblock}{\ADB(y)}
+    & \text{Choose $2n-1$ elements of $(x_{ij})\getsu\XXX$.}\\
+    & \text{Compute $2n-1$ entries $y_{ij}\gets f(x_{ij})$.}\\
+    & \text{Put $y$ to the missing place and send $\PK$ to $\AD$.}\\
+    & \text{Reveal $n$ elements of $(x_{ij})$ to $\AD$ if possible.}\\
+    & \text{Return $x$ if $\AD$ reveals $x$ such that $f(x)=y$.} 
+  \end{fblock}
+\end{align*}
+
+\foilhead[-1cm]{Merkle signature scheme}
+ 
+\illustration[scale=0.90, angle=-90, clip, trim=3.0cm 2.5cm 11.0cm 3.5cm]{hash-tree-signatures.eps}
+
+\textbf{Detailed description}
+\begin{triangles}
+  \item All intermediate values $c_{u}$ are computed by hashing $c_{u}\gets h(c_{u0},c_{u1})$.
+  \item The second level values $y_{u}$ are computed as before $y_u\gets f(x_u)$.
+  \item The secret key can be further compacted by computing $x_u\gets
+    g(u,k)$ where $g:\III\times\KSPACE\to\XXX$ induces a pseudorandom
+    function family $\GGG=\set{g_k}$.
+\end{triangles}
+
+
+
+
+
+\foilhead[-1cm]{Trapdoor one-way permutations}
+
+A collection of trapdoor permutations $\FFFTPERM$ is determined by
+three algorithms $(\GEN,\MAP,\INV)$ such that
+\begin{align*}
+  \forall (\PK,\SK)\gets\GEN,\quad \forall m\in\MSPACE_\PK:\qquad
+  \INV_\SK(\MAP_\PK(m))=m\enspace
+\end{align*}
+and both algorithms $\MAP_\PK(\cdot)$ and $\INV_\SK(\cdot)$ are
+deterministic.
+
+
+\foilhead[-1cm]{OW-CPA security} 
+
+
+A collection of trapdoor permutations $\FFFTPERM$ is
+$(t,\varepsilon)$-secure if for any $t$-time adversary $\AD$
+\begin{align*}
+  \advINVCPAXX{}{\AD}=\pr{\GAME^\AD=1}\leq \varepsilon
+\end{align*}
+where
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &(\PK,\SK)\gets\GEN\\
+    &m\getsu\MSPACE_\PK\\
+    &y\gets\MAP_\PK(m)\\
+    &\RETURN [\AD(\PK,y)\iseq m]
+  \end{game}
+\end{align*}
+
+
+
+\foilhead[-1cm]{Full Domain Hash}
+
+\textbf{Setup}\vspace*{1ex}\\
+\hspace*{1.5em} Run $(\PK,\SK)\gets\GEN$ to create an instance of
+trapdoor permutation.
+\hspace*{1.5em} Choose $h:\MSPACE\to\MSPACE_\PK$  from a collision resistant function family $\HHH$.\\ 
+
+
+\textbf{Signing}\vspace*{1ex}\\
+\hspace*{1.5em} To sign  $m\in\MSPACE$, compute $x\gets h(m)$ and output $s\gets\INV_\SK(x)$.\\
+
+\textbf{Verification}\vspace*{1ex}\\
+\hspace*{1.5em} A pair $(m,s)$ is a valid signature if $h(m)=\MAP_\PK(s)$.
+
+
+\foilhead[-1cm]{Random oracle model}
+
+Let us model the hash function by an oracle $\ORA_\PK(\cdot)$ that
+evaluates $h\getsu\HALL$ where $\HALL=\set{h:\MSPACE\to\MSPACE_\PK}$
+is a set of all functions.
+
+Thus, the advantage is now computed as average
+\begin{align*}
+  \advFORGEXX{\HALL}{\AD}=\frac{1}{\abs{\HALL}}\cdot\sum_{h\in\HALL}\advFORGEXX{h}{\AD}\enspace.
+\end{align*}
+
+
+In reality, we substitute $\HALL$ with a suitable hash family $\HHH$
+and hope
+\begin{align*}
+  \advFORGEXX{\HHH}{\AD}=\frac{1}{\abs{\HHH}}\cdot\sum_{h\in\HHH}\advFORGEXX{h}{\AD}
+  \approx \advFORGEXX{\HALL}{\AD}\enspace
+\end{align*}
+for all relevant adversaries $\AD\in\ADDIST$ humans devise.
+
+\foilhead[-1cm]{Security in the random oracle model}
+
+\textbf{Theorem.} Let $\FFFTPERM$ is $(t,\varepsilon)$-secure
+collection of trapdoor permutations such that $\MAP_\PK(\cdot)$ is
+always $\tau$-time computable. Then the FDH signature scheme is
+$(t-(q_h+q_s+1)\cdot\tau,q_s,(q_h+q_s+1)\cdot\varepsilon)$-secure
+against one more signature attack provided that the adversary can do
+up to $q_h$ hash queries.\vspace*{1cm}
+
+
+\textbf{Drawbacks}
+\begin{triangles}
+  \item The result holds only in random oracle model.
+  \item The security bound increases linearly with $q_h$ and $d_s$.
+  \item PSS signature scheme achieves a ``sublinear'' bound. 
+  \item The proof cannot be generalised to the standard model~[Pallier2007].
+\end{triangles}
+
+\foilhead[-1cm]{The corresponding proof}
+
+\begin{triangles}
+\item We can always assume that $\AD$ queries hash for the forgery.
+\item The following evaluation strategies lead to identical results
+    \begin{align*}
+      \begin{aligned}
+      \begin{fblock}{\ORA_\PK(m)}
+        &\IF H[m]=\bot\ \THEN\\
+        &\begin{cblock}
+         & H[m]\getsu\MSPACE_\PK\\
+        \end{cblock}\\
+        &\RETURN H[m]
+      \end{fblock}\\
+       \
+      \end{aligned}
+      \qquad\qquad
+      \begin{fblock}{\ORA_\PK(m)}
+        &\IF H[m]=\bot\ \THEN\\
+        &\begin{cblock}
+         & S[m]\getsu\MSPACE_\PK\\
+         & H[m]\gets\MAP_\PK(S[m])\\
+        \end{cblock}\\
+        &\RETURN H[m]
+      \end{fblock}
+    \end{align*}
+  \item Let $\varepsilon_i$ be the probability that forgery was
+    successful and the $i$th hash query corresponded to the message.
+  \item Then $\varepsilon_i\leq \varepsilon$, since otherwise we would
+    have a too efficient inverter.
+\end{triangles}
+
+
+
+\middlefoil{Digital Signatures Based on\vspace*{1ex}\\ Proofs of Knowledge}
+
+
+
+\foilhead[-1.5cm]{Sigma protocols}
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 11.0cm 2.5cm]
+ {sigma-protocols.eps}
+
+
+A \emph{sigma protocol} for an efficiently computable relation
+$R\subseteq\set{0,1}^*\times\set{0,1}^*$ is a three move
+protocol that satisfies the following properties.
+\begin{triangles}
+\item\textbf{$\boldsymbol{\Sigma}$-structure.} A prover first sends a
+  commitment, next a verifier sends \emph{varying} challenge, and
+  then the prover must give a consistent response.
+\item \textbf{Functionality.} The protocol run between an honest
+  prover $\PROVER(\SK)$ and verifier $\VERIFIER(\PK)$ is always
+  accepting if $(\SK,\PK)\in R$.
+\end{triangles}
+
+\foilhead[-1.5cm]{Security properties of sigma protocols}
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 11.0cm 2.5cm]
+ {sigma-protocols.eps}
+\Bigskip
+
+\begin{triangles}
+\item \textbf{Perfect simulatability.} There exists an efficient
+  \emph{non-rewinding} simulator $\SSS$ such that the output
+  distribution of a semi-honest verifier $\VERIFIER_*$ in the real
+  world and the output distribution of $\SSS^{\VERIFIER_*}$ in the
+  ideal world coincide.
+\item \textbf{Special soundness.} There exists an efficient extraction
+  algorithm $\EXTR$ that, given two accepting protocol runs
+  $(\alpha,\beta_0,\gamma_0)$ and $(\alpha,\beta_1,\gamma_1)$ with
+  $\beta_0\neq \beta_1$ that correspond to $\PK$, outputs $\SK_*$ such
+  that $(\SK_*,\PK)\in R$
+
+\end{triangles}
+
+
+
+\foilhead[-1.5cm]{Fiat-Shamir heuristics}
+Fiat-Shamir heuristics converts any sigma-protocol to a signature scheme.
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 4.0cm 2.5cm]
+ {fiat-shamir-heuristics.eps}
+
+
+\foilhead[-1.0cm]{Generic signature schemes}\enlargethispage{1cm}
+
+Let $\PROT$ be a sigma protocol specified by the prover and verifier
+algorithms $\PROVER_\SK$ and $\VERIFIER_\PK$. Then the corresponding
+\emph{generic signature scheme} is following.
+
+\textbf{Setup}\vspace*{1ex}\\
+\hspace*{1.5em} Use output $(\PK,\SK)\gets\GEN$ of the sigma protocol setup.
+
+\textbf{Signing}\vspace*{1ex}\\
+\hspace*{1.5em} To sign a message $m$, output $(\alpha,\beta,\gamma)$
+as a signature where
+\begin{align*}
+  \alpha\gets \PROVER_\SK,\quad \beta\gets h(m,\alpha),\quad
+  \gamma\gets\PROVER_\SK(\beta)\enspace.
+\end{align*}\ \vspace*{-8ex}\\
+ 
+
+\textbf{Verification}\vspace*{1ex}\\
+\hspace*{1.5em} A tuple $(m,\alpha,\beta,\gamma)$ is a valid signature
+if
+\begin{align*}
+\beta=h(m,\alpha)\wedge\VERIFY_\PK(\alpha,\beta,\gamma)=1\enspace.  
+\end{align*}
+
+\foilhead[-1.0cm]{Famous examples}
+
+Schnorr authentication protocol
+\begin{diamonds}
+\item Schnorr signature scheme
+\item DSA algorithm
+\item ElGamal signature scheme
+\item Nyberg-Rueppel signature scheme
+\end{diamonds}
+\vspace*{1cm}
+
+Fiat-Shamir identification protocol 
+\begin{diamonds}
+  \item Feige-Fiat-Shamir signature scheme 
+\end{diamonds}
+\vspace*{1cm}
+
+Guillou-Quisquater identification protocol
+\begin{diamonds}
+  \item Guillou-Quisquater signature scheme 
+\end{diamonds}
+
+
+
+\foilhead[-1.0cm]{Security in the random oracle model}
+
+\textbf{Basic Forking Lemma.}  Let $\kappa$ be the knowledge error of
+the sigma protocol. If for a particular public key $\PK$, a $t$-time
+adversary $\AD$ manages to output valid signature by making at most
+$\ell$ queries to the random oracle and no queries to the signing oracle
+with probability $\varepsilon$, then there exist an extraction
+algorithm $\KKK$ for that runs in expected time
+\begin{align*}
+  \EXP[\tau]=\Theta\brak{\frac{(\ell+2)\cdot
+      t}{\varepsilon-\kappa}}
+\end{align*}
+and returns the corresponding secret key $\SK$.\vspace*{1cm}
+
+
+\textbf{Simulatability Lemma.}  Oracle calls to the signing oracle can
+be replaced with the runs of the sigma protocol simulator. The
+probability of simulation failures due to the contradicting
+assignments for $\ORA(\cdot)$ are negligible.
+
+
+
+\foilhead[-1cm]{An encoding of the extraction task}
+
+Assume that $\AD$ never queries the same value $h(m_i,\alpha_i)$ twice
+and that $\AD$ itself verifies the validity of the candidate signature
+$(m_{n+1},s_{n+1})$.
+
+Let $\omega_0$ denote the randomness used by $\AD$ and let
+$\omega_1,\ldots \omega_{\ell+1}$ be the replies for the hash queries
+$h(m_i,\alpha_i)$. Now define
+\begin{align*}
+A(\omega_0,\omega_1,\ldots,\omega_{\ell+1})=  
+ \begin{cases}
+   i,&\text{ if the }i^{\text{th}}\text{ reply $\omega_i$ is used in forgery}\enspace,\\
+   0,&\text{ if }\AD \text{ fails}\enspace.
+ \end{cases}
+\end{align*}
+\begin{triangles}
+\item For any
+  $\overline{\vec{\omega}}=(\omega_0,\ldots,\omega_{i-1},\overline{\omega}_i,\ldots,\overline{\omega}_{\ell+1})$,
+  $\AD$ behaves identically up to the $i^{\text{th}}$ query as with
+  the randomness $\vec{\omega}$.
+\item To extract the secret key $\SK$, we must find $\vec{\omega}$ and
+  $\overline{\vec{\omega}}$ such that
+  $A(\vec{\omega})=i$ and $A(\overline{\vec{\omega}})=i$ and $\omega_i\neq\overline{\omega}_{i}$.
+\end{triangles}
+
+\foilhead[-1cm]{Classical algorithm}
+
+$\underline{\mathsf{Rewind}}$:
+\begin{enumerate}
+ \item Probe random entries $A(\vec{\omega})$ until $A(\vec{\omega})\neq 0$.
+ \item Store the matrix location $\vec{\omega}$ and the rewinding point $i\gets A(\vec{\omega})$.
+ \item Probe random entries $A(\overline{\vec{\omega}})$ until $A(\overline{\vec{\omega}})=i$.
+ \item Output the location tuple $(\vec{\omega},\overline{\vec{\omega}})$.
+\end{enumerate}
+\Bigskip
+
+$\underline{\smash{\mathsf{Rewind\text{-}Exp}}}$:
+\begin{enumerate}
+  \item Repeat the procedure $\mathsf{Rewind}$ until $\omega_i\neq\overline{\omega}_i$.
+  \item Use the knowledge extraction lemma to extract $\SK$.
+\end{enumerate}
+
+
+
+
+\foilhead[-1cm]{Average-case running time}
+
+\textbf{Theorem.}  If a array $A(\vec{\omega})$ with entries in
+$\set{0,\ldots,\ell}$ contains $\varepsilon$-fraction of nonzero entries,
+then $\mathsf{Rewind}$ and $\mathsf{Rewind\text{-}Exp}$ make on
+average
+\begin{align*}
+  \EXP[\probes| \mathsf{Rewind}] &=\frac{\ell+1}{\varepsilon}\\
+  \EXP[\probes|\mathsf{Rewind\text{-}Exp}] &=\frac{\ell+1}{\varepsilon-\kappa}
+\end{align*}
+probes where the \emph{knowledge error} 
+\begin{align*}
+ \kappa=\sum_{i=1}^\ell\pr{\omega_i=\overline{\omega}_i}\enspace.  
+\end{align*}
+
+\textbf{Proof.} We prove this theorem in another lecture.
+
+
+
+\middlefoil{Interpretation of the Results}
+
+\foilhead[-1cm]{Objective and subjective security}
+
+
+All forms of the Forking Lemma are stated with respect to a fixed key
+and thus give only soundness guarantees.\vspace*{0.5cm}
+
+If we believe that no human can devise an algorithm that for a
+\emph{particular} public key $\PK$ computes the corresponding secret
+key, then we also get the corresponding \emph{subjective} security
+guarantee.\vspace*{0.5cm}
+
+For objective security guarantees, we have to consider average success
+probability over all public keys. In this situation, the knowledge
+extraction with high probability is overkill.  Fixed number of probes
+together with Jensen's inequality give more tight bounds.\vspace*{0.5cm}
+
+\red{All these security guarantees hold in the random oracle model!}
+
+
+
+\foilhead[-2cm]{Average case nature of advantages}
+
+\illustration[scale=0.90, angle=-90, clip, trim=3.5cm 2.5cm 11.0cm 2.5cm]{average-nature.eps}
+
+
+The limit on the average advantage over all functions means:
+\begin{triangles}
+  \item An attack algorithm $\AD$ can be successful on few functions
+  \item For randomly chosen function family $\HHH$ the corresponding
+    average advantage is comparable with high probability over
+    the choice of $\HHH$.
+\end{triangles}
+
+\textcolor{red}{Such argumentation does not rule out possibility that
+  one can choose adaptively a specialised attack algorithm
+  $\AD$ based on the description of $h$.}
+
+\foilhead[-1cm]{Security against generic attacks}
+
+An adaptive choice of a specialised attack algorithm implies that the
+attack depends on the description of the hash function and not the family $\HHH$.
+
+Often, it is advantageous to consider only generic attacks that depend
+on the description of function family $\HHH$ and use only black-box
+access to the function $h$. Therefore, we can consider two oracles
+$\ORA_{\HALL}$ and $\ORA_{\HHH}$.
+
+If $\HHH$ is pseudorandom function family then for any generic attack,
+we can substitute $\HHH$ with the $\HALL$ and the success decreases marginally.
+
+\textbf{Theorem.}  Security in the random oracle model implies
+security against generic attacks if $\HHH$ is a pseudorandom function family.
+\begin{triangles}
+  \item The assumption that attackers use only generic attacks is subjective.
+  \item Such an assumption are not universal, i.e., there are settings
+    where this assumption is clearly irrational (various non-instantiability results).
+\end{triangles}
+
+\foilhead[-1cm]{Why the random oracle argument truly fails?}
+
+All currently used hash functions are iterative
+\begin{align*}
+  h(m_1,\ldots,m_k)=f(\cdots f(f(\mathsf{iv},m_1),m_2),\ldots,m_k)\enspace.
+\end{align*}
+Consequently, the class of generic attack $\ADDIST_{\mathrm{bb}}$ that
+treats $h(\cdot)$ as a black box without internal structure is
+sub-optimal.
+
+Instead, we should consider a wider class of attacks that treat $f$ as
+a black box, but still try to exploit iterative structure of the hash
+function.  
+
+However, the corresponding black box adversaries
+$\AD^{f(\cdot),h(\cdot)}$ can distinguish $\HHH$ form $\HALL$ with
+high probability.
+
+As a result, there might be a successful attack strategy
+$\AD^{f(\cdot),h(\cdot)}$ that works for all possible iterative hash
+functions, although the signature scheme is secure in the random
+oracle model.
+
+
+
+
+
+\end{document}
+
+\foilhead[-1.0cm]{OW-CCA2 security}\enlargethispage{2ex}
+
+A collection of trapdoor permutations $\FFFTPERM$ is
+$(t,\varepsilon)$-OW-CCA2 secure if for any $t$-time adversary $\AD$
+\begin{align*}
+  \advINVCCAIIXX{}{\AD}=\pr{\GAME^\AD=1}\leq \varepsilon
+\end{align*}\ \vspace*{-3ex}\\
+where\vspace*{-2ex}
+\begin{align*}
+  \begin{game}{\GAME^\AD}
+    &(\PK,\SK)\gets\GEN\\
+    &m\getsu\MSPACE_\PK\\
+    &y\gets\MAP_\PK(m)\\
+    &\RETURN [\AD^{\ORA(\cdot)}(y)\iseq x]
+  \end{game}
+\end{align*}
+and $\ORA(c)=\INV_\SK(c)$ if $y\neq c$ and $\bot$ otherwise.

@@ -1,0 +1,236 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage{graphicx}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\newcommand{\FFFTP}{\FFF_{\mathrm{tp}}}
+\newcommand{\HASH}{\mathrm{Hash}}
+
+
+\newcommand{\dindex}[3]{{#1}_{#2}^{\scriptscriptstyle (#3)}}
+
+
+
+\begin{document}
+
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise Session IX
+
+
+
+
+\begin{enumerate}
+
+
+
+
+
+\item Consider a following message transmission protocol. A sender
+  $\PARTY_1$ knows the public encryption key $\PK_2$ of a receiver
+  $\PARTY_2$ and the receiver $\PARTY_2$ knows the public signing key
+  $\PK_1$ of the sender $\PARTY_1$. To encrypt a message $m$ the
+  sender $\SK$ computes $c\gets\ENC_{\PK_2}(m)$,
+  $s\gets\SIGN_{\SK_1}(c)$ and sends $(c,s)$ over unreliable channel
+  to $\PARTY_2$. The receiver $\PARTY_2$ first checks the authenticity
+  by computing $\VERIFY_{\PK_1}(c,s)$ and then decrypts the message
+  $m\gets\DEC_{\SK_2}(c)$.
+
+  \begin{enumerate}
+  \item What are properties of the encryption and the signing scheme
+    are needed to guarantee secure message transmission? Compute the
+    corresponding security guarantees.
+  \item Show that the message transmission protocol may become
+    insecure if $\PARTY_1$ uses the signing key $\SK_1$ also for some
+    other purposes. Give an explicit attack description under the
+    assumption that the secret key $\SK_2$ can be extracted using
+    chosen message attacks.
+
+  \item Show that the message transmission protocol can become
+    insecure if $\PARTY_2$ uses $\SK_2$ to decrypt messages of several
+    senders.
+ 
+  \item Interpret the results.  In which contexts, the this message
+    transmission protocol is useful? When is the traditional
+    construction based on symmetric encryption and authentication
+    primitives better?
+
+  \item[$(\star)$] Give a construction of secure message transmission
+    protocol that is still based on signing and asymmetric encryption
+    primitives but is significantly more secure against malicious
+    behaviour.
+ 
+  \end{enumerate}
+
+\item Construct an identification scheme that is based on a signature
+  scheme. Prove that the corresponding identification scheme is secure
+  in the most powerful setting, where the adversary can run several
+  identification protocols concurrently in order to impersonate true
+  signer.
+
+\item Digital signatures are often used in various electronic
+  transaction systems. In the simplest setting, sellers issue a bills
+  for goods that must be signed by a bank before the transaction
+  becomes valid. However, such a setting violates the privacy of
+  buyers as the bank will always know what its clients have bought.
+  The latter is the main motivation for blind-signatures as they allow
+  to hide messages from the signer. More precisely, consider an blind
+  signature scheme, which is based on full domain hash and RSA.
+  \begin{itemize}
+  \item A public key is RSA modulus $n$ and a exponent $e$. The
+    corresponding private exponent $d$ such that $ed=1\mod \phi(n)$ is
+    the secret key.
+  \item To sign a message $m$, the signer must compute $s=h(m)^d\mod
+    n$.
+  \item A signature $(m,s)$ is valid if $h(m)=s^e\mod n$. 
+  \item To get a blind signature, a client must compute $h(m)$ and
+    then choose $r\getsu\ZZ_n^*$ and sent $\overline{m}=h(m)r^e\mod n$
+    to the signer. When the signer replies
+    $\overline{s}=\overline{m}^d\mod n$, the client computes
+    $s=\overline{s}r^{-1}\mod n$.
+  \end{itemize}
+  \begin{enumerate}
+  \item Show that the signature obtained in the blind signing protocol
+    is valid and the signer learns nothing about the message, i.e., we
+    can simulate $\overline{m}$ without seeing $m$.
+  \item Show that the blind signature scheme can be less secure than
+    the underlying RSA signature scheme by providing an explicit
+    attack that works against blind signatures and not for the RSA
+    signature.
+  \item Construct a protocol for selling goods over the internet that
+    preserves the privacy of buyers, assures that no client can spend
+    more money than he or she owns and guarantees that sellers
+    get their money.
+  \item Is it possible to design a protocol where buyers can
+    anonymously revoke transactions when sellers cheat.
+  \end{enumerate}
+
+
+
+\item[$(\star)$] Prove that security of a signature scheme can be
+  never proved through a reduction that shows how to extract secret
+  key from an adversary who is successful in deception. More
+  precisely, show that if such a reduction exists then there exists
+  also an attack strategy that extracts a secret key using few signing
+  queries. Why this impossibility result does not conflict with the
+  security proofs in the random oracle model?
+
+\item Let $\GG=\langle g\rangle$ be a $(t,\varepsilon_1)$-secure
+  $q$-element discrete logarithm group. Then the Schnorr signature
+  scheme is defined as follows.
+  \begin{itemize}
+  \item  A secret key $x\getsu\ZZ_q$ and the corresponding public key $y\gets g^x$.
+  \item To sign a message $m$, generate $r\getsu\ZZ_q$, compute
+    $\alpha\gets g^r$, $\beta\gets h(m,\alpha)$ and then compute the
+    reply $\gamma$ of the Schnorr identification protocol. The
+    resulting signature is a triple $s=(\alpha,\beta,\gamma)$.
+  \item A pair $(m,s)$ is a valid signature if $h(m,\alpha)=\beta$ and
+    $g^\gamma=y^\beta\alpha$.
+  \end{itemize}
+  Prove that if $h$ is replaced with a random oracle $\ORA_h(\cdot)$,
+  then the Schnorr signature scheme is $(c\cdot
+  t\varepsilon_1,\frac{\varepsilon_1}{2})$-secure against existential
+  forgeries in the key only attack model for an appropriate constant
+  $c$ provided that the adversary makes only single call to
+  $\ORA_h(\cdot)$ and that the adversary always controls the validity
+  of the proposed signature.
+  \begin{enumerate}
+  \item Show that an that if an adversary $\AD$ succeeds with
+    probability $\varepsilon$, there exists an adversary $\ADB$ that
+    succeeds with probability $\varepsilon$ in the Schnorr
+    identification protocol and has same time complexity.
+  \item Use the theorem about matrix games to estimate the average
+    running-time of a knowledge extractor for the Schnorr protocol and
+    use Markov inequality to find success probability for a strict
+    time bound.
+  \item Note that the previous result holds only for the values of
+    public keys $y$ such that the success probability is large
+    enough. Show that if the average success probability
+    $\advEAUTHXX{}{\ADB}> \varepsilon$ then the probability of getting
+    a bad key $y$ such that $\varepsilon_y<\frac{\varepsilon}{2}$ is
+    low.
+  \end{enumerate}
+
+\item Construct a generic signature scheme from the Fiat-Shamir
+  identification protocol. Recall that the Fiat-Shamir protocol works
+  as follows.
+  \begin{itemize}
+  \item A secret key $s\getsu\ZZ_n^*$ and the public key $v\gets
+    s^2\mod n$.
+  \item To authenticate, the prover generates $r\getsu\ZZ_n^*$ and
+    sends $\alpha\gets r^2\mod n$ to the verifier. The verifier sends
+    $\beta\getsu\set{0,1}$ to the prover who replies $\gamma\gets
+    rs^b\mod n$. The prover succeeds if $\gamma^2=\alpha v^b\mod n$.
+  \end{itemize}
+
+
+\item Any instantiation of the full domain hash signature scheme
+  defines implicitly a bundle $\HHH\Join\FFFTP$ of function families
+  $\HHH$ and $\FFFTP$. Namely, the signature scheme is determined by a
+  tuple of algorithms $(\GEN,\MAP,\INV,\HASH)$, where
+  $(\GEN,\MAP,\INV)$ determines the collection of trapdoor
+  permutations $\FFFTP$ and functions $\INV_\SK:\MSPACE_\PK\to\SSPACE$
+  and $\HASH_\PK:\MSPACE\to\TSPACE_\PK$ have matching input and output
+  domains $\TSPACE_\PK\subseteq \MSPACE_\PK$ for every
+  $(\PK,\SK)\gets\GEN$. The corresponding bundle $\HHH\Join\FFFTP$ of
+  function families $\HHH$ and $\FFFTP$ is
+  $(t,\varepsilon)$-claw-free if for any $t$-time adversary $\AD$
+  the following advantage
+  \begin{align*}
+    \advCFXX{\FFFTP\Join\HHH}{\AD}=\pr{\GAME^\AD=1}\leq\varepsilon\enspace
+  \end{align*}
+  where
+  \begin{align*}
+    \begin{game}{\GAME^\AD}
+      &(\PK,\SK)\gets\GEN\\
+      &(m,s)\gets\AD(\PK)\\
+      &\RETURN [\HASH_\PK(m)\iseq \MAP_\PK(s)]
+    \end{game}
+  \end{align*}
+  Prove the following facts about the full domain hash signature
+  scheme.
+  \begin{enumerate}
+  \item The signature scheme is $(t,\varepsilon)$-secure against
+    existential forgeries in the model, where the adversary cannot
+    access the signing oracle, if the bundle $\HHH\Join\FFFTP$ is
+    $(t,\varepsilon)$-claw-free.
+  \item Generalise the notion of claw-free bundles so that
+    $(t,\varepsilon)$-security is sufficient for the standard attack
+    model.
+  \end{enumerate}
+
+\item Consider a full domain hash signature as in the previous
+  exercise. Assume that the hash function family $\HHH$ is strongly
+  $\varepsilon_1$-regular, i.e., for every key pair
+  $(\PK,\SK)\gets\GEN$ and the output distribution of $\HASH_\PK(m)$
+  where $m\getsu\MSPACE$ and uniform distribution over $\MSPACE_\PK$
+  are $\varepsilon_1$-close. Now consider the security against
+  universal forgeries
+    \begin{align*}
+      \advUFORGEXX{\HHH\Join\FFFTP}{\AD}=\pr{\GAME^\AD=1}
+    \end{align*}
+   where
+   \begin{align*}
+     \begin{game}{\GAME^\AD}
+       &(\PK,\SK)\gets\GEN\\
+       &m\getsu\MSPACE\\
+       &s\gets\AD(m,\PK)\\
+       &\RETURN \VERIFY_\PK(m,s)
+     \end{game}
+   \end{align*}
+   and prove that $(t,\varepsilon)$-security of trapdoor collection
+   $\FFFTP$ is sufficient for security. Generalise the notion of
+   one-wayness so that it is also sufficient against chosen message
+   attacks.
+
+
+
+
+\end{enumerate}
+\end{document}
+
