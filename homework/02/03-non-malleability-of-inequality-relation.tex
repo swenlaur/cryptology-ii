@@ -1,0 +1,38 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{fixed nm-cpa, fixed relation}
+
+\begin{document}
+\begin{exercise}{NM-CPA security for inequality relation}
+Explain why IND-CPA adversary $\AD$ can be converted to the adversary $\ADB$ against non-malleability game for inequality relation 
+\begin{align*}
+&\begin{game}{\BGAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & \MMM_0\gets\ADB(\PK)\\
+ & m\gets\MMM_0\\
+ & c\gets\ENC_\PK(m)\\
+ & \hat{c}\gets\ADB(c)\\
+ & \IF c=\hat{c}\ \THEN \RETURN 0\\ 
+ & \RETURN m\neq\DEC_\SK(\hat{c}) 
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+ & (\SK,\PK)\gets\GEN\\
+ & \MMM_0\gets\ADB(\PK)\\
+ & m, \overline{m}\gets\MMM_0\\
+ & \overline{c}\gets\ENC_\PK(\overline{m})\\
+ & \hat{c}\gets\ADB(\overline{c})\\
+ & \IF c=\hat{c}\ \THEN \RETURN 0\\ 
+ & \RETURN m\neq\DEC_\SK(\hat{c}) 
+\end{game}
+\end{align*}
+How does the analysis change if we consider equality relation
+\end{exercise}
+\begin{solution}
+\textbf{Hint:} What would be the best option to win the game if $\AD$ is a perfect adversary against IND-CPA games?
+
+\end{solution}
+\end{document}

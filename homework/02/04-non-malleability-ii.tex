@@ -1,0 +1,122 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{non-malleability}
+
+\begin{document}
+\begin{exercise}{Alternative NM-CPA security definition}
+Prove that the standard non-malleability definition specified by the games
+\begin{align*}
+&\begin{game}{\BGAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & \MMM_0\gets\ADB(\PK)\\
+ & m\gets\MMM_0\\
+ & c\gets\ENC_\PK(m)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+&
+&&\begin{game}{\BGAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & \MMM_0\gets\ADB(\PK)\\
+ & m\gets\MMM_0,\overline{m}\gets\MMM_0\\
+ & \overline{c}\gets\ENC_\PK(\overline{m})\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(\overline{c})\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_i,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+\end{align*}
+is equivalent to the simplified definition specified by the following games 
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_0)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\AD(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_0,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+&
+&&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_1)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\AD(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_0,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+\end{align*}
+
+
+\end{exercise}
+\begin{solution}
+For clarity we split the proof into three smaller steps.
+ 
+\vspace*{3ex}
+\noindent
+\textsc{First step.} Show that standard definition is equivalent to the definition specified by the following games
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & i\gets\set{0,1}\\
+ & c\gets\ENC_\PK(m_i)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_i,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+&
+&&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & i\gets\set{0,1},j\gets\set{0,1}\\
+ & c\gets\ENC_\PK(m_j)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\ADB(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_i,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+\end{align*}
+
+\vspace*{3ex}
+\noindent
+\textsc{Second step.}
+Show that the alternative definition is equivalent to the definition specified by the following games
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_1)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\AD(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_1,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+&
+&&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_0)\\
+ & \pi,\hat{c}_1,\ldots,\hat{c}_n\gets\AD(c)\\
+ & \IF c\in\set{\hat{c}_1,\ldots,\hat{c}_n}\ \THEN \RETURN 0\\ 
+ & \hat{m}_1\gets\DEC_\SK(\hat{c}_1),\ldots,\hat{m}_n\gets\DEC_\SK(\hat{c}_n)\\
+ & \RETURN \pi(m_1,\hat{m}_1,\ldots,\hat{m}_n) 
+\end{game}
+\end{align*}
+
+\vspace*{3ex}
+\noindent
+\textsc{Third step.}
+Show that the results obtained in the second and third step are sufficient to conclude the desired result.
+
+
+\end{solution}
+\end{document}

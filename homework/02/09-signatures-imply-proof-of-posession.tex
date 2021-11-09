@@ -1,0 +1,17 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{entity authentication, signature scheme, proof of posession}
+
+
+\begin{document}
+\begin{exercise}{Signatures $\Rightarrow$ Entity authentication}
+Let $(\GEN,\SIGN,\VERIFY)$ be a signature scheme that is $(t,\varepsilon)$-secure against universal one-more signature attack where the message distribution is uniform distribution over the message space $\MMM$.  
+Prove that the entity authentication protocol where the verifier $\VVV$ chooses $m\getsu \MMM$ and the prover sends back the signature $s\gets \SIGN_\SK(m)$ there can be no black-box knowledge extractors for the secret key that is also efficient.
+\end{exercise}
+\begin{solution}
+Let $\KKK^{\PPP_*}$ be a black-box knowledge extractor algorithm that succeeds in time $t_2$ and with probability $\varepsilon_2$ for all provers $\PPP_*$ that run in time $t_1$ and are at least $\varepsilon_1$ successful. Then we can construct an adversary $\ADB$ can conduct successful one-more signature attacks....  
+
+\end{solution}
+\end{document}

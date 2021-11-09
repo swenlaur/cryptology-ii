@@ -1,0 +1,43 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{collision resistance, iterative hashing}
+
+
+\begin{document}
+
+
+\begin{exercise}{Collision-resistance is closed under iterative hashing}
+Let $\HHH$ be $(t,\varepsilon)$-collision resistant hash function family defined by a single function $h:\SSS\times\MMM\to\SSS$. Show that function families defined by the construction
+\begin{align*}
+g_1(s, m_1) &= h(s,m_1)\enspace,\\
+g_2(s, m_1, m_2)&=h(g_1(s, m_1), m_2)\enspace,\\
+g_3(s, m_1, m_2, m_3)&=h(g_2(s, m_1, m_2), m_3)\enspace,\\
+&\ldots
+\end{align*}
+are also collision resistant function families with elements $g_s(\ldots) =g_i(k, \ldots)$.
+
+\end{exercise}
+\begin{solution} 
+\
+
+\vspace*{2ex}
+\noindent
+\textsc{Simplified problem.}
+Let us prove the collision resistance of $g_2$. Let there be a collision, i.e., \ldots
+Then \ldots 
+
+
+\vspace*{2ex}
+\noindent
+\textsc{General solution.}
+The analysis done above is suitable for any $i$. Indeed, let $g_{i-1}$ be \ldots. 
+ \ldots
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Qualitative analysis.} Note that the success bound grows \ldots 
+
+\end{solution}
+\end{document}

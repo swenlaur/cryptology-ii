@@ -1,0 +1,27 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{ind-cca, sign-and-encrypt, standalone security}
+
+
+\begin{document}
+\begin{exercise}{Security of encrypt-and-sign}
+Consider a following message transmission protocol. A sender
+  $\PARTY_1$ knows the public encryption key $\PK_2$ of a receiver
+  $\PARTY_2$ and the receiver $\PARTY_2$ knows the public signing key
+  $\PK_1$ of the sender $\PARTY_1$. To encrypt a message $m$ the
+  sender $\SK$ computes $c\gets\ENC_{\PK_2}(m)$,
+  $s\gets\SIGN_{\SK_1}(c)$ and sends $(c,s)$ over unreliable channel
+  to $\PARTY_2$. The receiver $\PARTY_2$ first checks the authenticity
+  by computing $\VERIFY_{\PK_1}(c,s)$ and then decrypts the message
+  $m\gets\DEC_{\SK_2}(c)$.
+Prove that the protocol remains secure even if the adversary gets oracle access to the receiver, i.e., it can send any tuples $c, s$ and obtain the corresponding decryption. 
+\end{exercise}
+\begin{solution}
+Let us first formalise two games that are analog of IND-CCA2 security games...
+Next let us prove that the decryption queries will yield $m\neq \bot$ with small enough probability
+Based on this let us define trivial decryption oracle and reduce the security to IND-CPA games...
+
+\end{solution}
+\end{document}
