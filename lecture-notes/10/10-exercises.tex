@@ -1,0 +1,157 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+
+
+\newcommand{\FALL}{\FFF_{\mathrm{all}}}
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise session X
+
+
+\section*{Examples of Sigma Protocols}
+
+\begin{enumerate}
+
+\item The Guillou-Quisquater identification scheme (GQ scheme) is
+  directly based on the RSA problem. The identification scheme is a
+  honest verifier zero-knowledge proof that the prover knows $x$ such
+  that $x^e=y\mod n$ where $n$ is an RSA modulus, i.e., the public
+  information $\PK=(n,e,y)$ and the secret is $x$. The protocol itself
+  is following:
+  \begin{enumerate}
+  \item[1.] $\PROVER$ chooses $r\getsu\ZZ_n^*$ and sends $\alpha\gets r^e$ to $\VERIFIER$.
+  \item[2.] $\VERIFIER$ chooses $\beta\getsu\set{0,1}$ and sends it to $\PROVER$.
+  \item[3.] $\PROVER$ computes $\gamma\gets r x^\beta$ and sends it to $\VERIFIER$.
+  \item[4.] $\VERIFIER$ accepts the proof if $\gamma^e=\alpha y^\beta$.    
+  \end{enumerate}
+  Prove that the Guillou-Quisquater identification scheme is sigma
+  protocol.
+  \begin{enumerate}
+  \item The GQ identification scheme is functional.
+  \item The GQ identification scheme has the zero-knowledge property.
+  \item The GQ identification protocol is specially sound. 
+  \item Amplify soundness guarantees with parallel and sequential
+    composition and derive the corresponding knowledge bounds.
+  \end{enumerate}
+
+\item Let $\GG$ be a cyclic group with prime number of elements $q$
+  and let $g_1$ and $g_2$ be generators of the group. Now consider a
+  sigma protocol for proving the knowledge of $x$ such that
+  $g_1^x=y_1$ and $g_2^x=y_2$, i.e., the public information is
+  $(g_1,g_2,y_1,y_2)$ and the secret knowledge is $x$. The protocol is
+  following:
+  \begin{enumerate}
+  \item[1.] $\PROVER$ chooses $r\getsu\ZZ_q$ and sends $\alpha_1\gets
+    g_1^r$ and $\alpha_2\gets g_2^r$ to $\VERIFIER$.
+  \item[2.] $\VERIFIER$ chooses $\beta\getsu\ZZ_q$ and sends it to $\PROVER$.
+  \item[3.] $\PROVER$ computes $\gamma\gets x\beta+r$ and sends it to
+    the verifier $\VERIFIER$.
+  \item[4.] $\VERIFIER$ accepts the proof if $g_1^{\gamma}=\alpha_1
+    y_1^\beta$ and $g_2^{\gamma}=\alpha_2 y_2^\beta$.
+  \end{enumerate}
+  Prove that the protocol is indeed a sigma protocol.
+  \begin{enumerate}
+  \item The protocol is functional and has the zero-knowledge
+    property.
+  \item The protocol is specially sound and two colliding transcripts
+    indeed reveal $x$ such that $g_1^x=y_1$ and $g_2^x=y_2$.
+  \end{enumerate}
+  As a concrete application of this protocol construct a proof that
+  the ElGamal encryption $(c_1,c_2)$ is an encryption of $\ENC_\PK(1)$.
+\end{enumerate}
+
+
+\section*{Applications of Sigma Protocols}
+
+\begin{enumerate}
+  \addtocounter{enumi}{2}
+\item Recall that in the first step of certified computations the
+  prover $\PROVER$ commits bit by bit to his or inputs $x_1,\ldots,
+  x_n$ and uses sigma protocol to prove the validity of
+  commitments. Use Pedersen commitments and the Schnorr protocol
+  $\pok{x}{y=g^x}$ to implement this strategy.
+  \begin{enumerate}
+  \item Construct a sigma protocol $\pok{c,g}{\exists r: c=y^xg^r}$.
+  \item Construct a sigma protocol $\pok{c,g}{\exists d: \OPEN(c,d)\in\set{0,1}}$.
+  \item Use homomorphic properties of the Pedersen commitment to
+    construct a sigma protocol for proving $x_1+\cdots+x_n=1$ and
+    $x_i\in\set{0,1}$.
+  \end{enumerate}
+
+\item In the second phase of certified computations the prover reveals
+  commitments to all intermediate values in the Boolean circuit. As in
+  the previous exercise use Pedersen commitments and the Schnorr
+  protocol $\pok{x}{y=g^x}$ to construct sigma protocols to prove the following facts
+  \begin{enumerate}
+  \item Values $c_u$ and $c_v$ are the commitments of $u$ and $v$ such that $v=\neg u$.
+  \item Commitments $c_u$, $c_v$ $c_w$ of $u$, $v$ and $w$ are such that $w=u\wedge v$.
+  \item Commitment $c_f$ of $f$ is such that $f=x_0\wedge \neg x_1 \vee \neg x_3\wedge x_4$. 
+  \end{enumerate}
+
+\item Many e-voting protocols use sigma protocols to prove the
+  correctness of several crucial steps. In particular, one often needs
+  to prove
+  \begin{enumerate}
+  \item $c$ is a lifted ElGamal encryption of $0$ or $1$;
+  \item $c$ is a lifted ElGamal encryption of $x\in\set{0,\ldots 2^\ell}$;
+  \item $(c_{ij})_{i,j=1}^n$ is an Pedersen commitment to a permutation matrix. 
+  \end{enumerate}
+  Use the Schnorr protocol $\pok{x}{y=g^x}$ and properties of lifted ElGamal
+  and Pedersen commitments to construct the corresponding sigma
+  protocols.
+
+
+\item[$(\star)$] Let $\GG$ be a cyclic group with prime number of
+  elements $q$ as in the previous exercise. Design a sigma proof that
+  the prover knows $x_1$ and $x_2$ such that
+  $y=g_1^{x_1}g_2^{x_2}$. The latter is often used together with the
+  lifted ElGamal encryption $\overline{\ENC}_\PK(x)=\ENC(g^x)$ that is
+  additively homomorphic. Construct sigma protocols for the following
+  statements.
+  \begin{enumerate}
+  \item An encryption $c$  is $\overline{\ENC}_\PK(m)$ and $m$ is known or publicly fixed.
+  \item An encryption $c_2$ is computed as $c\cdot\ENC_\PK(1)$.
+  \item An encryption $c_2$ is computed as $c_1^y\cdot \ENC_\PK(1)$.
+  \item An encryption $c_3$ is computed as $c_1\cdot c_2\cdot \ENC_\PK(1)$.
+  \end{enumerate}
+
+\item Recall that a generic Schnorr signature
+  $(m,\alpha,\beta,\gamma)$ is defined as follows $\alpha\gets g^r$
+  for $r\getsu \ZZ_q$, $\beta\gets h(m,\alpha)$ and $\gamma=x\beta+r$
+  where $y=g^x$ is the public key of a signer and $x$ is the secret
+  key. Consider the security of the Schnorr signature scheme against
+  existential forgeries, where the function $h$ is replaced with a
+  random oracle $\ORA_h(\cdot)$ that computes uniformly chosen
+  function from $\FALL=\set{h:\GG\times\MSPACE\to\ZZ_q}$.  
+  \begin{enumerate}
+  \item Convert an adversary that makes at most $q_h$ queries to
+    random oracle $\ORA_h(\cdot)$ and succeeds with the probability
+    $\varepsilon$ in the key only model can be converted to an
+    adversary $\AD_*$, which queries each message only once from
+    $\ORA_h$ and returns only valid signatures or halts. Show that the
+    running times of $\AD$ and $\AD_*$ are comparable and $\AD_*$
+    makes at most $q_h+1$ queries.
+  \item Convert $\AD_*$ to an adversary $\ADB$ that initiates up to
+    $q_h+1$ Schnorr identification protocols and then finishes
+    successfully one these identification protocols with the same
+    probability than $\AD_*$ succeeds in existential forgery.
+  \item Look at the second type of matrix games we considered in the
+    lectures and provide the expected number of probes needed to
+    extract the secret key from $\ADB$ and $\AD$.
+
+  \item It is common to consider security in the model where adversary
+    can use signing oracle up to $g_s$ times. Show that each of the
+    queries $\SIGN(m)$ can be simulated by choosing
+    $\beta,\gamma\gets\ZZ_q$ and computing $\alpha\gets g^\gamma
+    y^{-\beta}$ and then defining $\ORA_h(m,\alpha)=\beta$. Why and
+    when is this assignment consistent with the definition of random
+    oracle?
+ \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

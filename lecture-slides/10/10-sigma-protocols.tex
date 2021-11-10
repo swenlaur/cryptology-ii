@@ -1,0 +1,479 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{color}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Sigma Protocols}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{30 April, 2010}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+\newcommand{\probes}{\mathsf{probes}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\renewcommand{\SK}{{\red{\mathsf{sk}}}}
+\renewcommand{\PK}{{\blue{\mathsf{pk}}}}
+
+
+\begin{document}
+\titlefoil
+
+\middlefoil{Formal Syntax}
+
+\foilhead[-1.5cm]{Sigma protocols}
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 11.0cm 2.5cm]
+ {sigma-protocols.eps}
+
+
+A \emph{sigma protocol} for an efficiently computable relation
+$R\subseteq\set{0,1}^*\times\set{0,1}^*$ is a three move
+protocol that satisfies the following properties.
+\begin{triangles}
+\item\textbf{$\boldsymbol{\Sigma}$-structure.} A prover first sends a
+  commitment, next a verifier sends \emph{varying} challenge, and
+  then the prover must give a consistent response.
+\item \textbf{Functionality.} The protocol run between an honest
+  prover $\PROVER(\SK)$ and verifier $\VERIFIER(\PK)$ is always
+  accepting if $(\SK,\PK)\in R$.
+\end{triangles}
+
+\foilhead[-1.5cm]{Security properties of sigma protocols}
+
+\illustration[scale=0.82, angle=-90, clip, trim=3.5cm 2.5cm 11.0cm 2.5cm]
+ {sigma-protocols.eps}
+\Bigskip
+
+\begin{triangles}
+\item \textbf{Perfect simulatability.} There exists an efficient
+  \emph{non-rewinding} simulator $\SSS$ such that the output
+  distribution of a semi-honest verifier $\VERIFIER_*$ in the real
+  world and the output distribution of $\SSS^{\VERIFIER_*}$ in the
+  ideal world coincide.
+\item \textbf{Special soundness.} There exists an efficient extraction
+  algorithm $\EXTR$ that, given two accepting protocol runs
+  $(\alpha,\beta_0,\gamma_0)$ and $(\alpha,\beta_1,\gamma_1)$ with
+  $\beta_0\neq \beta_1$ that correspond to $\PK$, outputs $\SK_*$ such
+  that $(\SK_*,\PK)\in R$
+
+\end{triangles}
+
+\middlefoil{Soundness of Sigma Protocols}
+
+\foilhead[-1cm]{Soundness in the standalone model}
+
+\textbf{Main Theorem.} Denote $\kappa=\abs{\BBB}^{-1}$. Now if a
+$t$-time prover $\PROVER_*$ succeeds in the sigma protocol with
+probability at least $\varepsilon>\kappa$, there exists a
+knowledge-extraction algorithm $\KEXTR^{\PROVER_*}$ that always
+recovers a secret $\SK_*$ corresponding to $\PK$ and the expected
+running-time of $\KEXTR^{\PROVER_*}$ is
+\begin{align*}
+  c_1\cdot\frac{2t}{\varepsilon-\kappa}+c_2
+\end{align*}
+for some small constants $ c_1,c_2\in\RR$. 
+\Bigskip
+
+\textbf{Remark.} 
+\begin{triangles}
+\item The coefficient $c_1$ depends on the total complexity of the protocol.
+\item The coefficient $c_2$ depends on the complexity of the $\EXTR$
+  algorithm.
+\end{triangles}
+
+
+\foilhead[-1.5cm]{The corresponding matrix game}
+
+\illustration[scale=0.85, angle=-90, clip, trim=4.5cm 0.0cm 10.5cm 0.7cm]{knowledge-extraction.eps}
+
+Let $A(r,c)$ be the output of the honest verifier $\VERIFIER(c)$ that
+interacts with a potentially malicious prover $\PROVER_*(r)$.
+\begin{triangles}
+\item Then all matrix elements in the same row $A(r,\cdot)$ lead to same $\alpha$ value.
+\item To extract the secret key $\SK$, we must find two ones in the same row.
+\item We can compute the entries of the matrix on the fly.
+\end{triangles}
+ 
+
+\foilhead[-1cm]{Classical algorithm}
+
+\textbf{Task:} Find two ones in a same row.
+
+$\underline{\mathsf{Rewind}}$:
+\begin{enumerate}
+ \item Probe random entries $A(r,c)$ until $A(r,c)=1$.
+ \item Store the matrix location $(r,c)$.
+ \item Probe random entries $A(r,\overline{c})$ in the same row until $A(r,\overline{c})=1$.
+ \item Output the location triple $(r,c,\overline{c})$.
+\end{enumerate}
+\vspace*{2cm}
+
+$\underline{\smash{\mathsf{Rewind\text{-}Exp}}}$:
+\begin{enumerate}
+  \item Repeat the procedure $\mathsf{Rewind}$ until $c\neq \overline{c}$.
+  \item Use the extraction algorithm $\EXTR$ to extract $\SK$.
+\end{enumerate}
+
+\foilhead[-1cm]{Average-case running time}
+
+\textbf{Theorem.}  If a $m\times n$ zero-one matrix $A$ contains
+$\varepsilon$-fraction of nonzero entries, then the $\mathsf{Rewind}$
+and $\mathsf{Rewind\text{-}Exp}$ algorithm make on average
+\begin{align*}
+  \EXP[\probes| \mathsf{Rewind}] &=\frac{2}{\varepsilon}\\
+  \EXP[\probes|\mathsf{Rewind\text{-}Exp}] &=\frac{2}{\varepsilon-\kappa}
+\end{align*}
+probes where $\kappa=\frac{1}{n}$ is a \emph{knowledge error}.
+
+
+
+\foilhead[-1cm]{Average case complexity I}
+
+Assume that the matrix contains $\varepsilon$-fraction of nonzero
+elements, i.e., $\PROVER_*$ convinces $\VERIFIER$ with probability
+$\varepsilon$. Then on average we make
+\begin{align*}
+  \E{\probes_1}= \varepsilon +
+  2(1-\varepsilon)\varepsilon+3(1-\varepsilon)^2\varepsilon+\cdots=\textstyle \frac{1}{\varepsilon}
+\end{align*}
+matrix probes to find the first non-zero entry. Analogously, we make 
+\begin{align*}
+  \E{\probes_2|r}=\textstyle\frac{1}{\varepsilon_r}
+\end{align*}
+probes to find the second non-zero entry. Also, note that  
+\begin{align*}
+  \EXP[\probes_2]%
+  &=\sum_{r}\pr{r}\cdot \EXP[\probes_2|r]=
+  \sum_{r}\frac{\varepsilon_r}{\sum_{r'}\varepsilon_{r'}}\cdot\frac{1}{\varepsilon_r}
+  =  \frac{1}{\varepsilon}\enspace,
+\end{align*}
+where $\varepsilon_r$ is the fraction of non-zero entries in the $r^{\text{th}}$ row.
+
+\foilhead[-1cm]{Average case complexity II}
+
+As a result we obtain that the $\mathsf{Rewind}$ algorithm does on average
+\begin{align*}
+  \EXP[\probes]=\textstyle \frac{2}{\varepsilon}
+\end{align*}
+probes. Since the $\mathsf{Rewind}$ algorithm fails with probability
+\begin{align*}
+  \pr{\mathsf{failure}}=\sum_{r}\pr{c=\overline{c}|\mathsf{halting}}
+  \leq\frac{\kappa}{\varepsilon}
+\end{align*}
+we make on average 
+\begin{align*}
+  \EXP[\probes^*]=\frac{1}{\pr{\mathsf{success}}}\cdot\EXP[\probes]
+  \leq\frac{\varepsilon}{\varepsilon-\kappa}\cdot\frac{2}{\varepsilon}=\frac{2}{\varepsilon-\kappa}\enspace
+\end{align*}
+probes.
+
+\foilhead[-1cm]{Soundness of sequential compositions}
+
+\textbf{Main Theorem.}  Consider a setting where a prover $\PROVER_*$
+and honest verifier $\VERIFIER$ sequentially execute the same sigma
+protocol $\ell$ times. Denote $\kappa=\abs{\BBB}^{-1}$. Also let
+$\PROVER_*$ be successful if $\PROVER_*$ succeeds at least in one
+protocol instance. Now if a $t$-time prover $\PROVER_*$ succeeds with
+probability at least $\varepsilon>\ell\kappa$, there exists a
+knowledge-extraction algorithm $\KEXTR^{\PROVER_*}$ that always
+recovers a secret $\SK_*$ corresponding to $\PK$ and the expected
+running-time of $\KEXTR^{\PROVER_*}$ is
+\begin{align*}
+  c_1\cdot\frac{\ell+1}{\varepsilon-\ell\kappa}+c_2
+\end{align*}
+for some small constants $ c_1,c_2\in\RR$. 
+\bigskip
+
+\textbf{Remark.} 
+\begin{triangles}
+\item The coefficient $c_1$ depends on the total complexity of the protocol.
+\item The coefficient $c_2$ depends on the complexity of the $\EXTR$
+  algorithm.
+\end{triangles}
+
+\foilhead[-1.5cm]{The corresponding matrix game}
+
+\illustration[scale=0.85, angle=-90, clip, trim=4.5cm 0.0cm 10.5cm 0.7cm]{sequential-knowledge-extraction.eps}
+
+Let $A(\omega_0,\omega_1,\ldots,\omega_\ell)$ denote the index of the
+first successful protocol between honest verifier
+$\VERIFIER(\omega_{1},\ldots,\omega_\ell)$ and a prover
+$\PROVER_*(\omega_0)$.
+\begin{triangles}
+\item Then a randomness prefix $\omega_0,\ldots,\omega_{i-1}$ leads to the same $\alpha_i$ value.
+\item To extract the secret key $\SK$, we must find two $i$-s with the same prefix.
+\item We can compute the entries of the array on the fly.
+\end{triangles}
+
+
+
+
+\foilhead[-1cm]{Classical algorithm}
+
+$\underline{\mathsf{Rewind}}$:
+\begin{enumerate}
+ \item Probe random entries $A(\vec{\omega})$ until $A(\vec{\omega})\neq 0$.
+ \item Store the matrix location $\vec{\omega}$ and the rewinding point $i\gets A(\vec{\omega})$.
+ \item Probe random entries $A(\overline{\vec{\omega}})$ with the prefix $\omega_0,\ldots,\omega_{i-1}$ until $A(\overline{\vec{\omega}})=i$.
+ \item Output the location tuple $(\vec{\omega},\overline{\vec{\omega}})$.
+\end{enumerate}
+\Bigskip
+
+$\underline{\smash{\mathsf{Rewind\text{-}Exp}}}$:
+\begin{enumerate}
+  \item Repeat the procedure $\mathsf{Rewind}$ until $\omega_i\neq\overline{\omega}_i$.
+  \item Use the extraction algorithm $\EXTR$ to extract $\SK$.
+\end{enumerate}
+
+
+\foilhead[-1cm]{Average-case running time}
+
+\textbf{Theorem.}  If a array $A(\vec{\omega})$ with entries in
+$\set{0,\ldots,\ell}$ contains $\varepsilon$-fraction of nonzero entries,
+then $\mathsf{Rewind}$ and $\mathsf{Rewind\text{-}Exp}$ make on
+average
+\begin{align*}
+  \EXP[\probes| \mathsf{Rewind}] &=\frac{\ell+1}{\varepsilon}\\
+  \EXP[\probes|\mathsf{Rewind\text{-}Exp}] &=\frac{\ell+1}{\varepsilon-\kappa}
+\end{align*}
+probes where the \emph{knowledge error} 
+\begin{align*}
+ \kappa=\sum_{i=1}^\ell\pr{\omega_i=\overline{\omega}_i}\enspace.  
+\end{align*}
+
+
+
+\foilhead[-1cm]{Average case complexity I}\enlargethispage{1cm}
+
+Assume that $\AD$ succeeds with probability $\varepsilon$. Then the
+results proved for the zero-one  matrix with fixed dimensions  
+imply
+\begin{align*}
+  \EXP[\probes_1]=\textstyle \frac{1}{\varepsilon}\qquad\text{and}\qquad
+  \EXP[\probes_2|A(\vec{\omega})=i]=\textstyle\frac{1}{\varepsilon_{i}}
+\end{align*}
+where $\varepsilon_i$ is the fraction of entries labelled with $i$. Thus
+\begin{align*}
+  \EXP[\probes_2]%
+  &=\sum_{i=1}^{\ell}\pr{A(\vec{\omega})=i}\cdot \EXP[\probes_2|A(\vec{\omega})=i]\\
+  \EXP[\probes_2] &=
+  \sum_{i=1}^{\ell}\frac{\varepsilon_{i}}{\varepsilon}\cdot\frac{1}{\varepsilon_{i}}
+  =\frac{\ell}{\varepsilon}\enspace.
+\end{align*}
+
+
+
+\foilhead[-1cm]{Average case complexity II}
+
+Consequently, the $\mathsf{Rewind}$ algorithm does on average
+\begin{align*}
+  \EXP[\probes]= \frac{\ell+1}{\varepsilon}
+\end{align*}
+probes. Since the $\mathsf{Rewind}$ algorithm fails with probability
+\begin{align*}
+  \pr{\mathsf{failure}}%
+  =\sum_{i=1}^\ell\pr{A(\vec{\omega})=i}\pr{\omega_i=\overline{\omega}_i|\mathsf{halting}}
+   \leq\frac{\kappa_1+\cdots+\kappa_\ell}{\varepsilon}
+\end{align*}
+we make on average 
+\begin{align*}
+  \EXP[\probes^*]=\frac{1}{\pr{\mathsf{success}}}\cdot\EXP[\probes]
+  \leq\frac{\varepsilon}{\varepsilon-\kappa}\cdot\frac{\ell+1}{\varepsilon}
+  =\frac{\ell+1}{\varepsilon-\kappa}\enspace.
+\end{align*}
+
+
+\middlefoil{Various Parallel Compositions}
+
+\foilhead[-1.5cm]{Conjunctive proofs}\enlargethispage{1cm}
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm 0.0cm 10.0cm 0.7cm]{and-composition.eps}
+
+If we run two sigma protocols for different relations $R_1$ and $R_2$
+in parallel, we get a sigma protocol for new relation $R_1\wedge
+R_2$
+\begin{align*}
+  (\SK_1,\SK_2,\PK)\in R_1\wedge R_2
+  \quad\Leftrightarrow\quad
+  (\SK_1,\PK)\in R_1\wedge (\SK_2,\PK)\in R_2\enspace.
+\end{align*}
+provided that both sigma protocols have the same challenge space
+$\BBB$ and it a \emph{perfect simulation of transcripts}
+$(\alpha_i,\beta,\gamma_i)$ is \emph{efficient} for any $\beta$.
+
+\foilhead[-1.0cm]{The corresponding proof}
+
+\textbf{Perfect simulatability.}  Let $\SSS_1$ be a canonical
+simulator for $\VERIFIER_1$. Now if $\SSS_1$ outputs a properly
+distributed triple $(\alpha_1,\beta,\gamma_1)$, then we can augment
+this with properly distributed $(\alpha_2,\beta,\gamma_2)$ and thus we
+get a properly distributed protocol transcript
+$(\alpha_1,\alpha_2,\beta,\gamma_1,\gamma_2)$.
+\Bigskip
+
+\textbf{Special soundness.}  Given two accepting transcripts
+\begin{align*}
+  &(\alpha_1,\alpha_2,\beta^0,\gamma_1^0,\gamma_2^0),
+  (\alpha_1,\alpha_2,\beta^1,\gamma_1^1,\gamma_2^1), 
+ \quad\text{with}\quad \beta^0\neq\beta^1\enspace, 
+\end{align*}
+we can decompose them into original colliding transcripts
+\begin{align*}
+  &(\alpha_1,\beta^0,\gamma_1^0),(\alpha_1,\beta^1,\gamma_1^1),\qquad \beta^0\neq\beta^1\enspace,\\
+  &(\alpha_2,\beta^0,\gamma_2^0),(\alpha_2,\beta^1,\gamma_2^1),\qquad \beta^0\neq\beta^1\enspace.
+\end{align*}
+
+
+\foilhead[-1.5cm]{Disjunctive proofs}
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm
+  1.0cm 10.0cm -0.3cm]{or-composition.eps} 
+%
+Assume that we have two sigma protocols for relations $R_1$ and $R_2$
+such that the challenge is chosen uniformly from a commutative group
+$(\BBB;+)$.
+
+Then a prover can use a simulator $\SSS_j$ to create the transcript
+for missing secret $\SK_j$ and then create response using the known
+secret $\SK_i$.
+
+
+\foilhead[-1.5cm]{Disjunctive proofs}
+\addtocounter{page}{-1} 
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm
+  1.0cm 10.0cm -0.3cm]{or-composition.eps}
+%
+
+As a result, we get a sigma protocol for new relation $R_1\vee R_2$
+\begin{align*}
+  (\SK_1,\SK_2,\PK)\in R_1\vee R_2
+ \quad\Leftrightarrow\quad 
+ (\SK_1,\PK)\in R_1\vee (\SK_2,\PK)\in R_2\enspace.
+\end{align*}
+
+\foilhead[-1.0cm]{The corresponding proof}
+
+\textbf{Perfect simulatability.}  Note that $\beta_1$ and $\beta_2$
+are independent and have a uniform distribution over
+$\BBB$. Consequently, we can run the canonical simulators $\SSS_1$ and
+$\SSS_2$ be for $\VERIFIER_1$ and $\VERIFIER_2$ in parallel to create
+the properly distributed transcript
+$(\alpha_1,\alpha_2,\beta_1+\beta_2,\beta_1,\beta_2,\gamma_1,\gamma_2)$.
+\Bigskip
+
+
+\textbf{Special soundness.}
+Given two transcripts
+\begin{align*}
+  &(\alpha_1,\alpha_2,\beta_1^0+\beta_2^0,\beta_1^0,\beta_2^0,\gamma_1^0,\gamma_2^0),
+  (\alpha_1,\alpha_2,\beta_1^1+\beta_2^1,\beta_1^1,\beta_2^1,\gamma_1^1,\gamma_2^1)
+\end{align*}
+such that $ \beta_1^0+\beta_2^0\neq\beta_1^1+\beta_2^1$, we can extract a colliding sub-transcript
+\begin{align*}
+  \begin{cases}
+  (\alpha_1,\beta_1^0,\gamma_1^0),(\alpha_1,\beta_1^1,\gamma_1^1),&\text{if } \beta_1^0\neq\beta_1^1\enspace,\\
+  (\alpha_2,\beta_2^0,\gamma_2^0),(\alpha_2,\beta_2^1,\gamma_2^1),&\text{if } \beta_2^0\neq\beta_2^1\enspace.
+  \end{cases}
+\end{align*}
+
+\foilhead[-1.5cm]{Parallel composition}\enlargethispage{1cm}
+\illustration[scale=0.85, angle=-90, clip, trim=3.5cm 0.0cm 10.0cm 0.7cm]{parallel-composition.eps}
+
+If we run two sigma protocols  for different relations $R_1$ and $R_2$
+in parallel, we get a sigma protocol$^*$ for new relation $R_1\wedge
+R_2$
+\begin{align*}
+  (\SK_1,\SK_2,\PK)\in R_1\wedge R_2
+  \quad\Leftrightarrow\quad
+  (\SK_1,\PK)\in R_1\wedge (\SK_2,\PK)\in R_2\enspace.
+\end{align*}
+$^*$
+\begin{small}
+  Modulo small details---not all colliding
+  transcripts reveal both secrets.
+\end{small}
+
+
+\middlefoil{Certified Computations\vspace*{1ex}\\{\normalsize Semihonest case}}
+
+\foilhead[-1cm]{The concept}\enlargethispage{1cm}
+
+\illustration[scale=0.80, angle=-90, clip, trim=3.5cm 0.0cm 3.5cm 0.0cm]{certified-computations.eps}
+Lucy should learn $f(x)$ and nothing more even if Charlie is malicious.
+
+\foilhead[-1cm]{Basic tools}
+
+There are many ways how to build protocols for certified computations.
+Here, we consider one of the simplest protocols that is based DL
+group.
+\begin{triangles}
+  \item We use Pedersen commitments with a public parameter $y\getsu\GG$
+    \begin{align*}
+      (y^xg^r,(x,r))\gets\COM(x;r)
+    \end{align*}
+  \item We use proofs of knowledge for various relations about discrete logarithms
+    \begin{align*}
+      &\pok{\blue{z},\blue{g}}{\exists \red{x}: \blue{g}^{\red{x}}=\blue{z}}\\
+      &\pok{\blue{g_1},\blue{g_2},\blue{z}}{\exists \red{x_1},\red{x_2}: 
+        \blue{g_1}^{\red{x_1}}\blue{g_2}^{\red{x_2}}=\blue{z}}
+    \end{align*}
+   to prove more complex properties about Pedersen commitments.
+\end{triangles}
+
+
+\foilhead[-1cm]{Boolean circuit of commitments}\enlargethispage{1cm}
+
+Charlie prepares a Boolean circuit for $f$ and commits all intermediate values.
+\illustration[scale=0.75, angle=-90, clip, trim=3.5cm 0.0cm 3.5cm 0.0cm]{boolean-circuit.eps}
+
+
+\foilhead[-1cm]{Augmentation by proofs of knowledge I}
+
+Charlie proves that all commitments $\COM(x_i)$ are commitments of bits
+\begin{center}
+\fbox{$\pok{\blue{g},\blue{y},\blue{c}}{\exists \red{r}: 
+\blue{g}^{\red{r}}=\blue{c}\vee \blue{g}^{\red{r}}=\blue{c}\blue{y}^{-1}}$}
+\end{center}
+\bigskip
+
+\illustration[scale=0.55, angle=-90, clip, trim=3.0cm 0.0cm 3.5cm 0.0cm]{augmented-circuit-i.eps}
+
+\foilhead[-1cm]{Augmentation by proofs of knowledge II}
+
+Charlie proves that all intermediate commitments are correct, e.g.
+\begin{center}
+ \fbox{$\POK_{\blue{g},\blue{y},\blue{c_1},\blue{c_2}}^\neg\left[\exists \red{r_1}\red{r_2}: 
+\blue{g}^{\red{r_1}}=\blue{c}\wedge \blue{g}^{\red{r_2}}=\blue{c_2}\blue{y}^{-1}\vee\ldots\right]$}
+\end{center}
+\bigskip
+
+\illustration[scale=0.55, angle=-90, clip, trim=3.0cm 0.0cm 3.5cm 0.0cm]{augmented-circuit-ii.eps}
+
+
+\foilhead[-1cm]{Final protocol}
+
+Since we can use disjunctive composition to combine all sigma proofs,
+we get the following protocol for certified computations.
+\begin{triangles}
+  \item Charlie commits his input bit by bit using Pedersen commitment.
+  \item Lucy sends the description of a function $f$.
+  \item Charlie creates Boolean circuit and commits all values.
+  \item Both parties agree one the corresponding validity  proof.
+  \item Charlie decommits $f(x)$ and sends the first proof message $\alpha$.
+  \item Lucy sends the challenge message $\beta\gets\BBB$.
+  \item Charlie sends back the corresponding response $\gamma$.
+  \item Lucy accepts $f(x)$ only if the sigma protocol succeeds.
+\end{triangles}
+
+
+
+\end{document}
+
