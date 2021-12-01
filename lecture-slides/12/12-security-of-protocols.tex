@@ -1,0 +1,455 @@
+\documentclass[landscape,footrule]{foils}
+\usepackage[lecture-serie]{foiltex-extra}
+\usepackage{crysymb}
+\usepackage{crypto-ii}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx} 
+
+
+\newcommand{\lecture}{Security of Protocols}
+\newcommand{\lserie}{MTAT.07.003 Cryptology II}
+\newcommand{\ldate}{6 May, 2009}
+\newcommand{\lauthor}{Sven Laur}
+\newcommand{\linst}{University of Tartu}
+\graphicspath{{./illustrations/}}
+
+
+\newcommand{\probes}{\mathsf{probes}}
+\newcommand{\lastline}{\vspace*{-2ex}}
+\newcommand{\spreadappart}{\vspace*{\fill}}
+
+
+\renewcommand{\SK}{{\red{\mathsf{sk}}}}
+\renewcommand{\PK}{{\blue{\mathsf{pk}}}}
+
+
+
+
+\begin{document}
+\titlefoil
+
+\foilhead[-1cm]{Primitives and protocols}
+\LogoOn
+
+\textbf{Cryptographic primitives.} Primitives are tailor-made
+constructions that have to preserve their security properties in very
+specific scenarios.
+\begin{triangles}
+\item IND-CPA cryptosystem is guaranteed to be secure \emph{only}
+  with respect to the simplistic games that define IND-CPA security.
+\item A binding commitment is secure \emph{only} against double opening. 
+\end{triangles}\vspace*{3ex}
+
+\textbf{Cryptographic protocols.} Protocols must preserve 
+security  under the wide range of conditions that are
+implicitly specified by security model.
+\begin{triangles}
+\item An adversary might try to learn inputs of honest parties. 
+\item An adversary might try to change the outputs of honest parties.
+\item An adversary might force honest parties to compute something else.
+\item An adversary might try to learn his or her outputs so that
+  honest parties learn nothing about their outputs.
+\end{triangles}
+
+\foilhead[-1cm]{Security against a specific security goal}%\enlargethispage{1cm}
+
+For each specific security goal and input distribution $\INPDIST$, we
+can construct a security game $\GREAL$ that models the corresponding
+protocol run.
+\bigskip
+
+\illustration{security-game.eps}
+\vspace*{-2ex}
+
+Any well-defined security goal can be formalised as a predicate
+$\ADB(\cdot)$. It is common to model the adversary $\AD$ as a dedicated entity in
+the model.
+
+\foilhead[-1cm]{Relevant attack scenarios}
+
+No protocol can be secure against all imaginable attacks and security
+goals. Hence, we have to specify the answer for the following
+questions.
+\begin{diamonds}
+  \item What is tolerated adversarial behaviour? 
+  \item What type of predicates $\ADB(\cdot)$ are considered relevant?
+  \item What is the model of communication and computations?
+  \item In which context the protocol is executed?
+  \item When is a plausible attack successful enough?
+\end{diamonds}
+\Bigskip
+\spreadappart
+
+\textbf{Common security levels.} Let $\ADBDIST$ be the set of relevant predicates.
+\begin{triangles}
+  \item  If $\ADBDIST$ consists of all predicates then we talk
+about \emph{statistical security}.
+\item  If  $\ADBDIST$ is a set of all $t$-time predicates, we talk
+about \emph{computational~security}.
+
+\end{triangles}
+
+
+
+
+\middlefoil{Resilience Principle}
+
+\foilhead[-1cm]{Resilience principle}
+
+Let $\PROT_\alpha$ and $\PROT_\beta$ be protocols such that any
+plausible attack $\AD$ against $\PROT_\alpha$ can be converted to a
+plausible attack against the $\PROT_\beta$ roughly with the same
+success rate. Then protocol $\PROT_\alpha$ is as secure as
+$\PROT_\beta$. We denote it $\PROT_\beta\preceq \PROT_\alpha$.
+\Bigskip
+
+\textbf{Ideal implementation.} For any functionality $\FFF$, we can consider
+the ideal implementation $\PROTID$, which uses \emph{unconditionally
+  trusted third party} $\TTP$:
+\begin{enumerate}
+\item All parties submit their inputs to a trusted party $\TTP$.
+\item $\TTP$ computes and sends the desired outputs back. 
+\end{enumerate}
+\Bigskip
+
+\textbf{Resilience principle.}  An ideal implementation $\PROTID$ is
+as secure as any protocol $\PROT$ that correctly implements the
+functionality $\FFF$. Any protocol $\PROT\succeq\PROTID$ achieves
+maximal security level for any relevant security goal $\ADB(\cdot)$.
+
+
+
+\foilhead[-1cm]{Ideal vs real world paradigm}
+
+Let $\GIDATK$ and $\GREATK$ be the games that model the execution of
+an ideal and real protocols $\PROTID$ and $\PROT$ and let $\ADID$ and
+$\AD$ be the corresponding real and ideal world adversaries.  Then we
+can compare the following games.
+\begin{align*}
+  &\begin{game}{\GIDEAL^{\ADID}}
+    &\vec{\STATE}\gets\INPDIST\\
+    &\vec{\OSTATE}^\circ\gets\GIDATK^{\ADID}(\vec{\STATE})\\
+    &\RETURN \ADB(\vec{\OSTATE}^\circ)
+  \end{game}
+  &&
+  \begin{game}{\GREAL^{\AD}}
+    &\vec{\STATE}\gets\INPDIST\\
+    &\vec{\OSTATE}\gets\GREATK^{\AD}(\vec{\STATE})\\
+    &\RETURN \ADB(\vec{\OSTATE})
+  \end{game}
+\end{align*}
+Now $\PROTID\preceq\PROT$ if for any $\ADB\in\ADBDIST$ and for any
+$\tre$-time real world adversary there exists a $\tid$-time ideal
+world adversary $\ADID$ such that
+\begin{align*}
+  \abs{\pr{\smash{\GREAL^\AD=1}}-\pr{\smash{\GIDEAL^{\ADID}=1}}}\leq
+  \varepsilon\enspace.
+\end{align*}
+
+\foilhead[-1cm]{Simulation principle}\enlargethispage{1cm}
+
+
+\illustration[scale=0.75, angle=-90, clip, trim=3.5cm 0.0cm 4.0cm 0.0cm]{simulation-principle.eps}
+
+The correspondence $\AD,\ADB\mapsto\ADID$ is usually implemented by
+\emph{simulator} $\SSS$ that act as a translator between real world adversary
+$\AD$ and ideal world.
+
+
+\middlefoil{Standalone Security Model\vspace*{1ex}\\
+           {\normalsize Two Parties and Static Corruption}}
+
+\foilhead[-1cm]{Formal description}
+
+\textbf{Computational context.} The protocol $\PROT$ is executed once
+with the inputs $x_1,x_2$ and auxiliary information
+$\sigma_1,\sigma_2$, i.e., $\STATE_1=(x_1,\sigma_1)$ and
+$\STATE_2=(x_2,\sigma_2)$. The output of honest parties is
+$\OSTATE_i=(y_i,\sigma_i)$ where $y_i$ is the protocol output.
+
+
+
+\textbf{Corruption model.}  Adversary can corrupt one party before the
+protocol. A \emph{semihonest} adversary only observes the computations
+done by the corrupted party. A \emph{malicious} adversary can alter
+the behaviour of the party.
+\bigskip
+
+\textbf{Communication model.}  Each party sends and receives one
+message during a round. A maliciously corrupted party can send his or
+her message the honest party has sent his or her message
+(\emph{rushing adversary}).
+\bigskip
+
+
+\textbf{Ideal world model.} Both parties submit their inputs $x_1,x_2$
+to $\TTP$ who computes the corresponding outputs $y_1,y_2$. Party
+$\PARTY_1$ gets his or her input $y_1$ first and \emph{maliciously}
+corrupted $\PARTY_1$ \emph{can abort} the protocol after that.
+\lastline
+
+
+
+\foilhead[-1.0cm]{Classical security definitions}
+
+\textbf{Statistical security}\vspace*{0.5ex}\\
+A protocol is $(\tre,\tid,\varepsilon)$-\emph{secure} if for any
+$\tre$-time real world adversary $\AD$ there exists a $\tid$-time
+ideal world adversary $\ADID$ such that for any input distribution
+$\INPDIST$ the output distributions $\vec{\OSTATE}$ and
+$\vec{\OSTATE}^\circ$ are statistically $\varepsilon$-close.
+\Bigskip
+
+\textbf{Computational security}\vspace*{0.5ex}\\
+A protocol is $(\tre,\tid,\tpre,\varepsilon)$-\emph{secure} if for
+any $\tre$-time real world adversary $\AD$ there exists a $\tid$-time
+ideal world adversary $\ADID$ such that for any input distribution
+$\INPDIST$ the output distributions $\vec{\OSTATE}$ and
+$\vec{\OSTATE}^\circ$ are  $(\tpre,\varepsilon)$-close.
+
+
+\middlefoil{Examples}
+
+
+\foilhead[-1.0cm]{Protocol for rock-paper-scissors game}\enlargethispage{1cm}
+
+
+
+\illustration[scale=0.70, angle=-90, clip, trim=3.5cm 0.0cm 4.0cm 0.0cm]{rock-paper-scissors.eps}
+
+Assume that $(\GEN,\COM,\OPEN)$ is perfectly binding commitment scheme.
+Let $x_1\circledast x_2$ denote the outcome of the game for
+$x_1,x_2\in\set{0,1,2}$ and $y=(x_1,x_2,x_1\circledast x_2)$
+denote the desired end result of the game.
+
+
+\foilhead[-1.5cm]{Simulator for the first player}
+\
+\vspace*{-1cm}
+\begin{align*}
+  \begin{fblock}{\SSS^{\PARTY_1^*}(\sigma_1,x_1)}
+    & (\PK,c)\gets \PARTY_1^*(\sigma_1,x_1)\\
+    & \text{Use rewinding to get }\\
+    &\begin{cblock}
+     &d_0\gets\PARTY_1^*(0),
+      d_1\gets\PARTY_1^*(1),
+      d_2\gets\PARTY_1^*(2)\\
+    \end{cblock}\\
+    & \text{Compute } x_1^i\gets \OPEN_\PK(c,d_i) \text{ for } i\in\set{0,1,2}.\\
+    & \text{Send $0$ to $\TTP$ if none of the decommitments are valid.}\\
+    & \text{Otherwise send $x_1^{i}\neq \bot$ to $\TTP$.}\\
+    & \text{Given $y$ form $\TTP$ store $d\gets\PARTY_1^*(x_2)$.}\\
+    & \text{If $\OPEN_\PK(c,d)=\bot$ then order $\TTP$ to halt the computations.}\\
+    & \text{Output whatever $\PARTY_1^*$ outputs.} 
+  \end{fblock}
+\end{align*}%
+
+
+\foilhead[-1cm]{Simulator for the second player}
+
+We cannot build simulator for the second player since $\hat{x}_2$ sent
+to $\PARTY_1$ may depend on the commitment value and the following
+code fragment fails
+\begin{align*}
+  \begin{fblock}{\SSS^{\PARTY_2^*}(\sigma_2,x_2)}
+   &\PK\gets\GEN\\ 
+   & (c,d)\gets\COM_\PK(0)\\
+   & \text{Send }\hat{x}_2\gets\PARTY_2^*(\sigma_2,x_2,c)\text{ to }\TTP.\\
+   & \text{Given $y$ from $\TTP$ rewind until success.}\\
+   &\begin{cblock}
+    & (c,d)\gets\COM_\PK(x_1)\\
+    & \text{If $\PARTY_2^*(\sigma_2,x_2,c)\neq \hat{x}_2$ repeat the cycle.}
+   \end{cblock}\\
+   &\text{Output whatever $\PARTY_2^*$ does.}
+  \end{fblock}
+\end{align*}
+
+\foilhead[-1cm]{Further analysis}
+
+If commitment scheme is $(\tre,\varepsilon)$-hiding then probabilities 
+\begin{align*}
+ \alpha(x_1,x_2)=\pr{\PK\gets\GEN, (c,d)\gets\COM_\PK(x_1):\PARTY_2^*(c)=x_2}  
+\end{align*}
+can vary at most $\varepsilon$ if we alter $x_1$. Hence, on average
+after $\frac{1}{\alpha(0,x_2)-\varepsilon}$ the rewinding succeeds and
+the continuation of the simulation is perfect.  \bigskip
+
+As the running-time must be finite, a nonzero failure probability
+causes statistical difference. The statistical difference comes from
+two sources:
+\begin{triangles}
+\item The distribution of inputs $\hat{x}_2$ submitted to $\TTP$ is
+  different from the distribution of $\hat{x}_2$ over the real
+  protocol runs.
+\item A nonzero simulation failure cause secondary difference.
+\end{triangles}
+
+
+
+\foilhead[-1cm]{Coin flipping by telephone}
+
+\illustration[scale=0.75, angle=-90, clip, trim=1.5cm 0.0cm 13.5cm 0.0cm]
+{coin-flipping.eps}
+
+The protocol above assures that participants output a uniformly
+distributed bit even if one of the participants is malicious.
+\begin{triangles}
+\item If the commitment scheme is perfectly binding, then Lucy can
+  also generate public parameters for the commitment scheme.
+\item If the commitment scheme is perfectly hiding, then Charlie can
+  also generate public parameters for the commitment scheme.
+\end{triangles}
+
+
+\foilhead[-3.0cm]{Simulator for the second party}\enlargethispage{1cm}
+\
+\begin{align*}
+  \begin{fblock}{\SSS^{\PARTY_2^*}(\STATE_2,y)}
+    &\orangecommand{\PK\gets\GEN}\\
+    &\begin{forblock}{i=1,\ldots k\ }
+      &b_1\getsu\set{0,1}\\
+      &(c,d)\gets\COM_\PK(b_1)\\
+      &b_2\gets\PARTY_2^*(\STATE_2,\PK,c)\\
+      &\IF b_1\oplus b_2=y\ \THEN\\
+      &\begin{cblock} \text{Send $d$ to $\PARTY_2^*$ and output
+          whatever $\PARTY_2^*$ outputs.}
+      \end{cblock}
+    \end{forblock}\\
+    &\RETURN  \mathsf{Failure}
+  \end{fblock}
+\end{align*}      
+
+\foilhead[0.0cm]{Failure probability}
+
+\centerline{\scalebox{0.7}{
+$
+  \begin{fblock}{\SSS^{\PARTY_2^*}(\STATE_2,y)}
+    &\PK\gets\GEN\\
+    &\begin{forblock}{i=1,\ldots k\ }
+      &b_1\getsu\set{0,1}\\
+      &\orangecommand{(c,d)\gets\COM_\PK(b_1)}\\
+      &b_2\gets\PARTY_2^*(\STATE_2,\PK,c)\\
+      &\IF b_1\oplus b_2=y\ \THEN\\
+      &\begin{cblock} 
+         &\RETURN  \mathsf{Success}
+      \end{cblock}
+    \end{forblock}\\
+    &\RETURN  \mathsf{Failure}
+  \end{fblock}
+  \qquad
+  \begin{fblock}{\SSS_1^{\PARTY_2^*}(\STATE_2,y)}
+    &\PK\gets\GEN\\
+    &\begin{forblock}{i=1,\ldots k\ }
+      &b_1\getsu\set{0,1}\\
+      &\orangecommand{(c,d)\gets\COM_\PK(0)}\\
+      &b_2\gets\PARTY_2^*(\STATE_2,\PK,c)\\
+      &\IF b_1\oplus b_2=y\ \THEN\\
+      &\begin{cblock} 
+         &\RETURN  \mathsf{Success}
+      \end{cblock}
+    \end{forblock}\\
+    &\RETURN  \mathsf{Failure}
+  \end{fblock}
+  \qquad
+  \begin{fblock}{\SSS_2^{\PARTY_2^*}(\STATE_2,y)}
+    &\PK\gets\GEN\\
+    &\begin{forblock}{i=1,\ldots k\ }
+      &(c,d)\gets\COM_\PK(0)\\
+      &b_2\gets\PARTY_2^*(\STATE_2,\PK,c)\\
+      &b_1\getsu\set{0,1}\\
+      &\IF b_1\oplus b_2=y\ \THEN\\
+      &\begin{cblock} 
+         &\RETURN  \mathsf{Success}
+      \end{cblock}
+    \end{forblock}\\
+    &\RETURN  \mathsf{Failure}
+  \end{fblock}
+$
+}}
+
+If commitment scheme is $(k\cdot t,\varepsilon_1)$-hiding, then for
+any $t$-time adversary $\PARTY_2^*$ the failure probability
+\begin{align*}
+  \pr{\mathsf{Failure}}\leq\pr{\smash{\SSS_2^{\PARTY_2^*}(y)=\mathsf{Failure}}}+k\cdot\varepsilon_1\leq
+  2^{-k}+k\cdot\varepsilon_1\enspace.
+\end{align*}
+
+\foilhead[-1.5cm]{The corresponding security guarantee}\enlargethispage{0.5cm}
+
+If the output $y$ is chosen uniformly over $\set{0,1}$, then the last
+effective value of $b_1$ has also an almost uniform distribution:
+$\abs{\pr{b_1=1|\neg\mathsf{Failure}}-\frac{1}{2}}\leq
+k\cdot\varepsilon_1$. Hence, for $\PARTY_2^\circ=\SSS^{\PARTY_2^*}$
+the outputs of games
+\begin{small}
+\begin{align*}
+  \begin{game}{\GIDEAL^{\PARTY_2^\circ}}
+    &(\STATE_1,\STATE_2)\gets\INPDIST\\
+    &y\getsu\set{0,1}\\
+    &\OSTATE_1\gets(\STATE_1,y)\\
+    &\OSTATE_2\gets\SSS_2^{\PARTY_2^*(\STATE_2)}\\
+    &\RETURN  (\OSTATE_1,\OSTATE_2)
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GREAL^{\PARTY_2^*}}
+    &(\STATE_1,\STATE_2)\gets\INPDIST\\
+    &\text{$\PARTY_1$ and $\PARTY_2^*$ run the protocol.}\\
+    &\OSTATE_1\gets\PARTY_1\\
+    &\OSTATE_2\gets\PARTY_2^*\\
+    &\RETURN  (\OSTATE_1,\OSTATE_2)
+  \end{game}
+\end{align*}%
+\end{small}%
+are at most $k\cdot\varepsilon_2$ apart if the run of $\SSS_2^{\PARTY_2^*}$
+is successful. Consequently, the statistical distance between output
+distributions is at most $2^{-k}+2k\cdot\varepsilon_1$.
+
+
+
+\foilhead[-1.5cm]{Simulator for the first party}
+\scalebox{0.73}{$
+  \begin{fblock}{\SSS^{\PARTY_1^*}(\STATE_1,y)}
+    & \orangecommand{\PK\gets\GEN},\ c\gets\PARTY_1^*(\STATE_1,\PK)\\
+    & \text{Rewind $\PARTY_1$ to get } d_0\gets \PARTY_1^*(0),\ d_1\gets \PARTY_1^*(1)\\
+    & b_{1}^{0}\gets\OPEN_\PK(c,d_0),\ b_{1}^{1}\gets\OPEN_\PK(c,d_1)\\
+    & \IF \bot\neq b_1^0\neq b_1^1\neq \bot\ \THEN \mathsf{Failure}\\
+    & \IF b_1^0=\bot = b_1^1\ \THEN\\
+    & \begin{cblock}
+      &\text{Send the $\mathsf{Halt}$ command to $\TTP$.}\\
+      &\text{Choose $b_2\getsu\set{0,1}$ and re-run the protocol with  $b_2$.}\\
+      &\text{Return whatever $\PARTY_1^*$ returns.}
+    \end{cblock}\\
+    &\IF b_1^0=\bot\ \THEN b_1\gets b_1^1\ \ELSE b_1\gets b_1^0\\
+    &b_2\gets b_1\oplus y\\
+    &\text{Re-run the protocol with $b_2$}\\
+    &\IF b_1^{b_2}=\bot\ \THEN \text{Send the $\mathsf{Halt}$ command to $\TTP$.}\\
+    &\text{Return whatever $\PARTY_1^*$ returns.}
+  \end{fblock}
+$}
+
+\foilhead[-1cm]{Further analysis}
+
+If the commitment scheme is $(t,\varepsilon_2)$-binding, then the
+failure probability is less than $\varepsilon_2$.  If the output $y$
+is chosen uniformly over $\set{0,1}$, then the value of $b_2$ seen by
+$\PARTY_1^*$ is uniformly distributed.
+
+Consequently, the output distributions of $\SSS^{\PARTY_1^*}$ and
+$\PARTY_2$ in the ideal world coincide with the real world outputs if
+$\SSS$ does not fail.
+
+\foilhead[-1cm]{Resulting security guarantee}
+
+\textbf{Theorem.} If a commitment scheme is $(k\cdot
+t,\varepsilon_1)$-hiding and $(t,\varepsilon_2)$-binding, then for any
+plausible $t$-time real world adversary there exists $\Oh(k\cdot
+t)$-time ideal world adversary such that the output distributions in
+the real and ideal world are
+$\max\set{2^{-k}+2k\cdot\varepsilon_1,\varepsilon_2}$-close.
+
+
+\end{document}
+
+

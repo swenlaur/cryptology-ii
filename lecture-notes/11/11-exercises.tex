@@ -1,0 +1,247 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+
+
+\newcommand{\FALL}{\FFF_{\mathrm{all}}}
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2010 / Exercise session XI
+
+
+\begin{enumerate}
+
+\item Let $\PROT$ be a sigma protocol such that the challenge $\beta$
+  is chosen uniformly from an $n$ element set $\BBB$. Let $\SSS_0$ be
+  a $t_0$-time algorithm that simulates perfectly the protocol
+  transcript $(\alpha,\beta,\gamma)$ when both parties are honest:
+  \begin{align*}
+    \pr{(\alpha,\beta,\gamma)\gets\SSS_0}=\pr{\VERIFIER, \PROVER\text{ create } (\alpha,\beta,\gamma)}\enspace.
+  \end{align*}
+  \begin{enumerate}
+  \item Prove that the following black-box simulator
+    \begin{align*}
+      \begin{fblock}{\SSS^{\VERIFIER_*}}
+        &\begin{forblock}{i\in\set{1,\ldots, k}}
+        &(\hat{\alpha},\hat{\beta},\hat{\gamma})\gets\SSS_0\\
+        &\beta\gets \VERIFIER_*(\alpha)\\        
+        &\IF \beta=\hat{\beta}\ \THEN \RETURN\VERIFIER_*(\hat{\gamma})  
+        \end{forblock}\\
+        &\; \RETURN\mathsf{Failure}
+      \end{fblock}
+    \end{align*}
+    provides perfect simulation when it does not halt with $\bot$:
+    \begin{align*}
+      \pr{\psi\gets\SSS^{\VERIFIER_*}|\neg \mathsf{Failure}}=\pr{\psi\gets\VERIFIER_*^\PROVER}\enspace.
+    \end{align*}
+    Establish also the corresponding failure probability
+    $\pr{\mathsf{Failure}}$ and compute the total running time of
+    $\SSS^{\VERIFIER_*}$ such that $\pr{\mathsf{Failure}}\leq
+    \varepsilon$. When are the running times of $\VERIFIER_*$ and
+    $\SSS^{\VERIFIER_*}$ comparable?
+
+  \item There is a trade-off between simulation overhead and
+    soundness, since the knowledge error can be expressed as
+    $\kappa=\frac{1}{\abs{\BBB}}$. Thus, by decreasing the set $\BBB$
+    we also increase acceptance probability for malicious provers. To
+    compensate the effect, we must sequentially run several instances
+    of $\PROT$. Let $\kappa$ be the desired knowledge error and let
+    $\varepsilon$ be the desired bound on simulation failure
+    $\pr{\mathsf{Failure}}$.  What is the minimal number of rounds we
+    need, if we require that $\SSS^{\VERIFIER_*}$ can run only
+    $\poly(\log_2 (1/\varepsilon))$ times slower than $\VERIFIER_*$?
+  \end{enumerate}
+\item One possibility to convert a sigma protocol into a zero
+  knowledge proof is to use commitments to fix $\beta$ value before
+  $\VERIFIER_*$ receives $\alpha$ value. As a result, we can use the
+  following black-box simulation strategy
+    \begin{align*}
+      \begin{fblock}{\SSS^{\VERIFIER_*}}
+        &\PK\gets \GEN\\
+        &c\gets\VERIFIER_*(\PK)\\
+        &\hat{\beta}\gets\KEXTR^{\VERIFIER_*}(\PK,c)\\ 
+        &(\alpha,\hat{\beta},\gamma)\gets\SSS_1(\hat{\beta})\\
+        &\RETURN\VERIFIER_*(\alpha,\gamma)\\
+      \end{fblock}
+      \qquad
+      \begin{fblock}{\KEXTR^{\VERIFIER_*}(\PK,c)}
+        &\begin{forblock}{i\in\set{1,\ldots,k}}
+          &\alpha\gets\SSS_2,d\gets\VERIFIER_*(\alpha)\\ 
+          &\beta\gets \OPEN_\PK(c,d)\\
+          &\IF\beta \neq \bot \ \THEN\RETURN\beta\\
+        \end{forblock}\\
+       &\RETURN\bot
+      \end{fblock}
+    \end{align*}
+    where $\SSS_1$ simulates perfectly the protocol messages given
+    $\hat{\beta}$ and $\SSS_2$ simulates perfectly the first message
+    $\alpha$.
+    \begin{enumerate}
+    \item Prove that the simulation is perfect when there are no
+      simulation failures. The simulation fails if one of two events
+      happens: (i) the knowledge extraction fails
+      $\KEXTR^{\VERIFIER_*}(\PK,c)=\bot$ and the verifier
+      $\VERIFIER_*$ outputs a valid decommitment in the final run;
+      (ii) the knowledge extraction succeeds
+      $\KEXTR^{\VERIFIER_*}(\PK,c)\neq \bot$ but $\hat{\beta}\neq\OPEN_\PK(c,d)$.
+    \item Let $\varepsilon_1=\varepsilon_1(\PK,c)$ be the probability
+      that $\VERIFIER_*$ manages to open $c$. Let $\varepsilon$ be the
+      desired failure probability for knowledge extraction procedure
+      $\KEXTR^{\VERIFIER_*}(\PK,c)$. Find out the corresponding value of $k$.
+    \item Let $\Omega_{\mathrm{good}}$ consist of all reachable pairs
+      $(\PK,c)$ such that $\varepsilon_1(\PK,c)\geq 2\varepsilon$.
+      What is the total simulation failure probability if the value of
+      $k$ is chosen according to the bound obtained in the part (b)?
+      How many times $\SSS^{\VERIFIER_*}$ is slower than
+      $\VERIFIER_*$?
+    \item Compare the results with the previous exercise. Can we
+      construct a simulator that is only
+      $\poly(\log_2(1/\varepsilon))$ slower than $\VERIFIER_*$?
+
+    \end{enumerate}
+
+  \item Many challenge response protocols can be converted to
+    zero-knowledge proofs if one can guarantee that the verifier knows
+    the final answer.  Witness-indistinguishable sigma protocols can
+    be used for that purpose.
+    \begin{enumerate} 
+    \item As a first example, consider the zero-knowledge proof for
+      quadratic non-residuosity presented in the lecture. Let the game
+      $\GAME_0$ model the behaviour of honest verifier with $\beta=0$
+      and let the game $\GAME_1$ model the behaviour of honest
+      verifier with $\beta$. Write down these games under the
+      assumption that $v$ is quadratic residue. Simplify the games
+      $\GAME_0$ and $\GAME_1$ until you have reached to the same game.
+
+    \item More generally, let $x$ be the public input and $w$ the
+      corresponding witness. Also, assume that the challenge $\alpha$
+      is computed as $\alpha(\beta;r)$ where $\beta\getsu\set{0,1}$
+      and $r\getsu\RSPACE$. Finally, let
+      \begin{align*}
+        \pok{\beta}{\exists r: \alpha=\alpha(\beta,r)}\equiv
+        \pok{r}{\alpha=\alpha(0;r)}\vee \pok{r}{\alpha=\alpha(1;r)}
+      \end{align*}
+      be the corresponding disjunctive proof. Prove that the
+      corresponding protocol transcript coincides for both potential
+      witnesses $\beta\in\set{0,1}$ if the input $x$ is incorrectly
+      formed:
+      \begin{align*}
+        \exists r: \alpha=\alpha(0;r)\wedge \exists r: \alpha=\alpha(1;r) \enspace.
+      \end{align*}
+      Explain also why and unbounded prover can distinguish proves if
+      this condition does not hold. What happens if for some incorrect
+      input $x$ only one disjunct can be satisfied?
+    \end{enumerate}
+  \item The construction of sigma protocols for complex relations can
+    be cumbersome and inefficient. Hence, it is often advantageous to
+    use more simplistic alternatives for tightening challenge-response
+    protocols. Let $\alpha=\alpha(\beta;r)$ be the challenge message
+    where $\beta\getsu\BBB$ is the expected response and
+    $r\getsu\RSPACE$ is the masking randomness. Then verifier can
+    prove that he or she knows $\beta$ by revealing $\beta$ and
+    $r$. Of course, the prover must commit his or her response before
+    receiving $\beta$ and $r$.
+    \begin{enumerate}
+    \item As an example, consider the challenge-response protocol that
+      proves the possession of secret key (ability to decrypt
+      messages). Recall that the challenge is computed as
+      $\alpha\gets\ENC_\PK(\beta)$ and the response is computed as
+      $\beta\gets\DEC_\SK(\alpha)$.  Construct the corresponding
+      zero-knowledge proof using the idea explained above.
+    \item Construct a simulator $\SSS^{\VERIFIER_*}$ that first
+      extracts $\beta$ and then uses this value to pass the proof. Is
+      there any conceptual difference compared to the construction
+      given in Exercise 2? Can this simulator construction be used for
+      any challenge response protocol?
+    \item For clarity, assume that the cryptosystem in question is RSA
+      with OAEP padding. Would you use the construction based on sigma
+      protocol or the construction given above?
+    \end{enumerate}
+
+  \item There is an important distinction between the strengthening of
+    sigma protocols with commitments and with a coin-flipping protocol
+    for $\beta\getsu\BBB$. Namely, the strengthening with
+    coin-flipping protocol preserves proof of knowledge property,
+    whereas the use of commitments does not. Analyse the soundness
+    guarantees of both protocols under the assumption that the
+    knowledge bound of a sigma protocol is $\kappa$, i.e., if a prover
+    succeeds in the proof with probability strictly more than $\kappa$
+    then by generating and analysing all protocol runs, we can extract
+    the secret witness $w$.
+    \begin{enumerate}
+    \item Let $(\GEN,\COM,\OPEN)$ be a perfectly hiding commitment
+      scheme such that randomness $r$ used to compute commitments is
+      uniformly sampled from a set $\RRR$. Then it is straightforward
+      to prove that for any plausible value $\PK$ of public parameters
+      sets
+      \begin{align*}
+        \RRR_{c,m}=\set{r\in\RRR: (c,d)\gets\COM_\PK(m;r)}
+      \end{align*}
+      have the same number of elements for any $c\in\CCC$ and
+      $m\in\MSPACE$. Use this fact to prove that if a malicious prover
+      succeeds with probability $\varepsilon$ against the
+      zero-knowledge protocol, then there exist possibly inefficient
+      prover that succeeds with the same probability against the sigma
+      proof. Why is this sufficient for soundness?
+
+      \textbf{Hint:} Consider first the simplest case when
+      $\abs{\RRR_{c,m}}=1$.
+    \item In brief, a coin-flipping protocol is $\varepsilon$-secure
+      against malicious provers if there exists an efficient simulator
+      $\SIM$ that given $\beta\getsu\BBB$ simulates the protocol for
+      the prover $\PROVER_*$ such that the revealed challenge after
+      the coin-flipping protocol is $\beta$ and the output
+      distributions of $\PPP_*^{\VERIFIER}$ and $\SIM^{\PPP_*}$ are
+      statistically $\varepsilon$-close. Prove that any prover
+      $\PROVER_*$ against the zero-knowledge protocol can be converted
+      to an adversary $\PROVER_\sigma$ against the sigma protocol so
+      that the advantage does not drop and the running time of
+      $\PROVER_\sigma$ is comparable to $\PROVER_*$. How is the
+      efficiency of $\PROVER_\sigma$ connected to the efficiency of
+      the simulator $\SIM$.
+
+      \textbf{Hint:} Note that $\varepsilon$-closeness holds also for
+      the provers $\PROVER_{**}$ that run $\PROVER_*$ and then output
+      $1$ if the transcript $(\alpha,\beta,\gamma)$ generated by
+      $\PROVER_*$ is valid and $0$ otherwise.
+    \end{enumerate}
+
+
+
+\item Let $\textsc{SquareFree}$ denote all square free integers, i.e.,
+  all integers that do not divisible by some prime square. Let
+  $\textsc{ProdOfTwoPrimePowers}$ denote all integers in the form
+  $p^aq^b$ where $p,q\in\PP$. Then the classical zero-knowledge proof
+  $n\in\textsc{RsaModulus}$ consists of following steps.
+  \begin{enumerate}
+  \item[1.] Prove that $n\in\textsc{SquareFree}$.
+  \item[2.] Prove that $n\in\textsc{SquareFree}$ is a product of two prime powers.
+  \end{enumerate}
+  In the following, we consider only the simplest proof that
+  $n\in\textsc{SquareFree}$.
+  \begin{enumerate}
+  \item Let $\phi(n)=\abs{\ZZ_n^*}$ denote the Euler totient function.
+    Prove that if $\gcd(n,\phi(n))= 1$ then $n\in\textsc{SquareFree}$.
+    Describe the class of square free numbers such that
+    $\gcd(n,\phi(n))\neq 1$.
+  \item Let $\textsc{SquareFree}^*$ be the class of all square free
+    numbers such that $\gcd(n,\phi(n))= 1$. Construct a
+    challenge-response protocol for proving  $n\in\textsc{SquareFree}^*$.
+ 
+    \textbf{Hint:} If $\gcd(n,\phi(n))=1$ and prover knows the
+    factorisation, then a prover can efficiently find $n$-th roots.
+  \item Let $X_{\mathrm{bad}}=\set{x^n:x\in\ZZ_n^*}$ be the set of
+    $n$-th powers. Show that if $\gcd(n,\phi(n))=d>1$ then
+    $\abs{X_{\mathrm{bad}}}=\abs{\ZZ_n^*}/d$. Conclude that a
+    malicious prover can win the challenge-response protocol with
+    probability at most $\frac{1}{d}$.
+  \item Construct a corresponding zero-knowledge proof for $n\in\textsc{SquareFree}^*$.
+  \end{enumerate}
+
+\end{enumerate}
+
+
+\end{document}

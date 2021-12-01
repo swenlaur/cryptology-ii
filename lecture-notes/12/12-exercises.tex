@@ -1,0 +1,228 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+
+
+
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2009 / Exercise session XII
+
+
+
+\begin{enumerate}
+
+\item Sometimes it is inherently possible to implement the desired
+  functionality without breaching desired security. For instance,
+  consider a two-party protocol for addition, where at the end both
+  parties obtain $x_1+x_2$.
+  \begin{enumerate}
+  \item Show that any protocol that implements addition also reveals
+    the input of the opponent. Generalise the result and show that it
+    is always possible to deduce something about the opponents input
+    unless the desired output is not a constant (protocol is actually
+    redundant).
+  \item Show that if a malicious party knows the parity of the
+    opponents input before the protocol, then he or she can control
+    the output parity in the addition protocol. Generalise the result
+    and show that given enough information the adversary can always
+    partially control the opponents output unless the output is
+    constant.
+  \end{enumerate}
+
+\item To illustrate some aspects of secure computations, consider a
+  simultaneous broadcast protocol used for the rock-paper-scissors
+  game:
+  \begin{itemize}
+  \item $\PARTY_1$ computes $\PK\gets\GEN$.
+    $(c,d)\gets\COM_\PK(x_1)$ and sends $\PK,c$ to $\PARTY_2$.
+  \item $\PARTY_2$ replies $x_2$ to $\PARTY_1$ who after that
+    releases $d$ to $\PARTY_1$,
+  \item $\PARTY_2$ computes $x_1\gets\OPEN_\PK(c,d)$ and both parties output $x_1,x_2$. 
+  \end{itemize}
+  Let $\PARTY_2^*$ be a semi-malicious adversary that chooses
+  $\hat{x}_2$ as an efficiently computable randomised function
+  $f(c,x_2)$ but outputs $(x_1,\hat{x}_2)$ as an output. For
+  simplicity, assume that the input of party $\PARTY_1$ consists only
+  form the protocol input $x_1$ and thus $\PARTY_1$ outputs
+  $(x_1,\hat{x}_2)$.
+  \begin{enumerate}
+  \item Compute the corresponding output distribution if the initial
+    input distribution $\INPDIST$ is a uniform distribution over
+    $\ZZ_3\times\ZZ_3$ and
+    \begin{align*}
+      \alpha(x_1,x_2,\hat{x}_2)=\pr{\PK\gets\GEN,(c,d)\gets\COM_\PK(x_1):
+        f(c,x_2)=\hat{x}_2}
+    \end{align*}
+    is independent form $x_2$. To get concrete results, fix some
+    concrete values for the $\alpha$ table.
+  \item Compute the output distribution in the ideal world under the
+    assumption that the commitment scheme is perfectly hiding and we
+    use a naive simulation construction
+    \begin{align*}
+    \begin{fblock}{\SSS^{\PARTY_2^*}(x_2)}
+      &\PK\gets\GEN\\
+      & (c,d)\gets\COM_\PK(0)\\
+      & \text{Send }\hat{x}_2\gets\PARTY_2^*(\sigma_2,x_2,c)\text{ to }\TTP.\\
+      & \text{Given $x_1,\hat{x}_2$ from $\TTP$ set $(c,d)\gets\COM_\PK(x_1)$.}\\
+      & \text{Rewind $\PARTY_2^*$ and output whatever $\PARTY_2^*$ on
+        $\PK,c,d$ does.}
+  \end{fblock}
+  \end{align*}
+  What is the corresponding statistical difference between
+  real and ideal world implementations?
+\end{enumerate}
+\item Consider the implementation of simultaneous broadcast primitive
+  detailed in the previous exercise. For simplicity and concreteness,
+  let the input distribution and $\PARTY_2^*$ be the same as in the
+  previous exercise.
+  \begin{enumerate} 
+  \item Compute the distance between ideal and real world
+    distributions if we use an inefficient but perfect simulator
+  \begin{align*}
+  \begin{fblock}{\SSS_\circ^{\PARTY_2^*}(x_2)}
+    & \PK\gets\GEN\\
+    & (c,d)\gets\COM_\PK(0)\\
+    & \text{Send }\hat{x}_2\gets\PARTY_2^*(\sigma_2,x_2,c)\text{ to }\TTP.\\
+    & \text{Given $x_1,\hat{x}_2$ from $\TTP$,
+      generate all runs between $\PARTY_1(x_2)$ and $\PARTY_2(x_2)$:}\\
+    &\begin{cblock}
+      &\text{Choose randomness $\omega_1\gets\Omega_1$ and
+        $\omega_2\gets\Omega_2$ for $\PARTY_1$ and $\PARTY_2^*$.}\\
+      &\text{Run the protocol and store the output $(x_1,\overline{x}_2)$ of $\PARTY_2^*$ into a list $\LLL$.}
+   \end{cblock}\\
+   &\text{Let $\LLL_{\hat{x}_2}$ be the list of pairs $(x_1,\overline{x}_2)\in\LLL$
+   such that $\hat{x}_2=\overline{x}_2$.}\\
+   &\text{Choose uniformly a pair for the list $\LLL_{\hat{x}_2}$ and output it.}
+  \end{fblock}
+  \end{align*}
+  Show that if the commitment scheme is perfectly hiding then the
+  output distributions in the real and ideal world coincide.
+  \item Show that the simulator
+  \begin{align*}
+  \begin{fblock}{\SSS^{\PARTY_2^*}(x_2)}
+   &\PK\gets\GEN\\ 
+   & (c,d)\gets\COM_\PK(0)\\
+   & \text{Send }\hat{x}_2\gets\PARTY_2^*(x_2,c)\text{ to }\TTP.\\
+   & \text{Given $x_1,\hat{x}_2$ from $\TTP$ rewind until success.}\\
+   &\begin{cblock}
+    & (c,d)\gets\COM_\PK(x_1)\\
+    & \text{If $\PARTY_2^*(x_2,c)\neq \hat{x}_2$ repeat the cycle.}
+   \end{cblock}\\
+   &\text{Output whatever $\PARTY_2^*$ does.}
+  \end{fblock}
+  \end{align*}
+  provides same output distribution as the simulator $\SSS_\circ$
+  provided that $\SSS$ stops before the time-bound $\tid$. Compute the
+  failure probability for a fixed value of $\tid$ and estimate the
+  final statistical distance between real and ideal world
+  distributions.
+  \end{enumerate}
+
+\item The Blum coin-fipping protocol is very similar to the
+  simultaneous broadcast protocol described and analysed in previous
+  exercises.
+  \begin{enumerate}
+  \item This resemblance is not a coincidence. Prove that given an
+    ideal implementation of addition protocol, it is trivial to
+    implement coin-flipping protocol. Also, prove that given an ideal
+    addition protocol it is trivial to implement simultaneous
+    broadcast protocol, where both parties learn their inputs and vice
+    versa.
+  \item Construct a coin-flipping protocol from the ideal simultaneous
+    broadcast protocol and substitute the ideal implementation with
+    the protocol analysed in previous exercises. Compare the end
+    result with the description of the Blum protocol:
+   \begin{itemize}
+   \item $\PARTY_1$ generates $b_1\getsu\set{0,1}$, computes
+     $\PK\gets\GEN$, $(c,d)\gets\COM_\PK(b_1)$ and sends $\PK,c$ to
+     $\PARTY_2$.
+   \item $\PARTY_2$ generates $b_2\getsu\set{0,1}$ to $\PARTY_1$ who after that
+    releases $d$ to $\PARTY_1$.
+   \item $\PARTY_2$ computes $b_1\gets\OPEN_\PK(c,d)$ and both parties
+    output $b_1\oplus b_2$.
+   \end{itemize}
+\end{enumerate}
+
+\item Let $\PROT_\circledast$ denote the the coin-flipping protocol
+  that uses an ideal simultaneous broadcast primitive and $\PROT$ the
+  Blum protocol.
+\begin{enumerate}
+\item Construct a simulator for $\PARTY_1^*$ for the protocol
+  $\PROT_\circledast$. Next, modify the simulator so that it works
+  with the Blum coin-flipping protocol. For that recall that the
+  simulator for $\PARTY_1^*$ for the simultaneous broadcast protocol
+  consists of an input extractor block
+   \begin{align*}
+   \begin{fblock}{\KEXTR^{\PARTY_1^*}(\sigma_1,x_1)}
+    & \text{Generate randomness $\omega_1\gets\Omega_1$ for $\PARTY_1^*$.}\\ 
+    & (\PK,c)\gets \PARTY_1^*(\sigma_1,x_1;\omega_1)\\
+    & \text{Use rewinding to get }\\
+    &\begin{cblock}
+     &d_0\gets\PARTY_1^*(0),
+      d_1\gets\PARTY_1^*(1),
+    \end{cblock}\\
+   &\text{Reveal the actual inputs:}\\
+   &\begin{cblock}
+       &\hat{x}_1^0\gets\OPEN_\PK(c,d_0)\\
+       &\hat{x}_1^1\gets\OPEN_\PK(c,d_1)\\
+     \end{cblock}\\
+  & \text{If $\bot\neq\hat{x}_1^0\neq\hat{x}_1^1\neq\bot$ then output $\mathsf{double\text{-}opening}$.}\\
+  & \text{If $\hat{x}_1^0\neq\bot$ output $\hat{x}_1^0$ else output $\hat{x}_1^0$.}
+  \end{fblock} 
+\end{align*}%
+followed by the protocol simulation block
+\begin{align*}
+  \begin{fblock}{\SSS_{\circ}^{\PARTY_1^*}(x_1,\omega_1,x_2)}
+    & (\PK,c)\gets \PARTY_1^*(\sigma_1,x_1;\omega_1)\\
+    & d\gets\PARTY_1^*(x_2)\\
+    & \text{If $\OPEN_\PK(c,d)=\bot$ then order $\TTP$ to  halt the computations.}\\
+    & \text{Output whatever $\PARTY_1^*$ outputs.}   
+  \end{fblock}
+\end{align*}
+\item Analyse the quality and running time of these simulators. Show
+  that both achieve perfect simulation of the output distributions,
+  i.e., the real and ideal world distributions coincide.
+\end{enumerate}
+
+\item Let $\PROT_\circledast$ denote the the coin-flipping protocol
+  that uses an ideal simultaneous broadcast primitive and $\PROT$ the
+  Blum protocol.
+\begin{enumerate}
+\item Construct a simulator for $\PARTY_2^*$ for the protocol
+  $\PROT_\circledast$. Next, modify the simulator so that it works
+  with the Blum coin-flipping protocol.  For that recall that the
+  simulator for $\PARTY_1^*$ for the simultaneous broadcast protocol
+  consists of an input extractor block
+   \begin{align*}
+   \begin{fblock}{\KEXTR^{\PARTY_2^*}(\sigma_2,x_2)}
+     & \text{Generate randomness $\omega_2\gets\Omega_2$ for $\PARTY_2^*$.}\\
+     &\PK\gets\GEN\\
+     & (c,d)\gets\COM_\PK(0)\\
+     & \text{Return }\hat{x}_2\gets\PARTY_2^*(x_2,c).\\
+  \end{fblock} 
+\end{align*}%
+followed by the protocol simulation block
+\begin{align*}
+  \begin{fblock}{\SSS_{\circ}^{\PARTY_2^*}(x_2,\omega_2,x_1,\hat{x}_2)}
+   & \text{Rewind until success.}\\
+   &\begin{cblock}
+   & (c,d)\gets\COM_\PK(x_1)\\
+   & \text{If $\PARTY_2^*(x_2,c;\omega_2)\neq \hat{x}_2$ repeat the cycle.}
+   \end{cblock}\\
+   &\text{Output whatever $\PARTY_2^*$ does.}
+  \end{fblock}
+\end{align*}
+\item Analyse the quality and running time of these simulators. Show
+  that the real and ideal world distributions are statistically close
+  if the number of rewinds is high enough.
+\end{enumerate}
+
+\end{enumerate}
+
+
+
+\end{document}
