@@ -1,0 +1,85 @@
+\documentclass[landscape,dvips]{foils}
+\usepackage{foiltex-extra}
+\usepackage{crysymb}
+\usepackage{crypto-ii-notations}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{pstricks}
+\usepackage{pst-plot}
+\usepackage{pstcol}
+
+
+\newcommand{\lucy}[1]     {\includegraphics[width= #1]{./pictures/lucy.eps}}
+\newcommand{\sally}[1]    {\includegraphics[width= #1]{./pictures/sally.eps}}
+\newcommand{\charlie}[1]  {\includegraphics[width= #1]{./pictures/charlie.eps}}
+\newcommand{\snoopy}[1]   {\includegraphics[width= #1]{./pictures/snoopy.eps}}
+\newcommand{\bubble}[1]   {\includegraphics[width= #1]{./pictures/thought-bubble.eps}}
+\newcommand{\rbubble}[1]  {\includegraphics[width= #1]{./pictures/r-thought-bubble.eps}}
+\newcommand{\briefcase}[1]{\includegraphics[width= #1]{./pictures/briefcase.eps}}
+\newcommand{\computer}[1] {\includegraphics[width= #1]{./pictures/computer.eps}}
+\newcommand{\device}[1]   {\includegraphics[width= #1]{./pictures/device.eps}}
+\newcommand{\cloud}[1]    {\includegraphics[width= #1]{./pictures/cloud.eps}}
+
+
+% Notions needed for cryptosystem
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+
+
+
+
+
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+\begin{pspicture}(\textwidth,\textheight)(0,0) 
+\psset{unit=1cm} 
+\psset{arrowsize=6pt 2}
+\psset{labelsep=7pt}
+
+
+
+\rput(0.3\textwidth,10.5){\lucy{2.5cm}}
+\rput(0.7\textwidth,10.5){\charlie{3.0cm}}
+\uput[u](0.3\textwidth,13){$b$}
+\uput[u](0.7\textwidth,13){$x_0,x_1$}
+
+\psline{<-}(0.4\textwidth,12.0)(0.6\textwidth,12.0)
+\uput[u](0.5\textwidth,12.0){$\PK$}
+\psline{->}(0.4\textwidth,11.0)(0.6\textwidth,11.0)
+\uput[u](0.5\textwidth,11.0){$\PK_0,\PK_1$}
+\psline{<-}(0.4\textwidth,10.0)(0.6\textwidth,10.0)
+\uput[u](0.5\textwidth,10){$d_0,d_1$}
+
+\uput[r](-0.03\textwidth,11.5){$(\PK_b,\SK_b)\gets\GEN$}
+\uput[r](-0.03\textwidth,10.5){$\PK_{1-b}\gets \PK\cdot\PK_b^{-1}$}
+
+\uput[d](0.3\textwidth,8.0){$m_b\gets\DEC_{\SK_b}(d_b)$}
+
+\uput[r](0.8\textwidth,12.5){$(\PK,\SK)\gets\GEN$}
+\uput[r](0.8\textwidth,11.5){Halt if $\PK_0\cdot\PK_1\neq\PK$}
+\uput[r](0.8\textwidth,10.5){$d_0\gets \ENC_{\PK_0}(x_0)$} 
+\uput[r](0.8\textwidth,9.5){$d_1\gets\ENC_{\PK_1}(x_1)$} 
+
+\end{pspicture}
+\end{document}

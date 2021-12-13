@@ -1,0 +1,83 @@
+\documentclass[landscape,dvips]{foils}
+\usepackage{foiltex-extra}
+\usepackage{crysymb}
+\usepackage{crypto-ii-notations}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{pstricks}
+\usepackage{pst-plot}
+\usepackage{pstcol}
+
+
+\newcommand{\lucy}[1]     {\includegraphics[width= #1]{./pictures/lucy.eps}}
+\newcommand{\sally}[1]    {\includegraphics[width= #1]{./pictures/sally.eps}}
+\newcommand{\charlie}[1]  {\includegraphics[width= #1]{./pictures/charlie.eps}}
+\newcommand{\snoopy}[1]   {\includegraphics[width= #1]{./pictures/snoopy.eps}}
+\newcommand{\bubble}[1]   {\includegraphics[width= #1]{./pictures/thought-bubble.eps}}
+\newcommand{\rbubble}[1]  {\includegraphics[width= #1]{./pictures/r-thought-bubble.eps}}
+\newcommand{\briefcase}[1]{\includegraphics[width= #1]{./pictures/briefcase.eps}}
+\newcommand{\computer}[1] {\includegraphics[width= #1]{./pictures/computer.eps}}
+\newcommand{\device}[1]   {\includegraphics[width= #1]{./pictures/device.eps}}
+\newcommand{\cloud}[1]    {\includegraphics[width= #1]{./pictures/cloud.eps}}
+
+
+% Notions needed for cryptosystem
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+
+
+
+
+
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+\begin{pspicture}(\textwidth,\textheight)(0,0) 
+\psset{unit=1cm} 
+\psset{arrowsize=6pt 2}
+\psset{labelsep=7pt}
+
+
+
+\rput(0.3\textwidth,10.5){\lucy{2.5cm}}
+\rput(0.7\textwidth,10.5){\charlie{3.0cm}}
+\uput[u](0.3\textwidth,13){$b$}
+\uput[u](0.7\textwidth,13){$x_0,x_1$}
+
+\psline{->}(0.4\textwidth,11.5)(0.6\textwidth,11.5)
+\uput[u](0.5\textwidth,11.5){$\PK,c$}
+\psline{<-}(0.4\textwidth,10.0)(0.6\textwidth,10.0)
+\uput[u](0.5\textwidth,10){$d_0,d_1$}
+
+\uput[r](0.03\textwidth,11.5){$(\PK,\SK)\gets\GEN$}
+\uput[r](0.03\textwidth,10.5){$c\gets\ENC_\PK(b)$}
+
+\uput[d](0.3\textwidth,8.0){$m_b\gets\DEC_\SK(d_b)$}
+
+\uput[r](0.8\textwidth,12.){Halt if $c\notin \CSPACE$}
+\uput[r](0.8\textwidth,11.){$r_0,r_1\getsu\MSPACE$} 
+\uput[r](0.8\textwidth,10){$d_0\gets c^{r_0}\cdot\ENC_\PK(x_0)$} 
+\uput[r](0.8\textwidth,9){$d_1\gets \bigl(\frac{c}{\ENC_\PK(1)}\bigr)^{r_1}\cdot\ENC_\PK(x_1)$} 
+
+\end{pspicture}
+\end{document}

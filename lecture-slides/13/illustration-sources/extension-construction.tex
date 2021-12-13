@@ -1,0 +1,117 @@
+\documentclass[landscape,dvips]{foils}
+\usepackage{foiltex-extra}
+\usepackage{crysymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{pstricks}
+\usepackage{pst-plot}
+\usepackage{pstcol}
+
+
+\newcommand{\lucy}[1]     {\includegraphics[width= #1]{./pictures/lucy.eps}}
+\newcommand{\sally}[1]    {\includegraphics[width= #1]{./pictures/sally.eps}}
+\newcommand{\charlie}[1]  {\includegraphics[width= #1]{./pictures/charlie.eps}}
+\newcommand{\snoopy}[1]   {\includegraphics[width= #1]{./pictures/snoopy.eps}}
+\newcommand{\bubble}[1]   {\includegraphics[width= #1]{./pictures/thought-bubble.eps}}
+\newcommand{\rbubble}[1]  {\includegraphics[width= #1]{./pictures/r-thought-bubble.eps}}
+\newcommand{\briefcase}[1]{\includegraphics[width= #1]{./pictures/briefcase.eps}}
+\newcommand{\computer}[1] {\includegraphics[width= #1]{./pictures/computer.eps}}
+\newcommand{\device}[1]   {\includegraphics[width= #1]{./pictures/device.eps}}
+\newcommand{\cloud}[1]    {\includegraphics[width= #1]{./pictures/cloud.eps}}
+
+
+% Notions needed for cryptosystem
+\renewcommand{\MSPACE}{\textcolor{red}{\mathcal{M}}}
+\renewcommand{\CSPACE}{\textcolor{blue}{\mathcal{C}}}
+\renewcommand{\RSPACE}{\textcolor{red}{\mathcal{R}}}
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+\newcommand{\MSPACEO}{\textcolor{red}{\mathcal{M}_0}}
+\newcommand{\msg}[1]{\textcolor{red}{m_{#1}}}
+\newcommand{\rnd}[1]{\textcolor{red}{r_{#1}}}
+\newcommand{\enc}[1]{\ENC_\PK(#1)}
+\newcommand{\dec}[1]{\DEC_\SK(#1)}
+
+
+
+\newcommand{\MALICE} {\text{Malice}}
+\newcommand{\CHARLIE}{\text{Charlie}}
+\newcommand{\STATE}  {\sigma}
+\newcommand{\GUESS}  {\textcolor{darkgreen}{\mathsf{guess}}}
+\newcommand{\SUCCESS}{\mathsf{Success}}
+\newcommand{\TRIV}   {\text{Triv}}
+
+
+\newcommand{\PRG}{\mathsf{prg}}
+\newcommand{\SEED}{\textcolor{red}{\mathsf{seed}}}
+
+\DeclareMathOperator{\argmin}{argmin}
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+
+% Notions needed for cryptosystem
+\renewcommand{\MSPACE}{\textcolor{red}{\mathcal{M}}}
+\renewcommand{\CSPACE}{\textcolor{blue}{\mathcal{C}}}
+\renewcommand{\RSPACE}{\textcolor{red}{\mathcal{R}}}
+\renewcommand{\PK}{{\textcolor{blue}{\mathsf{pk}}}}
+\renewcommand{\SK}{{\textcolor{red}{\mathsf{sk}}}}
+
+
+
+
+
+
+
+\definecolor{orange}{rgb}{1.0,0.453,0.0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+\begin{pspicture}(\textwidth,\textheight)(0,0) 
+\psset{unit=1cm} 
+\psset{arrowsize=6pt 2}
+\psset{labelsep=7pt}
+
+\rput(0.5\textwidth,10){
+  \begin{tabular}{|c|c|}
+    \hline
+    $x_{00}$ & $x_{01}$\\
+    \hline
+    $x_{10}$ & $x_{11}$\\
+    \hline
+  \end{tabular}
+  {\LARGE $=$}
+  \begin{tabular}{|c|c|}
+    \hline
+    \red{$y_{00}$} & \blue{$y_{01}$}\\
+    \hline
+    \red{$y_{10}$} & \blue{$y_{11}$}\\
+    \hline
+  \end{tabular}
+  {\LARGE $\oplus$}
+  \begin{tabular}{|c|c|}
+    \hline
+    \red{$z_{00}$} & \red{$z_{01}$}\\
+    \hline
+    \blue{$z_{10}$} & \blue{$z_{11}$}\\
+    \hline
+  \end{tabular}
+}
+
+
+
+
+
+\end{pspicture}
+\end{document}

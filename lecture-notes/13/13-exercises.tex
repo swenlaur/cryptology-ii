@@ -1,0 +1,260 @@
+\documentclass{article}
+\usepackage{crysymb}
+\usepackage[draft]{crygame}
+\usepackage{crypto-ii}
+
+
+\newcommand{\FFFTP}{\FFF_{\mathrm{tp}}}
+\newcommand{\PPPHC}{\PPP_{\mathrm{hc}}}
+
+
+\begin{document}
+
+\noindent	
+MTAT.07.003 Cryptology II\\
+Spring 2009 / Exercise session XIII
+
+
+\begin{enumerate}
+
+\item In the following, we are going to consider the simplified
+  version of the oblivious transfer protocol that was proposed by
+  Even, Goldreich and Lempel. As usual, let $\PARTY_1$ be the receiver
+  with input $b\in\set{0,1}$ and let $\PARTY_2$ be the sender with
+  input $x_0,x_1\in\MSPACE$. Additionally, assume that participants
+  can use oracle $\ORA_{\mathrm{map}}:\MSPACE\to\MSPACE$ to evaluate a
+  random permutation over $\MSPACE$ and the sender $\PARTY_2$ can use
+  the corresponding inversion oracle $\ORA_{\mathrm{inv}}$:
+  \begin{align*}
+    \forall m\in\MSPACE:\quad
+    \ORA_{\mathsf{inv}}(\ORA_{\mathrm{map}}(m))\equiv m\enspace.
+  \end{align*}
+  To transfer the message $x_b$ participants carry out the following
+  steps:
+  \begin{enumerate}
+  \item[1.] $\PARTY_1$ sends $c_0,c_1$ where $c_{1-b}\getsu\MSPACE$ and
+    $c_{b}\gets \ORA_{\mathrm{map}}(r)$ for $r\getsu\MSPACE$.
+  \item[2.] $\PARTY_2$ replies $d_0\gets\ORA_{\mathrm{inv}}(c_0)\oplus
+    x_0$ and $d_1\gets\ORA_{\mathrm{inv}}(c_1)\oplus x_1$.
+  \item[3.] $\PARTY_1$ reconstructs $x_b\gets r\oplus d_b$.
+  \end{enumerate}
+  Prove the protocol is secure in the semi-honest model.
+  \begin{enumerate}
+  \item The protocol is functional and receiver indeed recovers $x_b$. 
+  \item Construct a simulator for semi-honest sender and show
+    that the output distributions in the real an ideal world coincide.
+  \item Construct a simulator for semi-honest receiver and show that
+    the output distributions in the real an ideal world are
+    computationally indistinguishable. More precisely, give the bound
+    on distinguishing advantage in terms of $\ORA_{\mathrm{map}}$
+    queries made by the distinguisher.
+
+    \textbf{Hint:} What is the distinguishing advantage if the
+    distinguisher makes no calls to $\ORA_{\mathrm{map}}$ and the
+    receiver makes only a single $\ORA_{\mathrm{map}}$ call?
+  \end{enumerate}
+
+\item[$(\star)$] The full construction of the oblivious transfer
+  proposed by Even, Goldreich and Lempel uses hard-core
+  predicates. Let $\FFFTP$ be a collection of trapdoor permutations
+  and $\PPPHC$ be the predicate collection with matching domain
+  $\MSPACE_\PK$. Then the family $\PPPHC$ forms a
+  $(t,\varepsilon)$-hard-core predicate set with respect to $\FFFTP$,
+  if for any $t$-time algorithm $\AD$ the corresponding advantage
+  \begin{align*}
+    \advHCPredXX{\FFFTP\Join\PPPHC}{\AD}=\abs{\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}}\leq\varepsilon
+  \end{align*}
+  where 
+  \begin{align*}
+    \begin{game}{\GAME_0^\AD}
+      &(\PK,\SK)\gets\GEN\\
+      &m\getsu\MSPACE_\PK\\
+      &b\getsu\set{0,1}\\
+      &\RETURN \AD(\PK,m,b) 
+    \end{game}
+    \qquad
+    \begin{game}{\GAME_1^\AD}
+      &(\PK,\SK)\gets\GEN\\
+      &m\getsu\MSPACE_\PK\\
+      &b\gets \mathsf{Pred}_\PK(\INV_\SK(m))\\
+      &\RETURN \AD(\PK,m,b) 
+    \end{game}
+  \end{align*}
+  Prove that the standard oblivious transfer protocols for $1$-bit
+  messages, where $d_i\gets\mathsf{Pred}_\PK(\INV_\SK(c_i))\oplus
+  x_b$, is secure in the standard model. Also, find a reference that
+  shows that hard core predicates exist if one-way functions
+  exist. Compute the corresponding security guarantees.
+
+
+
+
+\item Recall that the Goldwasser-Micali cryptosystem is additively
+  homomorphic over $\ZZ_2$ construct a corresponding oblivious
+  transfer protocol based on the Aiello-Ishai-Reingold generic
+  construction that was presented in the lecture. Additionally, assume
+  that RSA modulus is correctly generated from two $n$-bit Blum primes
+  such that the quadratic residuosity problem is
+  $(t,\varepsilon)$-hard. That is, for all $t$-time adversaries $\AD$:
+  \begin{align*}
+    \advQRPXX{\PP_n}{\AD}=\abs{\pr{\smash{\BGAME_0^\AD=1}}-\pr{\smash{\BGAME_0^\AD=1}}}\leq\varepsilon
+  \end{align*}
+  where
+  \begin{align*}
+    \begin{game}{\BGAME_0^\AD}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu QR_N\\
+      &\RETURN \AD(x)
+    \end{game}
+    \qquad\qquad
+       \begin{game}{\BGAME_1^\AD}
+      &p,q\getsu\PP(n)\\
+      &N\gets pq\\ 
+      &x\getsu J_N\setminus QR_N\\
+      &\RETURN \AD(x)
+    \end{game}
+  \end{align*}
+  Now prove the security of the corresponding oblivious transfer
+  protocol directly from the indistinguishability property.
+
+\item The construction of the one out of two oblivious transfer
+  protocol proposed by Aiello, Ishai and Reingold can be extended in
+  several ways.
+  \begin{enumerate}
+  \item Construct one out of $n$ oblivious transfer protocol.
+
+    \textbf{Hint:} Construct a protocol that reveals $x$ only if
+    $\DEC_\SK(c)=2$.
+  
+  \item Explain how to transfer long messages that do not fit into the
+    message space of the homomorphic encryption by repeating the
+    transfer phase. What happens with the security guarantees?
+  \item Explain how we can use the underlying principle of hybrid
+    encryption and make the protocol more efficient for long
+    strings. What happens with the security guarantees?
+  \item Describe how we can use the construction given above to
+    implement pay-per-view system for sensitive content (satellite pictures).
+   \end{enumerate}
+
+ \item Not all protocols used for one out of two oblivious transfer
+   are perfect and therefore we need generic techniques for security
+   amplification.
+   \begin{enumerate}
+   \item Consider a leaking ideal oblivious transfer protocol $\PROT$
+     for $k$-bit strings, where the trusted third party reveals with
+     probability $p$ both inputs $x_0$ and $x_1$ to receiver but with
+     probability $1-p$ reveals only $x_b$ as desired. Describe a
+     construction that uses several instances of $\PROT$ to securely
+     implement one out of two oblivious transfer for $k$-bit strings.
+
+     \textbf{Hint:} Use additive secret sharing to achieve all or
+     nothing property.
+
+   \item Consider a defective ideal oblivious transfer protocol
+     $\PROT$ for $k$-bit strings, where trusted third party reveals
+     $x_b$ with probability $p$ and otherwise halts the protocol
+     prematurely. Describe a construction that uses several instances
+     of $\PROT$ to securely implement one out of two oblivious
+     transfer for $k$-bit strings.
+
+     \textbf{Hint:} What about error correction codes?
+   \item Let $\PROT$ be an ideal oblivious transfer protocol for
+     $k$-bit strings and let $f:\set{0,1}^k\to\set{0,1}^n$ be a
+     $(t,\varepsilon)$-pseudorandom generator.  Construct one out of
+     two oblivious transfer protocol for $n$-bit strings.
+   \end{enumerate}
+
+ \item Given a protocol $\PROT$ for ideal one out of two oblivious
+   transfer, construct a commitment scheme by amplifying security
+   properties of the following commitment scheme.
+   \begin{enumerate}
+   \item[1.] To commit a bit $x$, a sender creates uniformly distributed
+     pair $x_0,x_1$ such that $x_0\oplus x_1=x$. To get a commitment
+     string $c$, the receiver chooses $b\getsu\set{0,1}$ and uses
+     $\PROT$ to retrieve $x_b$.
+   \item[2.] To open a commitment, the sender releases both values
+     $x_0$ and $x_1$. The commitment is invalid if $c\neq x_b$.
+   \end{enumerate}
+   \begin{enumerate}
+   \item Prove that the commitment scheme is perfectly hiding and $\frac{1}{2}$-binding.
+   \item Give a construction that is perfectly hiding and
+     $2^{-k}$-binding.
+   \item Extend the abovementioned construction for $\ell$-bit
+     strings.
+   \end{enumerate}
+   This result is important as Brassard, Chaum and Cr\'{e}peau proved
+   that everything is provable in zero knowledge provided that binding
+   and hiding commitment schemes exists. More precisely, let the
+   relation between a public parameter $x$ and a secret witness $w$ be
+   encoded as a predicate
+   \begin{align*}
+     \psi(x,w)=1\quad\Leftrightarrow\quad (x,w)\in R\enspace.
+   \end{align*}
+   Then the corresponding zero-knowledge proof can be computed in time
+   $\Theta(\mathrm{size}(\psi))$ where $\mathrm{size}(\phi)$ is the
+   the total number of wires, unary and binary logic gates in the
+   circuit used to compute the formula $\psi$.
+   \begin{enumerate}
+   \item[(d)] Conclude that one can implement zero knowledge proofs
+     using only the implementations of ideal oblivious transfer. Is
+     the latter formally sufficient to conclude that everything can be
+     securely computed given a secure implementation of oblivious
+     transfer?
+   \end{enumerate}
+ \item Consider computations in the semi-honest model. Let $\PROT$ be
+   a one out of two ideal oblivious transfer protocol for $n$-bit
+   strings and let $f:\set{0,1}^n\to\set{0,1}^{2n}$ be a
+   $(t,\varepsilon)$-secure pseudorandom generator.  Construct an
+   oblivious tree traversal protocol such that a receiver could
+   retrieve all inputs stored in the arcs on the path selected by the
+   receiver.
+   \begin{enumerate}
+   \item Implement non-private but functional protocol, where receiver
+     uses oblivious transfer to receive the input stored on the
+     outgoing arc.
+
+   \item Extend the tree protocol so that it preserves
+     receiver-privacy, i.e., the server cannot detect which path the
+     receiver chose.
+
+   \item Use the inputs on the arc to encrypt the inputs of the
+     following arcs. Conclude that the modified protocol is also
+     computationally secure against semi-honest and malicious
+     receivers.
+
+   \item Conclude that any function can be computed by simultaneously
+     executing enough oblivious transfer protocols. Is this protocol
+     efficient for all functions?
+ 
+   \end{enumerate}
+
+ \item[$(\star)$] Let $\PROT$ be a one out of two oblivious transfer
+   protocol that is secure against malicious receivers and semi-honest
+   senders. Now consider the following simulator for malicious senders
+   $\PARTY_2^*$
+   \begin{align*}
+     \begin{fblock}{\SSS^{\PARTY_2^*}}
+       &\omega_1\getsu\Omega_1, \omega_2\getsu\Omega_2\\
+       & \text{Let $\hat{x}_0$ be the output of $\PARTY_1(0;\omega_1)$ interacting with $\PARTY_2(\omega_2)$.}\\
+       & \text{Let $\hat{x}_1$ be the output of $\PARTY_1(0;\omega_1)$ interacting with $\PARTY_2(\omega_2)$.}\\
+       & \text{Submit $\hat{x}_0$ and $\hat{x}_1$ to the trusted third party $\TTP$.}\\
+       & \text{Output the end state of  $\PARTY_2(\omega_2)$ interaction with  $\PARTY_1(0;\omega_1)$.}
+     \end{fblock}
+   \end{align*}
+   where $\omega_1\getsu\Omega_1$ is the randomness used by honest
+   receiver $\PARTY_1$ and $\omega_2\getsu\Omega_2$ is the randomness
+   used by malicious sender $\PARTY_2^*$. Does this construction lead
+   to joint output distribution that is computationally or
+   statistically indistinguishable from the real world output
+   distribution? Prove it or give a counter-example. Interpret the result.
+
+   \textbf{Implicit assumption:} We assume that receiver output always
+   some output even if the sender halts or otherwise behaves
+   illogically.
+
+   \textbf{Hint:} Consider first the protocol that has a perfect
+   simulator for semi-honest sender.
+
+\end{enumerate}
+\end{document}
