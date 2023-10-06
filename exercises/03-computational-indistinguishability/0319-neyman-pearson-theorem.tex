@@ -1,0 +1,25 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\tags{hypothesis testing, false positives, false negatives, tradeoff}
+
+\newcommand{\CTOSS}{\mathsf{CoinToss}}
+
+\begin{document}
+\begin{exercise}{Neyman-Pearson Theorem}
+Let $\AD$ be a distinguisher, let $\alpha(A)$ be the ratio of false positives and let $\beta(\alpha)$ be the ratio of false negatives. 
+Then we can define a weighted average $\delta(\AD)=\lambda \alpha(\AD)+(1-\lambda)\beta(\AD)$ for $\lambda\in [0,1]$.
+Now consider two near-identical deterministic distinguishers which differ only on the input $x_*$:
+\begin{align*}
+\forall x\neq x_*:\qquad \AD_0(x)=\AD_1(x)\enspace.
+\end{align*}
+For clarity, let us assume  $\AD_0(x_*)= 0$ and $\AD_1(x_*)=1$. 
+Establish under which conditions $\delta(\AD_0) \geq \delta(\AD_1)$ and conclude that describe the decision rule of a distinguisher that minimises $\delta$. 
+Let $\delta_\lambda^*$ be the  attainable $\delta$ value for each $\lambda$.  Each of these values $\delta_\lambda^*$ places a restriction on attainable $\alpha(\AD)$ and $\beta(\AD)$ values on $\alpha\beta$-plane. Sketch the corresponding border lines and explain why The Neyman-Pearson theorem  is a direct consequence.  
+\end{exercise}
+\end{document}
+
+\begin{solution}
+\end{solution}
+\end{document}
