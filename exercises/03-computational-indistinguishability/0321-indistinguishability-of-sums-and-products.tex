@@ -1,0 +1,33 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{}
+\contributor[]{}
+\tags{indistinguishability}
+
+
+\begin{document}
+\begin{exercise}{Indistinguishability of sums and products}
+Let $\XXX_0$ and $\XXX_1$ be $(t_1,\varepsilon_1)$-indistinguishable and let  $\YYY_0$ and $\YYY_1$ be $(t_2,\varepsilon_2)$-indistinguishable. Estimate the computational distance between the following games 
+\begin{align*}
+&\begin{game}{\GGG_0}
+&x\gets \XXX_0\\
+&y\gets \YYY_0\\
+&u = x+y\\
+&v = x\cdot y\\
+&\RETURN \ADV(u,v)
+\end{game}
+&
+&\begin{game}{\GGG_0}
+&x\gets \XXX_1\\
+&y\gets \YYY_1\\
+&u = x+y\\
+&v = x\cdot y\\
+&\RETURN \ADV(u,v)
+\end{game}
+\end{align*}
+Highlight all hidden assumptions. Do you get different results when you known that $\ADV$ ignores the second argument. Formalise this and explain why the resulting bound is different.
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}
