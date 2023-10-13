@@ -1,0 +1,31 @@
+\documentclass{crypto-exercise}
+\usepackage{hyperref}
+\author{Sven Laur}
+
+\tags{Computational Diffie-Hellman problem, Decisional Diffie-Hellman problem, bilinear pairing}
+
+\begin{document}
+\begin{exercise}{Separation between CDH and DDH}
+  Let $\GG$ be a finite additive group of prime order $q$ such that all elements $y\in\GG$ can be
+  expressed as multiples of $g\in\GG$.
+  \begin{itemize}
+  \item  Then the Computational
+  Diffie-Hellman (CDH) problem is following. Given $x=a\cdot g$ and
+  $y=b\cdot g$, find a group element $z=ab\cdot g$. 
+  \item Then the Decisional
+  Diffie-Hellman (DDH) problem is the following. For any triple
+  $x,y,z\in\GG$, you must decide whether it is a Diffie-Hellman triple
+  or not.
+  \item The group $\GG$ has a bilinear pairing $\langle\cdot,\cdot \rangle: \GG\times\GG:\to\GG_*$ when following equalities hold
+  \begin{align*}
+     \langle x_1+x_2,y\rangle= \langle x_1,y\rangle\cdot \langle x_2,y\rangle\\
+     \langle x,y_1+y_2\rangle= \langle x,y_1\rangle\cdot \langle x,y_2\rangle
+  \end{align*}
+  and the pairing is efficiently computable and non-degenerate, i.e., $\langle g,g \rangle\neq 1$.
+  \end{itemize}
+  Prove that $(t,\varepsilon)$-CDH group with a bilinear pairing cannot be DDH group.  
+  \end{exercise}
+\begin{solution}
+
+\end{solution}
+\end{document}
