@@ -1,0 +1,50 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{semantic security, trivial attack}
+
+
+\begin{document}
+\begin{exercise}{Alternative definition for semantic security}
+The standard notion of semantic security is  defined through the following games:
+\begin{align*}
+  \begin{game}{\GAME_0^\AD}
+    &\SK\gets\GEN\\
+    &\MSPACE_0\gets\AD^{\ENC_\SK(\cdot)}\\
+    &m\gets\MSPACE_0\\
+    &c\gets\ENC_\SK(m)\\
+    &\RETURN [g(m)\iseq \AD(c)]
+  \end{game}
+  \qquad\qquad
+  \begin{game}{\GAME_1^\AD}
+    &\SK\gets\GEN\\
+    &\MSPACE_0\gets\AD^{\ENC_\SK(\cdot)}\\
+    &m\gets\MSPACE_0, \overline{m}\gets\MSPACE_0\\
+    &\overline{c}\gets\ENC_\SK(\overline{m})\\
+    &\RETURN [g(m)\iseq \AD(\overline{c})]
+  \end{game}
+\end{align*}
+where the second game $\GAME_1$ models a very specific attack in the setting where the adversary does not see the encryption of a challenge message.
+This does not reflect reality close enough as the adversary can perform other more successful attacks in this setting. To capture that we define a new security game
+\begin{align*}
+  \begin{game}{\GAME_2^{\AD_*}}
+    &\SK\gets\GEN\\
+    &\MSPACE_0\gets\AD_*^{\ENC_\SK(\cdot)}\\
+    &m\gets\MSPACE_0\\
+    &\RETURN [g(m)\iseq \AD_*]
+  \end{game}
+\end{align*}
+This allows us to define two advantages
+\begin{align*}
+ \ADV_g^{\mathsf{sem}}(\AD)&=\pr{\GAME_0^\AD=1}-\pr{\GAME_1^\AD=1}\\
+\ADV_g^{\mathsf{sem*}}(\AD,\AD_*)&=\pr{\GAME_0^\AD=1}-\pr{\GAME_2^{\smash{\AD_*}}=1}
+\end{align*}
+The cryptosystem is $(t,\varepsilon)$-weakly semantically secure if for any $t$-time adversaries $\AD$ and $\AD_*$ the advantage 
+$\ADV_g^{\mathsf{sem*}}(\AD,\AD_*)\leq \varepsilon$. Prove that semantic security implies weak semantic security for the same function $g$.
+Show that  for large enough $t$ it is possible to get $\pr{\GAME_1^\AD=1}\ll\pr{\GAME_2^{\smash{\AD_*}}=1}$ for some adversaries $\AD$. Does this mean that weak semantic security does not imply semantic security? 
+\end{exercise}
+
+\begin{solution}
+\end{solution}
+
+\end{document}
