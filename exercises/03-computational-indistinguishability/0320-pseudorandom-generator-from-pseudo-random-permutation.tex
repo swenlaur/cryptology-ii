@@ -1,0 +1,30 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{}
+\editor{Sven Laur}
+\tags{indistinguishability, pseudorandom generator, pseudorandom permutation}
+
+
+\begin{document}
+\begin{exercise}{PRG from PRP}
+Let $\FFF$ be a $(q,t,\varepsilon)$-secure pseudorandom permutation family defined by a deterministic function $f:\KKK\times\MMM\to\MMM$ such that all functions $f_k(m):=f(k,m)$ are different. Show that functions $g_m:\KKK\to\MMM^n$ defined through the following iteration algorithm
+\begin{align*}
+\begin{fblock}{g_m(k)}
+& c_1\gets f(k, m)\\
+& c_2\gets f(k, c_1)\\
+&\cdots\\
+& c_n\gets f(k, c_{n-1})\\ 
+&\RETURN c_1,c_2,\ldots,c_n\\
+\end{fblock}
+\end{align*} 
+are pseudorandom generators for any $m\in\MMM$ for small enough $n$.
+\end{exercise}
+\begin{solution}\ \\
+\textsc{Subproof}. Let us prove the claim under the assumption that we can replace all function invocations by random samplings from  $\MMM$.\\\\
+\textsc{Subproof}. Define the collision event and analyse what is the probability that such event occurs under the assumption that function family is the set of all functions
+$\FFF_{\textsc{all}}(\MMM\to\MMM)$. Conclude that the construction is pseudorandom generator under this assumption.\\\\ 
+\textsc{Subproof}. Use PRP/PRF switchng lemma to complete the proof
+\end{solution}
+\end{document}

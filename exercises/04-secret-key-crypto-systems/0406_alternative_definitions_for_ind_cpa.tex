@@ -1,0 +1,70 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\editor{Sven Laur}
+\tags{IND-CPA security, left-or-right game, real-or-random game}
+
+\DeclareMathOperator*{\EXPO} {\mathbf{E}}
+\begin{document}
+
+\begin{exercise}{Alternative definitions for IND-CPA security}
+Estimate computational distance between following games under
+  the assumption that $(\GEN,\ENC,\DEC)$ is $(t,\varepsilon)$-IND-CPA
+  secure cryptosystem.
+  \begin{enumerate}
+  \item Left-or-right games (LOR security games)
+    \begin{align*}
+      \begin{game}{\GAME_0^\AD}
+      &\SK\gets\GEN\\
+      &\begin{fblock}{\text{For $i=1,\ldots,q$ do}}
+      &(m_0^i,m_1^i)\gets\AD\\
+      &\text{Give $\ENC_\SK(m_0^i)$ to $\AD$}
+      \end{fblock}\\
+      &\RETURN \text{the output of }\AD
+      \end{game}
+      \qquad\qquad
+      \begin{game}{\GAME_1^\AD}
+      &\SK\gets\GEN\\
+      &\begin{fblock}{\text{For $i=1,\ldots,q$ do}}
+      &(m_0^i,m_1^i)\gets\AD\\
+      &\text{Give $\ENC_\SK(m_1^i)$ to $\AD$}
+      \end{fblock}\\
+      &\RETURN \text{the output of }\AD
+      \end{game}
+     \end{align*}
+   \item Real-or-random games (ROR security games)
+    \begin{align*}
+      \begin{game}{\GAME_0^\AD}
+      &\SK\gets\GEN\\
+      &\begin{fblock}{\text{For $i=1,\ldots,q$ do}}
+      &m^i\gets\AD\\
+      &\text{Give $\ENC_\SK(m^i)$ to $\AD$}
+      \end{fblock}\\
+      &\RETURN \text{the output of }\AD
+      \end{game}
+      \qquad\qquad
+      \begin{game}{\GAME_1^\AD}
+      &\SK\gets\GEN\\
+      &\begin{fblock}{\text{For $i=1,\ldots,q$ do}}
+      &m_0^i\gets\AD,m_1^i\getsu\MSPACE\\
+      &\text{Give $\ENC_\SK(m_1^i)$ to $\AD$}
+      \end{fblock}\\
+      &\RETURN \text{the output of }\AD
+      \end{game}
+     \end{align*}
+  \end{enumerate} 
+  Moreover, we can suse these security games to define $(t,\varepsilon)$-LOR security and $(t,\varepsilon)$-ROR security.    
+  Prove that security against these security notions also implies IND-CPA security. 
+\end{exercise}
+\begin{solution}
+We split the proof into separate blocks each dedicates to a single subgoal.\\\\
+\textsc{Subproof} IND-CPA$\Rightarrow$ LOR-SECURITY
+\\\\
+\textsc{Subproof} LOR-SECURITY$\Rightarrow$IND-CPA
+\\\\
+\textsc{Subproof} IND-CPA$\Rightarrow$ LOR-SECURITY
+\\\\
+ \textsc{Subproof} ROR-SECURITY$\Rightarrow$IND-CPA
+
+\end{solution}
+\end{document}
+
