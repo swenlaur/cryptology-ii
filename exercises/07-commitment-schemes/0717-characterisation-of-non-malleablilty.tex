@@ -1,0 +1,82 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{commitment scheme, non-malleability}
+
+
+\begin{document}
+
+
+\begin{exercise}{Characterisation of  non-malleability}
+Let $(\GEN,\COM, \OPEN)$ be a commitment scheme with message space $\ZZ_2$. Then we can define a restricted form of  non-malleability for fixed relation $\pi:\ZZ_2\times\ZZ_2\to\set{0,1}$
+through the following games
+\begin{align*}
+&
+\begin{game}{\GAME_0}
+&\PK\gets\GEN\\
+&m_0,m_1,\sigma\gets\AD(\PK)\\
+&b\gets\set{0,1}\\
+&c,d\gets\COM_\PK(m_b)\\
+&\hat{c}\gets\AD(c),\hat{d}\gets\AD(d)\\
+&\hat{m}\gets\OPEN_\PK(\hat{c},\hat{d})\\
+&\IF \hat{c}=c\vee \hat{m}=\bot \ \THEN \RETURN 0\\
+&\RETURN \pi(m_b,\hat{m})
+\end{game}
+&&
+\begin{game}{\GAME_1}
+&\PK\gets\GEN\\
+&m_0,m_1,\sigma\gets\AD(\PK)\\
+&b\gets\set{0,1}\\
+&\hat{m}\gets\AD^*(\sigma)\\
+&\IF \hat{m}=\bot \vee \neg\AD^*(m_b)\  \THEN \RETURN 0\\
+&\RETURN \pi(m_b, \hat{m})
+\end{game}
+\end{align*}
+where $\sigma$ is the state of $\AD$ after the first execution step and $\AD^*$ is another stateless algorithm which corresponds to honest actor that creates $\hat{c},\hat{d}\gets\COM_\PK(\hat{m})$ without looking at $c$ and decides whether to release $\hat{d}$ based on $m_b$. 
+A commitment scheme is $(t,f(\cdot), \varepsilon)$-nonmalleable if for any $t$-time $\AD$ there exists $f(t)$-time $\AD^*$ such that 
+\begin{align*}
+\ADV^{\mathsf{nm\text{-}open}}(\AD,\AD^*)=\pr{\GAME_0^\AD=1}-\pr{\GAME_1^{\smash{\AD,\AD^*}}=1}\leq \varepsilon\enspace.
+\end{align*}
+Prove that this security notion follows if the following games
+\begin{align*}
+&
+\begin{game}{\BGAME_0}
+&\PK\gets\GEN\\
+&m_0,m_1,m_*\gets\ADB(\PK)\\
+&c,d\gets\COM_\PK(m_0)\\
+&\hat{c}\gets\ADB(c),\hat{d}\gets\ADB(d)\\
+&\hat{m}\gets\OPEN_\PK(\hat{c},\hat{d})\\
+&\IF \hat{c}=c\vee \hat{m}=\bot \ \THEN \RETURN 0\\
+&\RETURN [\hat{m}=m_*]
+\end{game}
+&&
+\begin{game}{\BGAME_1}
+&\PK\gets\GEN\\
+&m_0,m_1,m_*\gets\ADB(\PK)\\
+&c,d\gets\COM_\PK(m_1)\\
+&\hat{c}\gets\ADB(c),\hat{d}\gets\ADB(d)\\
+&\hat{m}\gets\OPEN_\PK(\hat{c},\hat{d})\\
+&\IF \hat{c}=c\vee \hat{m}=\bot \ \THEN \RETURN 0\\
+&\RETURN [\hat{m}\neq m_*]
+\end{game}
+\end{align*}
+ are computationally close enough.
+\end{exercise}
+\begin{proof} 
+Let us look at the matrix $R$ defining the relation with rows corresponding to $m_b$ and columns corresponding to $\hat{m}$. 
+
+\vspace*{2ex}
+\noindent
+\textsc{Trivial case.}
+Show that if there is a column of ones then it is trivial to get $\pr{\GAME_0^\AD=1}\leq\pr{\GAME_1^{\smash{\AD,\AD^*}}=1}$.
+
+
+\vspace*{2ex}
+\noindent
+\textsc{Non-trivial case.}
+Let $A$ be $2\times 2$ matrix of potential outcome probabilities for the game $\GAME_0$ and what is the minimal difference between the games $\GAME_0$ and $\GAME_1$ if we allow optimal $\AD^*$. Based on that define $\ADB$.
+
+
+
+\end{proof}
+\end{document}
