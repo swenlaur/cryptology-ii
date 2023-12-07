@@ -1,0 +1,29 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{sigma protocol, discrete logaritm problem, special soundness, random self-reducibility}
+
+\begin{document}
+\begin{exercise}{Knowledge-extraction for Schnorr identification scheme}
+The Schnorr identification scheme  is directly based on the discrete logarithm problem. The identification scheme is a honest verifier zero-knowledge proof that the prover knows $x$ such that $g^x=y$ in a group $\GG$ of size $q$. The protocol itself
+is following.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha=g^r $}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= \beta x+r$}}$\\
+    && $\bigl[g^{\gamma}\iseq y^\beta\alpha\bigr]$\\  
+  \end{tabular}
+\end{center}  
+Show that if an honest $t$-time prover $\PPP^*$ that can convince the honest verifier with probability $\varepsilon$ on average over all $y\in\GG$ can also solve the discrete logarithm problem well enough. 
+\end{exercise}
+
+\begin{solution}
+We can define a knowledge extractor $\KKK^{\PPP^*}(y)$ for finding discrete logarithm and then a self-randomised algorithm that uses $\KKK^{\PPP^*}$ on re-randomised problem instance. Consider the success probability for fixed time-bound on the running-time  $\KKK^{\PPP^*}$.
+\end{solution}
+\end{document}

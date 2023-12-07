@@ -1,0 +1,29 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{sigma protocol, discrete logaritm problem, special soundness, random self-reducibility}
+
+\begin{document}
+\begin{exercise}{Malleability of Schnorr identification scheme}
+The Schnorr identification scheme  is directly based on the discrete logarithm problem. The identification scheme is a honest verifier zero-knowledge proof that the prover knows $x$ such that $g^x=y$ in a group $\GG$ of size $q$. The protocol itself
+is following.
+\begin{center}
+  \begin{tabular}{ccc}
+    $\PPP$ & & $\VVV$\\
+    $r\getsu\ZZ_q$ \\
+    &$\xrightarrow{\makebox[6cm]{$\alpha=g^r $}}$ \\
+    && $\beta\getsu\ZZ_q$ \\
+    &$\xleftarrow{\makebox[6cm]{$\beta$}}$\\
+    \\  
+    &$\xrightarrow{\makebox[6cm]{$\gamma= \beta x+r$}}$\\
+    && $\bigl[g^{\gamma}\iseq y^\beta\alpha\bigr]$\\  
+  \end{tabular}
+\end{center}  
+Show that if an honest $t$-time prover $\PPP^*$ that can convince the honest verifier with probability $\varepsilon$ on average over all $y\in\GG$ can also solve the discrete logarithm problem well enough. 
+\end{exercise}
+
+\begin{solution}
+Consider a modified prover $\PPP^{**}$ that re-randomises the statement to be proven. That is it gets a statement $\POK_y[\exists x: g^x=y]$ and then asks $\PPP^*$ to prove $\POK_{y'}[\exists x': g^{x'}=y']$ for $y'=yg^{\delta}$.  Show how it can use the repies of $\PPP^*$ to pass  $\POK_y[\exists x: g^x=y]$. What does this mean on the success rate of $\PPP^{**}$ -- can there be more successful statements. 
+\end{solution}
+\end{document}
