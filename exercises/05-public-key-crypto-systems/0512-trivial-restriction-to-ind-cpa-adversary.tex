@@ -1,0 +1,33 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{ind-cpa, adversary restriction}
+
+\begin{document}
+\begin{exercise}{Trivial restriction to IND-CPA adversary}
+Prove that that any adversary $\AD$ against IND-CPA games
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_0)\\
+ & \RETURN \AD(c)  
+\end{game}
+&
+&\begin{game}{\GAME_1}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\AD(\PK)\\
+ & c\gets\ENC_\PK(m_1)\\
+ & \RETURN \AD(c)  
+\end{game}
+\end{align*}
+can be converted to a new adversary $\ADB$ against IND-CPA games that always outputs two different challenge messages $m_0\neq m_1$ so that the advantage remains the same and the computational overhead is constant.
+\end{exercise}
+\begin{solution}
+
+\end{solution}
+\textbf{Hint:} Decompose probability wrt condition $m_0=m_1$
+
+\end{document}

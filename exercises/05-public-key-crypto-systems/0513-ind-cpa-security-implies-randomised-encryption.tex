@@ -1,0 +1,41 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{float}
+\author{Sven Laur}
+\contributor{Sven Laur}
+\tags{ind-cpa, deterministic encryption}
+
+\begin{document}
+\begin{exercise}{IND-CPA security $\Rightarrow$ randomised encryption}
+Upper bound the probability that a $t$-time adversary $\AD$ can win the game 
+\begin{align*}
+&\begin{game}{\GAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & m\gets\AD(\PK)\\
+ & \RETURN \ENC_\PK(m)=\ENC_\PK(m)
+\end{game}
+\end{align*} 
+under the assumption that the cryptosystem is $(t,\varepsilon)$-IND-CPA secure. What restrictions this result puts on the minimal size of the randomness space used for encrypting a message?   
+\end{exercise}
+\begin{solution}
+\textbf{Hint:} Given an adversary $\AD$ construct an adversary $\ADB$ against 
+IND-CPA games
+\begin{align*}
+&\begin{game}{\BGAME_0}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\ADB(\PK)\\
+ & c\gets\ENC_\PK(m_0)\\
+ & \RETURN \AD(c)  
+\end{game}
+&
+&\begin{game}{\BGAME_1}
+ & (\SK,\PK)\gets\GEN\\
+ & (m_0,m_1)\gets\ADB(\PK)\\
+ & c\gets\ENC_\PK(m_1)\\
+ & \RETURN \AD(c)  
+\end{game}
+\end{align*}
+where $\ADB$ does a collision based decryption.
+
+\end{solution}
+\end{document}
