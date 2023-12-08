@@ -25,5 +25,8 @@ Show that if an honest $t$-time prover $\PPP^*$ that can convince the honest ver
 
 \begin{solution}
 We can define a knowledge extractor $\KKK^{\PPP^*}(y)$ for finding discrete logarithm and then a self-randomised algorithm that uses $\KKK^{\PPP^*}$ on re-randomised problem instance. Consider the success probability for fixed time-bound on the running-time  $\KKK^{\PPP^*}$.
+
+\noindent
+\textbf{Hint.} Take the standard knowledge extraction construction with success probability one and expected running-time $\Theta(1/(\varepsilon-\kappa))$. Fix a time-bound such that the extractor would succeed with probability $1/2$ when the $\varepsilon$ is the average success probability of $\PPP^*$. Now note that for each $y$ the success probability of $\PPP^*$  $\varepsilon_y$ can be different. Estimate what is the success probability of the knowledge extractor $\KKK$ with the fixed time-bound. Use random self reducibility to even this into average value for each challenge $y$.
 \end{solution}
 \end{document}
