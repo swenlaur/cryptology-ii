@@ -1,0 +1,56 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\usepackage{tikz}
+\author{Sven Laur}
+\contributor{}
+\editor{}
+\tags{false positives, false negatives, computational distance}
+
+
+\begin{document}
+\begin{exercise}{Timebounds and feasible distinguishers}
+For any distinguisher $\AD$ and two distributions $\XXX_0$ and $\XXX_1$, define the false-positive rate
+\begin{align*}
+\alpha(\AD)=\pr{x\gets\XXX_0: \AD(x)=1}\enspace\phantom{.}
+\end{align*}
+and the false‑negative rate as
+\begin{align*}
+\beta(\AD)=\pr{x\gets\XXX_1: \AD(x)=0}\enspace.
+\end{align*}
+Then it is straightforward to prove the following inequality 
+\begin{align}\label{ineq}
+1-\SD_x(\XXX_0,\XXX_1)\leq \alpha(\AD) +\beta(\AD)\leq 1+\SD_x(\XXX_0,\XXX_1)
+\end{align}
+Let us define distributions $\mathcal{X}_0$ and $\mathcal{X}_1$ over the set $\{0,1,\ldots, 9\}$ such that 
+\begin{align*}
+\pr{x\gets \XXX_0: x=2i+0}&=\frac{1}{5}\enspace.\\
+\pr{x\gets \XXX_1: x=2i+1}&=\frac{1}{5}\enspace.
+\end{align*}
+The distributions $\mathcal{X}_0$ and $\mathcal{X}_1$ are then clearly separable. To illustrate why such separation is not always achievable, let us consider the following computational model. A distinguisher $\AD$ is specified by a sequence of thresholds $t_1, t_2, \ldots, t_\ell$. The distinguisher outputs $\AD(x)=0$ for all $x < t_1$, and flips its output at each subsequent threshold. We define the running time of $\AD$ to be the number of thresholds~$\ell$.
+
+For each time bound, place all non-trivial distinguishers in the figure below and take their convex hull. This convexification models the ability to run a mixture of two distinguishers and obtain any weighted average of their performance. We assume that selecting a branch with a given probability incurs negligible cost.
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+    % Axes
+    \draw[->] (-0.5,0) -- (4.5,0) node[right] {$\alpha(\cdot)$};
+    \draw[->] (0,-0.5) -- (0,4.5) node[above] {$\beta(\cdot)$};
+
+
+    %\fill[fill=blue!10, draw=black] (0,4) -- (0,1.78) -- (1.78,0) -- (4,0) -- (4,2.22) --(2.22, 4) -- cycle;
+
+    % Grid (optional)
+    \draw[help lines, dashed, gray!50, step=0.4cm] (0,0) grid (4,4);
+
+\end{tikzpicture}
+\end{center}
+
+
+
+\end{exercise}
+
+
+\begin{solution}
+\end{solution}
+
+\end{document}
+
