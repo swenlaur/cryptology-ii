@@ -1,0 +1,30 @@
+\documentclass{crypto-exercise}
+\usepackage{hyperref}
+\author{Sven Laur}
+
+\tags{Computational Diffie-Hellman problem, Decisional Diffie-Hellman problem, bilinear pairing}
+
+\begin{document}
+\begin{exercise}{Forced equivalence between CDH and DDH}
+  Let $\GG$ be a finite multiplicative group of prime order $q$ such that all elements $y\in\GG$ can be
+  expressed as powers of of $g\in\GG$.
+  \begin{itemize}
+  \item  Then the Computational
+  Diffie-Hellman (CDH) problem is following. Given $u=g^x$ and
+  $v=g^y$, find a group element $w=g^{xy}$. 
+  \item Then the Decisional
+  Diffie-Hellman (DDH) problem is the following. For any triple
+  $u,v,w\in\GG$, you must decide whether it is a Diffie-Hellman triple
+  or not.
+  \item Let $\OOO$ be a sealed CDH oracle that operates as follows. Upon its first invocation, it issues $\ell$ DDH challenges. That is, for each challenge it samples a random tuple $(u,v,w)\gets \GG^3$ with probability $\tfrac{1}{2}$, and a valid Diffie--Hellman tuple otherwise. After each challenge, the oracle expects a reply bit $b$.
+If all $\ell$ replies are correct, then $\OOO$ begins to behave as a CDH oracle --  it answers queries according to
+\begin{align*}
+\OOO(g^x, g^y) = g^{xy}.
+\end{align*}
+\end{itemize}
+  Prove that if there exists an algorithm $\AD$ that has the advantage $\ADVDDH{\GG}{\AD}=\varepsilon$ then there exists an efficient oracle algorithm $\ADB^\OOO$ that achives significant $\ADVCDH{\GG}{\ADB^\OOO}$  even if the group $\GG$ was originally  a secure CDH group. This shows that we cannot ignore the possibility that the security parameters for the CDH and DDH problems may be of comparable magnitude. 
+  \end{exercise}
+\begin{solution}
+
+\end{solution}
+\end{document}

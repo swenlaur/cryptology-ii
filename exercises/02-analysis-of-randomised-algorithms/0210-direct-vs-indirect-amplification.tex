@@ -1,0 +1,28 @@
+\documentclass{crypto-exercise}
+\author[Formalisation of folklore]{Sven Laur}
+\contributor[Added the discussion about stopping the machine]{Sven Laur}
+\editor{Sven Laur}
+\tags{expected running time, strict running time, Markov inequality}
+
+\DeclareMathOperator*{\EXPO} {\mathbf{E}}
+\begin{document}
+
+
+\begin{exercise}{Direct vs indirect amplification}
+Let $\GG$ be a finite $q$-element group such that all elements $y\in\GG$ can be expressed as powers of $g\in\GG$. 
+Let $\AD$ be an algorithm that for any input $y$ finds its discrete logarithm with probability $\varepsilon$. Let $\ADB(y, \ell)$ be an algorithm that runs $\AD$ $\ell$ times to get the answer
+\begin{align*}
+\begin{game}{\ADB^{\AD}(y)}
+&\begin{forblock}{i\in\set{1,\ldots, \ell}\ }
+& x \gets \AD(y) \\
+& \text{if } g^{x} = y \enspace \RETURN y
+\end{forblock}\\
+& \RETURN \bot
+\end{game}
+\end{align*}
+Compute the success probability of $\ADB$ as a function of $\ell$. How many iterations are needed to get failure probability at most $2^n$.
+Use the alternative route to get the same goal. First generate $\ADB$ that always finds a discrete logarithm. Find its expected runningtime and construct a $2\tau$-time algorithm $\ADB_{2\tau}$ that fails with probability $\tfrac{1}{2}$ and repeat it until the failure probability is $2^{-n}$. Do you get the similar behaviour and why?
+\end{exercise}
+\begin{solution}
+\end{solution}
+\end{document}

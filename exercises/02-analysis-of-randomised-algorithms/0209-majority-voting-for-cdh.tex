@@ -1,0 +1,34 @@
+\documentclass{crypto-exercise}
+\author{Sven Laur}
+\tags{Computational Diffie-Hellman problem, random self-reducibility, majority-voting}
+
+\begin{document}
+\begin{exercise}{Majority voting of CDH}
+  Let $\GG$ be a finite group such that all elements $y\in\GG$ can be
+  expressed as powers of $g\in\GG$. Then the Computational
+  Diffie-Hellman (CDH) problem is following. Given $x=g^a$ and $y=g^b$, find a group element $z=g^{ab}$. 
+  Assume that there exists an algorithm $\AD$ that, on input $(g^x, g^y)\in \mathbb{G}^2$, outputs $g^{xy}$ with probability $\varepsilon$, and outputs a uniformly random element of $\mathbb{G}\setminus\{g^{xy}\}$ otherwise. Such an algorithm can be obtained by converting an arbitrary CDH solver into a randomly self-reduced CDH solver.
+Consider now the following CDH amplification strategy $\ADB$:
+\begin{itemize}
+  \item Run $\AD$ a total of $\ell$ times to obtain list of outputs $w_1, \ldots, w_\ell$.
+  \item Output $\bot$ if all candidate outputs are distinct.
+  \item Output $\bot$ if more than one group element appears at least twice among the candidates.
+  \item Otherwise, output the unique value $w$ that occurs at least twice in the list of candidates.
+\end{itemize}
+Estimate what is the probability that the answer is correct.   How does this probability scale wrt $\ell$.
+\end{exercise}
+\begin{solution}
+	
+Let us define two non-disjoint events $\mathsf{CDHPair}$ and $\mathsf{RandPair}$ where the first denotes the event that $g^{xy}$ occures more than once in the list and the second that a random $w\neq g^{xy}$ occurs in the list. Then we can estimate 
+\begin{align*}
+\pr{\ADB(g^x,g^y)=g^{xy}}\geq \pr{\mathsf{CDHPair}}-\pr{\mathsf{RandPair}}\enspace
+\end{align*}
+and we can use inclusion-exclusion principle to lower bound the first and upper bound the second.	
+\textbf{Hint:} If this gives overly conservative estimates, then you can use precise expression 
+\begin{align*}
+\pr{\ADB(g^x,g^y)=g^{xy}}= \pr{\mathsf{CDHPair}}\cdot\pr{\neg\mathsf{RandPair}|\mathsf{CDHPair}}\enspace
+\end{align*}
+and lowerbound the second term.
+
+\end{solution}
+\end{document}
