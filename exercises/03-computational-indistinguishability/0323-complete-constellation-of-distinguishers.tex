@@ -13,7 +13,7 @@ For any distinguisher $\AD$ and two distributions $\XXX_0$ and $\XXX_1$, define 
 \begin{align*}
 \alpha(\AD)=\pr{x\gets\XXX_0: \AD(x)=1}\enspace\phantom{.}
 \end{align*}
-and the false‑negative rate as
+and the false‑negative rate 
 \begin{align*}
 \beta(\AD)=\pr{x\gets\XXX_1: \AD(x)=0}\enspace.
 \end{align*}
@@ -21,12 +21,12 @@ Then it is straightforward to prove the following inequality
 \begin{align}\label{ineq}
 1-\SD_x(\XXX_0,\XXX_1)\leq \alpha(\AD) +\beta(\AD)\leq 1+\SD_x(\XXX_0,\XXX_1)
 \end{align}
-Let us define distributions $\mathcal{X}_0$ and $\mathcal{X}_1$ over the set $\{0,1,\ldots, 9\}$ such that 
+Let us define distributions $\mathcal{X}_0$ and $\mathcal{X}_1$ over the set $\{0,1,\ldots, 9\}$ such that  for any $i\in\set{0,\ldots, 9}:$
 \begin{align*}
 \pr{x\gets \XXX_0: x=i}&=\frac{i}{45}\enspace.\\
 \pr{x\gets \XXX_1: x=i}&=\frac{9-i}{45}\enspace.
 \end{align*}
-Compute the statistical distance between the distributions $\XXX_0$ and $\XXX_1$ and place all non-trivial distinguishers on the following figure  
+Compute the statistical distance between the distributions $\XXX_0$ and $\XXX_1$ and place all non-trivial distinguishers (a distinguisher that is not expressable as a mixture of two other distinguishers) on the following figure  
 \begin{center}
 \begin{tikzpicture}[scale=1.2]
     % Axes

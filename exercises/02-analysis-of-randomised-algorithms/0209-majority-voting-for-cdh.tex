@@ -8,27 +8,28 @@
   expressed as powers of $g\in\GG$. Then the Computational
   Diffie-Hellman (CDH) problem is following. Given $x=g^a$ and $y=g^b$, find a group element $z=g^{ab}$. 
   Assume that there exists an algorithm $\AD$ that, on input $(g^x, g^y)\in \mathbb{G}^2$, outputs $g^{xy}$ with probability $\varepsilon$, and outputs a uniformly random element of $\mathbb{G}\setminus\{g^{xy}\}$ otherwise. Such an algorithm can be obtained by converting an arbitrary CDH solver into a randomly self-reduced CDH solver.
-Consider now the following CDH amplification strategy $\ADB$:
+Consider now the following CDH amplification strategy $\ADB:$
 \begin{itemize}
   \item Run $\AD$ a total of $\ell$ times to obtain list of outputs $w_1, \ldots, w_\ell$.
-  \item Output $\bot$ if all candidate outputs are distinct.
-  \item Output $\bot$ if more than one group element appears at least twice among the candidates.
-  \item Otherwise, output the unique value $w$ that occurs at least twice in the list of candidates.
+  \item Output $\bot$ if all outputs are distinct.
+  \item Output $\bot$ if more than one element of $\GG$ appears at least twice among the list of outputs.
+  \item Otherwise, output the unique value $w$ that occurs at least twice in the list of outputs.
 \end{itemize}
 Estimate what is the probability that the answer is correct.   How does this probability scale wrt $\ell$.
 \end{exercise}
 \begin{solution}
 	
-Let us define two non-disjoint events $\mathsf{CDHPair}$ and $\mathsf{RandPair}$ where the first denotes the event that $g^{xy}$ occures more than once in the list and the second that a random $w\neq g^{xy}$ occurs in the list. Then we can estimate 
+Let us define two non-disjoint events $\mathsf{CDHPair}$ and $\mathsf{RandPair}$ where the first denotes the event that $g^{xy}$ occurs at least twice in $w_1, \ldots, w_\ell$ and the second that a random $w\neq g^{xy}$ occurs  at least twice in  $w_1, \ldots, w_\ell$. Then we can estimate 
 \begin{align*}
 \pr{\ADB(g^x,g^y)=g^{xy}}\geq \pr{\mathsf{CDHPair}}-\pr{\mathsf{RandPair}}\enspace
 \end{align*}
-and we can use inclusion-exclusion principle to lower bound the first and upper bound the second.	
-\textbf{Hint:} If this gives overly conservative estimates, then you can use precise expression 
+and we can use inclusion-exclusion principle to lower bound the first and upper bound the second.
+	
+\noindent\textbf{Hint:} If this gives overly conservative estimates, then you can use precise expression 
 \begin{align*}
 \pr{\ADB(g^x,g^y)=g^{xy}}= \pr{\mathsf{CDHPair}}\cdot\pr{\neg\mathsf{RandPair}|\mathsf{CDHPair}}\enspace
 \end{align*}
-and lowerbound the second term.
+and lowerbound the second term. The corresponding conditional probability depends how many instances of $g^{xy}$ are inside $w_1, \ldots, w_\ell$. However, it is easy to see that the higher the duplicity of $g^{xy}$ the lower is the conditional probability. Thus, we can get upper bound by computing the probability $w_i=w_j$ for $\ell-2$ random draws.
 
 \end{solution}
 \end{document}

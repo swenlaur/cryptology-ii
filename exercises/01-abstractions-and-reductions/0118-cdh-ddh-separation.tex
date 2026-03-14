@@ -6,8 +6,8 @@
 
 \begin{document}
 \begin{exercise}{Separation between CDH and DDH}
-  Let $\GG$ be a finite additive group of prime order $q$ such that all elements $y\in\GG$ can be
-  expressed as multiples of $g\in\GG$.
+  Let $(\GG,+)$ be a finite additive group of prime order $q$ such that all elements $y\in\GG$ can be
+  expressed as multiples of a generator $g\in\GG$.
   \begin{itemize}
   \item  Then the Computational
   Diffie-Hellman (CDH) problem is following. Given $x=a\cdot g$ and
@@ -21,7 +21,7 @@
      \langle x_1+x_2,y\rangle= \langle x_1,y\rangle\cdot \langle x_2,y\rangle\\
      \langle x,y_1+y_2\rangle= \langle x,y_1\rangle\cdot \langle x,y_2\rangle
   \end{align*}
-  and the pairing is efficiently computable and non-degenerate, i.e., $\langle g,g \rangle\neq 1$.
+  and the pairing is efficiently computable and non-degenerate, i.e., $\langle g,g \rangle\neq 1\in\GG^*$.
   \end{itemize}
   Prove that $(t,\varepsilon)$-CDH group with a bilinear pairing cannot be DDH group.  
   \end{exercise}

@@ -1,0 +1,53 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{computational indistinguishability, distributions, constructive hybrid argument}
+
+\renewcommand{\ADVIND}[2]{\ADV^{\mathsf{ind}}_{#1}(#2)}
+\newcommand{\ts}{t_{\mathrm{s}}}
+
+\begin{document}
+\begin{exercise}{Constructive hybrid argument}
+Let $\XXX_0$ and $\XXX_1$ efficiently samplable distributions that are $(t, \varepsilon)$-indistinguishable. Show that distributions $\XXX_0$ and $\XXX_1$ remain computationally indistinguishable even if the adversary can get $n$ samples.
+As the first step, estimate computational distances between following games
+\begin{align*}
+  & \begin{game}{\GAME_{00}^\AD}
+    &  x_0 \gets \XXX_0 \\
+    &  x_1 \gets \XXX_0 \\
+    & \RETURN \AD(x_0,x_1)
+  \end{game} 
+&
+ & \begin{game}{\GAME_{01}^\AD}
+    &  x_0 \gets \XXX_0 \\
+    &  x_1 \gets \XXX_1 \\
+    & \RETURN \AD(x_0,x_1)
+  \end{game} 
+&
+ & \begin{game}{\GAME_{11}^\AD}
+    &  x_0 \gets \XXX_1 \\
+    &  x_1 \gets \XXX_1 \\
+    & \RETURN \AD(x_0,x_1)
+  \end{game} 
+&
+\end{align*}
+and then generalise the argumentation to the case, where the adversary $\AD$ gets $n$ samples from a distribution $\XXX_i$.  Prove the statement by providing a \textbf{single} adversary $\ADB^\AD$ that plays against  indistinguishability games
+\begin{align*}
+  & \begin{game}{\BGAME_{0}^\ADB}
+    &  x \gets \XXX_0 \\
+    & \RETURN \ADB(x)
+  \end{game} 
+&
+ & \begin{game}{\BGAME_{1}^\ADB}
+    &  x \gets \XXX_1 \\
+    & \RETURN \ADB(x)
+  \end{game} 
+\end{align*}
+Estimate how the advantage of $\advIndXX{\GAME_0,\GAME_1}{\AD}$ and $\advIndXX{\BGAME_0,\BGAME_1}{\ADB}$ are related.
+Generalise the construction to general case. Why do we need to assume that distributions $\XXX_0$ and $\XXX_1$ are efficiently samplable?
+\end{exercise}
+
+
+\begin{solution}
+\end{solution}
+\end{document}

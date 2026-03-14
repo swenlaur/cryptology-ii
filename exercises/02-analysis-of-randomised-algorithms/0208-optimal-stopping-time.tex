@@ -8,8 +8,10 @@
 
 
 \begin{exercise}{From expected to strict running time}
-Let $\AD$ be an algorithm that always provides a solution to a puzzle and is guaranteed to have expected running-time $\tau$ and we need to construct a $t$-time algorithm that fails with low probability. One way to solve this is to stop the original algorithm $\AD$ after $s$ time steps. Let $\AD_s$ be the corresponding algorithm which returns $\bot$ if $\AD$ does not stop in $s$ time steps and  whatever $\AD$ returns otherwise. Let $\ADB$ be the algorithm that runs $\AD_s$ up to $\floor{t/s}$ times to get the correct answer.
+Let $\AD$ be an algorithm that always provides a solution to a puzzle and is guaranteed to have expected running-time $\tau$ and we need to construct a $t$-time algorithm that fails with low probability. One way to solve this is to stop the original algorithm $\AD$ after $s$ timesteps. Let $\AD_s$ be the corresponding algorithm which returns $\bot$ if $\AD$ does not stop in $s$ time steps and  whatever $\AD$ returns otherwise. Let $\ADB$ be the algorithm that runs $\AD_s$ up to $\floor{t/s}$ times to get the correct answer.
 Use Markov inequality to estimate the failure probability of $\ADB$.  What is the minimal failure probability $\delta$ for fixed time-bound $t$? What is the minimal time-bound $t$ to achieve failure probability $\delta$. Graph the region of feasible solutions on $t\delta$-plane. \\ 
+
+\noindent\textbf{Bonus:} Is it possible to define the running-time distribution of $\AD$ in such a way that Markov's inequality becomes tight, or at least tight up to a multiplicative constant?
 \end{exercise}
 
 \begin{solution}

@@ -7,7 +7,7 @@
 \begin{document}
 \begin{exercise}{Forced equivalence between CDH and DDH}
   Let $\GG$ be a finite multiplicative group of prime order $q$ such that all elements $y\in\GG$ can be
-  expressed as powers of of $g\in\GG$.
+  expressed as powers of $g\in\GG$.
   \begin{itemize}
   \item  Then the Computational
   Diffie-Hellman (CDH) problem is following. Given $u=g^x$ and
@@ -16,14 +16,15 @@
   Diffie-Hellman (DDH) problem is the following. For any triple
   $u,v,w\in\GG$, you must decide whether it is a Diffie-Hellman triple
   or not.
-  \item Let $\OOO$ be a sealed CDH oracle that operates as follows. Upon its first invocation, it issues $\ell$ DDH challenges. That is, for each challenge it samples a random tuple $(u,v,w)\gets \GG^3$ with probability $\tfrac{1}{2}$, and a valid Diffie--Hellman tuple otherwise. After each challenge, the oracle expects a reply bit $b$.
-If all $\ell$ replies are correct, then $\OOO$ begins to behave as a CDH oracle --  it answers queries according to
+  \item Let $\OOO$ be a CDH oracle that operates as follows. Upon its first invocation, it issues $\ell$ Diffie-Hellman challenges. That is, for each challenge $\OOO$ samples a random tuple $(u,v,w)\gets \GG^3$ with probability $\tfrac{1}{2}$, and a valid Diffie--Hellman tuple otherwise. After each challenge, the oracle expects a reply bit $b$.
+If all $\ell$ replies are correct, then $\OOO$ begins to behave as a CDH oracle and answers queries according to
 \begin{align*}
 \OOO(g^x, g^y) = g^{xy}.
 \end{align*}
 \end{itemize}
-  Prove that if there exists an algorithm $\AD$ that has the advantage $\ADVDDH{\GG}{\AD}=\varepsilon$ then there exists an efficient oracle algorithm $\ADB^\OOO$ that achives significant $\ADVCDH{\GG}{\ADB^\OOO}$  even if the group $\GG$ was originally  a secure CDH group. This shows that we cannot ignore the possibility that the security parameters for the CDH and DDH problems may be of comparable magnitude. 
-  \end{exercise}
+Formalise the behaviour of $\OOO$ as a stateful algorithm.
+ Prove that if there exists an algorithm $\AD$ that has the advantage $\ADVDDH{\GG}{\AD}=\varepsilon$ then there exists an efficient oracle algorithm $\ADB^\OOO$ that achives significant $\ADVCDH{\GG}{\ADB^\OOO}$  even if the group $\GG$ was originally  a secure CDH group. Prove that $\GG$ remains is a $(t_1,\varepsilon_1)$-secure CDH group for adversaries that have oracle access to $\OOO$ as long as the group is still $(t_2,\varepsilon_2)$-secure DDH group but $\varepsilon_1$ and $\varepsilon_2$ must be of comparable magnitude.  What does it mean? 
+\end{exercise}
 \begin{solution}
 
 \end{solution}
