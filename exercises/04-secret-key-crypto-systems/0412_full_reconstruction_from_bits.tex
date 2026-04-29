@@ -1,0 +1,40 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{semantic security, full reconstruction}
+
+
+\begin{document}
+\begin{exercise}{Full reconstruction from bits}
+Let  $\MSPACE$ be of a the messages space of size $2^n$ and let predicates $\psi_1,\ldots,\psi_n:\MSPACE\to\set{0,1}$ be  sych that their oucome uniquely determines the message space element, i.e, the system of equations
+\begin{align*}
+\psi_1(m)=b_1,\ldots,\psi_n(m)=b_n
+\end{align*}
+has a unique solution. Assume that for any $t$-time adversary the probability that $\AD$ wins a game 
+\begin{align*}
+  \begin{game}{\GAME_i}
+    &\SK\gets\GEN\\
+    &m\gets\MSPACE\\
+    &c\gets\ENC_\SK(m)\\
+    &\RETURN [\psi_i(m)\iseq \AD(c)]
+  \end{game}
+\end{align*}
+is at least $\frac{1}{2}+\varepsilon$ for any $i\in\set{1,\ldots,n}$.  How large $\varepsilon$ has to be so that one can  prove that there exists an efficient algorithm $\ADB$ that can reconstruct $m$ from an encryption, i.e., win the following game 
+\begin{align*}
+  \begin{game}{\BGAME}
+    &\SK\gets\GEN\\
+    &m\gets\MSPACE\\
+    &c\gets\ENC_\SK(m)\\
+    &\RETURN [m\iseq \ADB(c)]
+  \end{game}
+\end{align*}
+with non-trivial probability provided that $2^n$ is small enough to be enumerated and $\psi_1,\ldots,\psi_n$ are efficiently computable.  Is it possible to define  $\psi_1,\ldots,\psi_n$ so that the claim holds even $t\ll2^n$? What additional assumption allows us to prove the claim for any $\varepsilon >0$?
+\end{exercise}
+\begin{solution}\ \\
+\textbf{Hint:} What is trivial success for the game $\BGAME$?\\
+\textbf{Hint:} You can fix a sensible construction of $\ADB$.\\
+\textbf{Hint:} Define $\varepsilon_i(m)$ as the probability that $\AD(m)$ guesses $\psi_i(m)$. Is it possible $\varepsilon_1(m)\cdots\varepsilon_n(m)=0$? What does it mean for the success of $\ADB$? Analyze this for $n=2$, $n=3$ and generalise. 
+ 
+\end{solution}
+
+\end{document}
