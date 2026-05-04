@@ -1,0 +1,32 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{perfect message authentication codes, bruteforcing}
+\begin{document}
+\begin{exercise}{Existence of perfect message auhtentication codes}
+A deterministic message authentication code  $h:\KSPACE\times\MSPACE\to\TSPACE$ is perfect if the success of impersonation and substitution attaks is bounded by 
+$\smash{\frac{1}{\abs{T}}}$ and $\abs{\KSPACE}=\abs{\TSPACE}\cdot\abs{\TSPACE}$. It is easy to construct such codes for $\abs{\KSPACE}=\abs{\MSPACE}\cdot\abs{\MSPACE}$ but it is  harder for longer messages.
+Construct a perfect mesasage authentication code $h:\ZZ_2^2\times\ZZ_2^2\to\ZZ_2$ or prove that no such codes can exist. 
+\end{exercise}
+
+\begin{solution}
+Recall that a perfect message authentication code must be a universal hash function. Just start to fill the function table with corresponding restrictions.
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Key & 00 & 01 & 10 & 11\\
+\hline
+00&&&&\\
+01&&&&\\
+10&&&&\\
+11&&&&\\
+\hline
+\end{tabular}
+\end{center}
+
+ 
+
+
+\end{solution}
+\end{document}  

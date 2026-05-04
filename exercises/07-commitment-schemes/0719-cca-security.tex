@@ -1,0 +1,61 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\tags{CCA security for commitments}
+
+
+\begin{document}
+\begin{exercise}{CCA security for commitments}
+Consider an opening oracle $\OOO$ against a commitment scheme $(\GEN,\COM,\OPEN)$ that is defined in the following way
+\begin{align*}
+\begin{fblock}{\OOO_\PK(c)}
+&d_*\getsu\set{d: \OPEN_\PK(c,d)\neq\bot}\\
+&\RETURN d_*
+\end{fblock}\enspace.
+\end{align*}
+Let $\LLL$ denote the list of inputs submitted to $\OOO_\PK$.
+Then the commitment scheme is $(t,q,\varepsilon)$-binding against opening oracle the advantage of any $t$-time adversary $\AD$ in the following game 
+\begin{align*}
+\begin{game}{\GAME}
+& \PK\gets\GEN\\
+& c, d_0,d_1\gets \AD^{\OOO_\PK(\cdot)}(\PK)\\
+&\IF \OPEN_\PK(c, d_0)=\bot\ \THEN \RETURN 0\\
+&\IF \OPEN_\PK(c, d_1)=\bot\ \THEN \RETURN 0\\
+&\IF c\notin\LLL\wedge\abs{\LLL}\leq q\ \THEN \RETURN 0\\
+&\RETURN \OPEN_\PK(c, d_0)\neq \OPEN_\PK(c, d_1)
+\end{game}
+\end{align*}  
+is bounded by $\varepsilon$, i.e., $\pr{\GAME^\AD=1}\leq \varepsilon$.
+Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advantage $\ADV(\ADB)$ against the following game pairs
+\begin{align*}
+&
+\begin{game}{\BGAME}
+& \PK\gets\GEN\\
+& m_0, m_1\gets \ADB(\PK)\\
+& c,d \gets\COM_\PK(m_0)\\
+& c_*\gets \ADB(c)\\
+& d_*\gets \ADB(d)\\
+&\RETURN \OPEN_\PK(c_*,d_*)=m_0
+\end{game}
+&&
+\begin{game}{\BGAME}
+& \PK\gets\GEN\\
+& m_0, m_1\gets \ADB(\PK)\\
+& c,d \gets\COM_\PK(m_1)\\
+& c_*\gets \ADB(c)\\
+& d_*\gets \ADB(d)\\
+&\RETURN \OPEN_\PK(c_*,d_*)=m_1
+\end{game}
+\end{align*}  
+where 
+\begin{align*}
+\ADV(\ADB)=\frac{1}{2}\cdot\pr{\BGAME_0^\ADB=1}+\frac{1}{2}\cdot\pr{\BGAME_1^\ADB=1}-1\enspace.
+\end{align*}
+Show that then the commitment scheme cannot be $(t,1,\varepsilon)$-binding 
+\end{exercise}
+\begin{solution} 
+For simplicitly analyse the case where each commitment $c$ has only two valid openings $d_0$ and $d_1$ and both lead to different messages.  
+
+
+\end{solution}
+\end{document}

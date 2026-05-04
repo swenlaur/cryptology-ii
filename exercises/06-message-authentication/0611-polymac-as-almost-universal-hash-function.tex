@@ -1,0 +1,40 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{polynomial message authentication code, universal hash function, statistical distance}
+\begin{document}
+\begin{exercise}{Polynomial message authentication code as almost universal hash function}
+Consider messages that are  $\ell$-element lists  $\vec{m}=(m_1,\ldots, m_\ell)\in\FF^\ell$. Then the polynomial message authentication code is defined  as follows
+\begin{align*}
+    h(\vec{m}, k_1,k_0)= m_\ell k_1^\ell+m_{\ell-1} k_1^{\ell-1}\cdots+ m_1k_1+k_0.
+\end{align*}
+This code is not a universal hash function and thus there is an substitution attack that breaks the trivial success limit $\smash{\frac{1}{\abs{\FF}}}$. The corresponding attack can be described as the following game
+\begin{align*}
+\begin{game}{\GAME_0}
+&k_0,k_1\getsu \FF\\
+& \vec{m}\gets\AD\\
+& t\gets h(\vec{m}, k_1,k_0)\\
+& \overline{\vec{m}},\overline{t}\gets \AD(t)\\
+& \RETURN [ \vec{m}\neq \overline{\vec{m}}]\wedge[\overline{t}=h(\overline{\vec{m}}, k_1,k_0)]
+\end{game}
+\end{align*} 
+If $h$ would be a universal hash function then the game would simplify to the following game 
+\begin{align*}
+\begin{game}{\GAME_1}
+& \vec{m}\gets\AD\\
+& t, t_*\getsu\FF\\
+& \overline{\vec{m}},\overline{t}\gets \AD(t)\\
+& \RETURN [ \vec{m}\neq \overline{\vec{m}}]\wedge[\overline{t}=t_*]
+\end{game}
+\end{align*} 
+for which the success is guaranteed to be at most $\smash{\frac{1}{\abs{\FF}}}$. To estimate the statistical distance between the games $\GAME_0$ and $\GAME_1$ one has to estimate how much $h(\vec{m}, k_1,k_0), h(\overline{\vec{m}}, k_1,k_0)$ differ from $t, t_*\getsu\FF$. Compute the corresponding distance and resulting upper bound on the attack success. Is the result the same as obtained by direct analysis of $\GAME_0$?
+\end{exercise}
+
+\begin{solution}
+\textbf{Hint:} Just compute the probabilities.  
+
+
+
+\end{solution}
+\end{document}  

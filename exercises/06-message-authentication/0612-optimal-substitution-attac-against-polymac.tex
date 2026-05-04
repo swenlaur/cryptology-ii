@@ -1,0 +1,39 @@
+\documentclass{crypto-exercise}
+\usepackage{amsthm}
+\author{Sven Laur}
+\editor{Sven Laur}
+\tags{polynomial message authentication code, optimal substitution attack}
+\begin{document}
+\begin{exercise}{Polynomial message authentication code as almost universal hash function}
+Consider messages that are  $\ell$-element lists  $\vec{m}=(m_1,\ldots, m_\ell)\in\FF^\ell$. Then the polynomial message authentication code is defined  as follows
+\begin{align*}
+    h(\vec{m}, k_1,k_0)= m_\ell k_1^\ell+m_{\ell-1} k_1^{\ell-1}\cdots+ m_1k_1+k_0.
+\end{align*}
+This code is not a universal hash function and thus there is an substitution attack that breaks the trivial success limit $\smash{\frac{1}{\abs{\FF}}}$. The corresponding attack can be described as the following game
+\begin{align*}
+\begin{game}{\GAME_0}
+&k_0,k_1\getsu \FF\\
+& \vec{m}\gets\AD\\
+& t\gets h(\vec{m}, k_1,k_0)\\
+& \overline{\vec{m}},\overline{t}\gets \AD(t)\\
+& \RETURN [ \vec{m}\neq \overline{\vec{m}}]\wedge[\overline{t}=h(\overline{\vec{m}}, k_1,k_0)]
+\end{game}
+\end{align*} 
+The optimal substitution attack finds out what keys are consistent with the tag of the first message and then uses the key with the higest probability  to compute the next tag
+\begin{align*}
+  \begin{fblock}{\AD_{\vec{m},\overline{\vec{m}}}(t)}
+    &k_1^*,k_0^*\gets\argmax_{k_1^*,k_0^*}\pr{k_1,k_0\getsu\FF: (k_1,k_0)=(k_1^*,k_0^*)|h(\vec{m}, k_1, k_0)=t}\\
+    &\overline{t}\gets h(\overline{\vec{m}}, k_1^*, k_0^*)\\
+    &\RETURN (\overline{m},\overline{t})
+  \end{fblock}\enspace.
+\end{align*} 
+Compute the success probability of $\AD_{\vec{m},\overline{\vec{m}}}^*$ and compare that with the maximal success bound obtained in the lecture.
+\end{exercise}
+
+\begin{solution}
+\textbf{Hint:} Write down what does the condition $h(\vec{m}, k_1, k_0)=t$ mean and what is the corresponding posterior distribution.
+
+
+
+\end{solution}
+\end{document}  
