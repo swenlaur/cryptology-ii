@@ -32,7 +32,7 @@ Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advanta
 \begin{game}{\BGAME_0}
 & \PK\gets\GEN\\
 & m_0, m_1\gets \ADB(\PK)\\
-&\IF m_0\neq m_1\ \THEN \RETURN 0\\
+&\IF m_0= m_1\ \THEN \RETURN 0\\
 & c,d \gets\COM_\PK(m_0)\\
 & c_*\gets \ADB(c)\\
 & d_*\gets \ADB(d)\\
@@ -43,7 +43,7 @@ Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advanta
 \begin{game}{\BGAME_1}
 & \PK\gets\GEN\\
 & m_0, m_1\gets \ADB(\PK)\\
-&\IF m_0\neq m_1\ \THEN \RETURN 0\\
+&\IF m_0= m_1\ \THEN \RETURN 0\\
 & c,d \gets\COM_\PK(m_1)\\
 & c_*\gets \ADB(c)\\
 & d_*\gets \ADB(d)\\
@@ -55,7 +55,7 @@ where
 \begin{align*}
 \ADV(\ADB)=\frac{1}{2}\cdot\pr{\BGAME_0^\ADB=1}+\frac{1}{2}\cdot\pr{\BGAME_1^\ADB=1}-\frac{1}{2}\enspace.
 \end{align*}
-Show that then the commitment scheme cannot be $(t,1,\varepsilon)$-binding unless the original commitment is statistically binding.
+Show that then the commitment scheme cannot be $(t,1,\varepsilon)$-binding unless the original commitment is statistically binding. If it is not possible provide a conter example.
 \end{exercise}
 \begin{solution} 
 For simplicitly analyse the case where each commitment $c$ has only two valid openings $d_0$ and $d_1$ and both lead to different messages.  
