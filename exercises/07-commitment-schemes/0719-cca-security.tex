@@ -21,7 +21,7 @@ Then the commitment scheme is $(t,q,\varepsilon)$-binding against opening oracle
 & c, d_0,d_1\gets \AD^{\OOO_\PK(\cdot)}(\PK)\\
 &\IF \OPEN_\PK(c, d_0)=\bot\ \THEN \RETURN 0\\
 &\IF \OPEN_\PK(c, d_1)=\bot\ \THEN \RETURN 0\\
-&\IF c\notin\LLL\wedge\abs{\LLL}\leq q\ \THEN \RETURN 0\\
+&\IF c\in\LLL\vee\abs{\LLL} > q\ \THEN \RETURN 0\\
 &\RETURN \OPEN_\PK(c, d_0)\neq \OPEN_\PK(c, d_1)
 \end{game}
 \end{align*}  
@@ -29,7 +29,7 @@ is bounded by $\varepsilon$, i.e., $\pr{\GAME^\AD=1}\leq \varepsilon$.
 Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advantage $\ADV(\ADB)$ against the following game pairs
 \begin{align*}
 &
-\begin{game}{\BGAME}
+\begin{game}{\BGAME_0}
 & \PK\gets\GEN\\
 & m_0, m_1\gets \ADB(\PK)\\
 & c,d \gets\COM_\PK(m_0)\\
@@ -38,7 +38,7 @@ Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advanta
 &\RETURN \OPEN_\PK(c_*,d_*)=m_0
 \end{game}
 &&
-\begin{game}{\BGAME}
+\begin{game}{\BGAME_1}
 & \PK\gets\GEN\\
 & m_0, m_1\gets \ADB(\PK)\\
 & c,d \gets\COM_\PK(m_1)\\
@@ -49,7 +49,7 @@ Assume that there exists a $\tau$-time adversary $\ADB$ that has a large advanta
 \end{align*}  
 where 
 \begin{align*}
-\ADV(\ADB)=\frac{1}{2}\cdot\pr{\BGAME_0^\ADB=1}+\frac{1}{2}\cdot\pr{\BGAME_1^\ADB=1}-1\enspace.
+\ADV(\ADB)=\frac{1}{2}\cdot\pr{\BGAME_0^\ADB=1}+\frac{1}{2}\cdot\pr{\BGAME_1^\ADB=1}-\frac{1}{2}\enspace.
 \end{align*}
 Show that then the commitment scheme cannot be $(t,1,\varepsilon)$-binding 
 \end{exercise}
