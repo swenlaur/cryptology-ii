@@ -195,16 +195,16 @@ corrupted $\PARTY_1$ \emph{can abort} the protocol after that.
 \foilhead[-1.0cm]{Classical security definitions}
 
 \textbf{Statistical security}\vspace*{0.5ex}\\
-A protocol is $(\tre,\tid,\varepsilon)$-\emph{secure} if for any
-$\tre$-time real world adversary $\AD$ there exists a $\tid$-time
+A protocol is $(\tre,f(\cdot),\varepsilon)$-\emph{secure} if for any
+$\tre$-time real world adversary $\AD$ there exists a $f(\tre)$-time
 ideal world adversary $\ADID$ such that for any input distribution
 $\INPDIST$ the output distributions $\vec{\OSTATE}$ and
 $\vec{\OSTATE}^\circ$ are statistically $\varepsilon$-close.
 \Bigskip
 
 \textbf{Computational security}\vspace*{0.5ex}\\
-A protocol is $(\tre,\tid,\tpre,\varepsilon)$-\emph{secure} if for
-any $\tre$-time real world adversary $\AD$ there exists a $\tid$-time
+A protocol is $(\tre,f(\cdot),\tpre,\varepsilon)$-\emph{secure} if for
+any $\tre$-time real world adversary $\AD$ there exists a $f(\tre)$-time
 ideal world adversary $\ADID$ such that for any input distribution
 $\INPDIST$ the output distributions $\vec{\OSTATE}$ and
 $\vec{\OSTATE}^\circ$ are  $(\tpre,\varepsilon)$-close.
